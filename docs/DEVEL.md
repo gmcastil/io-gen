@@ -33,7 +33,6 @@ common set of core fields and some variant ones, depending on their type.
 | `width`      | integer                    | Logical bus width of the parent signal                             |
 | `bus`        | boolean                    | Indicates whether to emit as a bus (`foo[0]`) or scalar (`foo`)    |
 | `iostandard` | string                     | Fully-resolved IO standard                                         |
-| `bank`       | integer                    | IO bank number         |
 | `group`      | string (optional)          | Logical grouping or subsystem tag                                  |
 | `comment`    | object (optional)          | Contains free-form comments for `hdl` and/or `xdc` emitters        |
 | `attrs`      | object (optional)          | Future per-pin attributes such as drive, slew, or pull-up          |

@@ -12,8 +12,7 @@
             "hdl": "This is an HDL comment for LED[0]",
             "xdc": "This is an XDC comment for LED[0]"
         },
-        "pin": "T22",
-        "bank": 34
+        "pin": "T22"
     },
     {
         "signal": "led",
@@ -28,8 +27,7 @@
             "hdl": "This is an HDL comment for LED[1]",
             "xdc": "This is an XDC comment for LED[1]"
         },
-        "pin": "T23",
-        "bank": 34
+        "pin": "T23"
     },
     {
         "signal": "btn",
@@ -44,8 +42,7 @@
             "hdl": "User pushbutton",
             "xdc": "BTN0 input"
         },
-        "pin": "U19",
-        "bank": 35
+        "pin": "U19"
     },
     {
         "signal": "btn_bus",
@@ -60,8 +57,7 @@
             "hdl": "User pushbutton treated as 1-bit bus",
             "xdc": "BTN_BUS[0] input"
         },
-        "pin": "U20",
-        "bank": 35
+        "pin": "U20"
     },
     {
         "signal": "led_diff",
@@ -77,9 +73,7 @@
             "xdc": "Differential LED[0] outputs"
         },
         "p": "Y19",
-        "n": "Y20",
-        "bank_p": 34,
-        "bank_n": 34
+        "n": "Y20"
     },
     {
         "signal": "led_diff",
@@ -95,9 +89,7 @@
             "xdc": "Differential LED[1] outputs"
         },
         "p": "W19",
-        "n": "W20",
-        "bank_p": 34,
-        "bank_n": 34
+        "n": "W20"
     },
     {
         "signal": "btn_diff",
@@ -113,9 +105,7 @@
             "xdc": "BTN_DIFF input pair"
         },
         "p": "V17",
-        "n": "V18",
-        "bank_p": 35,
-        "bank_n": 35
+        "n": "V18"
     },
     {
         "signal": "btn_bus_diff",
@@ -131,8 +121,6 @@
             "xdc": "BTN_BUS_DIFF[0] input pair"
         },
         "p": "U17",
-        "n": "U18",
-        "bank_p": 35,
-        "bank_n": 35
+        "n": "U18"
     }
 ]
