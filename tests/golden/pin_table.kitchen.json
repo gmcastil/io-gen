@@ -1,0 +1,138 @@
+[
+    {
+        "signal": "led",
+        "group": "led",
+        "index": 0,
+        "direction": "out",
+        "buffer": "obuf",
+        "width": 2,
+        "bus": true,
+        "iostandard": "LVCMOS33",
+        "comment": {
+            "hdl": "This is an HDL comment for LED[0]",
+            "xdc": "This is an XDC comment for LED[0]"
+        },
+        "pin": "T22",
+        "bank": 34
+    },
+    {
+        "signal": "led",
+        "group": "led",
+        "index": 1,
+        "direction": "out",
+        "buffer": "obuf",
+        "width": 2,
+        "bus": true,
+        "iostandard": "LVCMOS33",
+        "comment": {
+            "hdl": "This is an HDL comment for LED[1]",
+            "xdc": "This is an XDC comment for LED[1]"
+        },
+        "pin": "T23",
+        "bank": 34
+    },
+    {
+        "signal": "btn",
+        "group": "buttons",
+        "index": 0,
+        "direction": "in",
+        "buffer": "ibuf",
+        "width": 1,
+        "bus": false,
+        "iostandard": "LVCMOS33",
+        "comment": {
+            "hdl": "User pushbutton",
+            "xdc": "BTN0 input"
+        },
+        "pin": "U19",
+        "bank": 35
+    },
+    {
+        "signal": "btn_bus",
+        "group": "buttons",
+        "index": 0,
+        "direction": "in",
+        "buffer": "ibuf",
+        "width": 1,
+        "bus": true,
+        "iostandard": "LVCMOS33",
+        "comment": {
+            "hdl": "User pushbutton treated as 1-bit bus",
+            "xdc": "BTN_BUS[0] input"
+        },
+        "pin": "U20",
+        "bank": 35
+    },
+    {
+        "signal": "led_diff",
+        "group": "led",
+        "index": 0,
+        "direction": "out",
+        "buffer": "obufds",
+        "width": 2,
+        "bus": true,
+        "iostandard": "LVDS_25",
+        "comment": {
+            "hdl": "Differential LED[0]",
+            "xdc": "Differential LED[0] outputs"
+        },
+        "p": "Y19",
+        "n": "Y20",
+        "bank_p": 34,
+        "bank_n": 34
+    },
+    {
+        "signal": "led_diff",
+        "group": "led",
+        "index": 1,
+        "direction": "out",
+        "buffer": "obufds",
+        "width": 2,
+        "bus": true,
+        "iostandard": "LVDS_25",
+        "comment": {
+            "hdl": "Differential LED[1]",
+            "xdc": "Differential LED[1] outputs"
+        },
+        "p": "W19",
+        "n": "W20",
+        "bank_p": 34,
+        "bank_n": 34
+    },
+    {
+        "signal": "btn_diff",
+        "group": "buttons",
+        "index": 0,
+        "direction": "in",
+        "buffer": "ibufds",
+        "width": 1,
+        "bus": false,
+        "iostandard": "LVDS_25",
+        "comment": {
+            "hdl": "Differential pushbutton scalar input",
+            "xdc": "BTN_DIFF input pair"
+        },
+        "p": "V17",
+        "n": "V18",
+        "bank_p": 35,
+        "bank_n": 35
+    },
+    {
+        "signal": "btn_bus_diff",
+        "group": "buttons",
+        "index": 0,
+        "direction": "in",
+        "buffer": "ibufds",
+        "width": 1,
+        "bus": true,
+        "iostandard": "LVDS_25",
+        "comment": {
+            "hdl": "Differential pushbutton treated as 1-bit bus",
+            "xdc": "BTN_BUS_DIFF[0] input pair"
+        },
+        "p": "U17",
+        "n": "U18",
+        "bank_p": 35,
+        "bank_n": 35
+    }
+]

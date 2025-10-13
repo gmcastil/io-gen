@@ -1,0 +1,203 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "IO generator schema",
+    "description": "Schema for describing PL pins....TBD",
+    "type": "object",
+    "properties": {
+        "title": {
+            "type": "string"
+        },
+        "part": {
+            "type": "string"
+        },
+        "signals": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "direction": {
+                        "$ref": "defs/direction.json"
+                    },
+                    "buffer": {
+                        "$ref": "defs/buffer.json"
+                    },
+                    "parameters": {
+                        "$ref": "defs/parameters.json"
+                    },
+                    "instance": {
+                        "$ref": "defs/instance.json"
+                    },
+                    "bank": {
+                        "$ref": "defs/bank.json"
+                    },
+                    "iostandard": {
+                        "$ref": "defs/iostandard.json"
+                    },
+                    "group": {
+                        "$ref": "defs/group.json"
+                    },
+                    "pins": {
+                        "$ref": "defs/pins.json"
+                    },
+                    "pinset": {
+                        "$ref": "defs/pinset.json"
+                    },
+                    "multibank": {
+                        "$ref": "defs/multibank.json"
+                    },
+                    "width": {
+                        "type": "integer",
+                        "minimum": 1
+                    },
+                    "generate": {
+                        "type": "boolean",
+                        "default": true
+                    },
+                    "comment": {
+                        "type": "object",
+                        "properties": {
+                            "xdc": {
+                                "type": "string"
+                            },
+                            "hdl": {
+                                "type": "string"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "allOf": [
+                    {
+                        "if": {
+                            "required": [
+                                "generate"
+                            ],
+                            "properties": {
+                                "generate": {
+                                    "const": false
+                                }
+                            }
+                        },
+                        "then": {
+                            "required": [
+                                "name"
+                            ]
+                        },
+                        "else": {
+                            "required": [
+                                "name",
+                                "direction",
+                                "buffer"
+                            ]
+                        }
+                    },
+                    {
+                        "if": {
+                            "required": [
+                                "multibank"
+                            ]
+                        },
+                        "then": {
+                            "required": [
+                                "width"
+                            ]
+                        }
+                    },
+                    {
+                        "if": {
+                            "properties": {
+                                "pins": {
+                                    "type": "array"
+                                }
+                            },
+                            "required": [
+                                "pins"
+                            ]
+                        },
+                        "then": {
+                            "required": [
+                                "width"
+                            ]
+                        }
+                    },
+                    {
+                        "if": {
+                            "required": [
+                                "pinset"
+                            ],
+                            "properties": {
+                                "pinset": {
+                                    "type": "object",
+                                    "required": [
+                                        "p"
+                                    ],
+                                    "properties": {
+                                        "p": {
+                                            "type": "array"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "then": {
+                            "required": [
+                                "width"
+                            ]
+                        }
+                    }
+                ],
+                "oneOf": [
+                    {
+                        "required": [
+                            "pins"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "pinset"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "multibank"
+                        ]
+                    }
+                ],
+                "additionalProperties": false
+            }
+        },
+        "banks": {
+            "type": "object",
+            "propertyNames": {
+                "pattern": "^[0-9]+$"
+            },
+            "additionalProperties": {
+                "type": "object",
+                "properties": {
+                    "iostandard": {
+                        "$ref": "defs/iostandard.json"
+                    },
+                    "performance": {
+                        "$ref": "defs/performance.json"
+                    },
+                    "comment": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "iostandard",
+                    "performance"
+                ],
+                "additionalProperties": false
+            }
+        }
+    },
+    "required": [
+        "title",
+        "part",
+        "signals"
+    ]
+}

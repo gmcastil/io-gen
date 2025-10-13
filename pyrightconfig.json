@@ -1,0 +1,10 @@
+{
+  "venvPath": ".",
+  "venv": ".venv",
+  "pythonVersion": "3.11",
+  "include": ["io_gen", "tests"],
+  "exclude": ["**/__pycache__", ".venv"],
+  "reportMissingImports": true,
+  "reportMissingTypeStubs": false
+}
+

@@ -1,0 +1,7 @@
+.coverage
+.venv_installed_stamp
+.venv/
+__pycache__/
+
+# Apple, leave me alone
+.DS_Store

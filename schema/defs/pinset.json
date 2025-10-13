@@ -1,0 +1,36 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "A differential pair, either scalar or an array",
+    "type": "object",
+    "oneOf": [
+        {
+            "description": "Scalar diferential pair",
+            "properties": {
+                "p": { "type": "string" },
+                "n": { "type": "string" }
+            },
+            "required": ["p", "n"],
+            "additionalProperties": false
+        },
+        {
+            "description": "Bus of diferential pairs",
+            "properties": {
+                "p": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "minItems": 1,
+                    "uniqueItems": true
+                },
+                "n": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "minItems": 1,
+                    "uniqueItems": true
+                }
+            },
+            "required": ["p", "n"],
+            "additionalProperties": false
+        }
+    ]
+}
+

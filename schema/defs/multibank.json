@@ -1,0 +1,26 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "A signal defined across multiple banks, with pins grouped per bank.",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "bank": { "$ref": "bank.json" },
+            "pins": { "$ref": "pins.json" },
+            "pinset": { "$ref": "pinset.json" },
+            "iostandard": { "$ref": "iostandard.json" },
+            "offset": {
+                "type": "integer",
+                "minimum": 0
+            }
+        },
+        "required": ["bank", "offset"],
+        "oneOf": [
+            { "required": ["pins"] },
+            { "required": ["pinset"] }
+        ],
+        "additionalProperties": false
+    },
+    "minItems": 1
+}
+
