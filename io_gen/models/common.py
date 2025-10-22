@@ -1,5 +1,9 @@
 from dataclasses import dataclass
 
+from typing import Union
+
+StrOrList = Union[str, list[str]]
+
 
 @dataclass(frozen=True)
 class Comment:

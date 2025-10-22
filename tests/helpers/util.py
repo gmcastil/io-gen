@@ -1,5 +1,6 @@
-import difflib
 from pathlib import Path
+from typing import Any
+import json
 
 
 def strip_line_endings(line: str) -> str:
@@ -15,16 +16,8 @@ def read_golden_lines(path: str | Path) -> list[str]:
     return golden_lines
 
 
-def unified_diff(
-    expected: list[str], actual: list[str], fromfile="expected", tofile="actual"
-) -> str:
-    """Return a unified diff string or empty if equal"""
-
-    if expected == actual:
-        return ""
-
-    return "\n".join(
-        difflib.unified_diff(
-            expected, actual, fromfile=fromfile, tofile=tofile, lineterm=""
-        )
-    )
+def read_vhdl_signals(path: str | Path) -> list[dict[str, Any]]:
+    """Reads a JSON file containing data that will determine VHDL signals definitions"""
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data if isinstance(data, list) else [data]

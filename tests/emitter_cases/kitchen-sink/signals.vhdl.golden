@@ -1,0 +1,32 @@
+[
+    {
+        "name": "led",
+        "type": "std_logic_vector",
+        "range": "(1 downto 0)"
+    },
+    {
+        "name": "btn",
+        "type": "std_logic",
+        "range": null
+    },
+    {
+        "name": "btn_bus",
+        "type": "std_logic_vector",
+        "range": "(0 downto 0)"
+    },
+    {
+        "name": "led_diff",
+        "type": "std_logic_vector",
+        "range": "(1 downto 0)"
+    },
+    {
+        "name": "btn_diff",
+        "type": "std_logic",
+        "range": null
+    },
+    {
+        "name": "btn_bus_diff",
+        "type": "std_logic_vector",
+        "range": "(0 downto 0)"
+    }
+]
