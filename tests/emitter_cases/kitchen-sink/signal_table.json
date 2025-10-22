@@ -1,0 +1,110 @@
+[
+    {
+        "name": "led",
+        "group": "led",
+        "direction": "out",
+        "buffer": "obuf",
+        "diff_pair": false,
+        "bus": true,
+        "width": 2,
+        "pins": [
+            "T22",
+            "T23"
+        ],
+        "iostandard": "LVCMOS33",
+        "comment": {
+            "hdl": "This is an HDL comment for LED",
+            "xdc": "This is an XDC comment for LED"
+        }
+    },
+    {
+        "name": "btn",
+        "group": "buttons",
+        "direction": "in",
+        "buffer": "ibuf",
+        "diff_pair": false,
+        "bus": false,
+        "width": 1,
+        "pins": "U19",
+        "iostandard": "LVCMOS33",
+        "comment": {
+            "hdl": "User pushbutton",
+            "xdc": "BTN0 input"
+        }
+    },
+    {
+        "name": "btn_bus",
+        "group": "buttons",
+        "direction": "in",
+        "buffer": "ibuf",
+        "diff_pair": false,
+        "bus": true,
+        "width": 1,
+        "pins": "U20",
+        "iostandard": "LVCMOS33",
+        "comment": {
+            "hdl": "User pushbutton treated as 1-bit bus",
+            "xdc": "BTN_BUS[0] input"
+        }
+    },
+    {
+        "name": "led_diff",
+        "group": "led",
+        "direction": "out",
+        "buffer": "obufds",
+        "diff_pair": true,
+        "bus": true,
+        "width": 2,
+        "pinset": {
+            "p": [
+                "Y19",
+                "W19"
+            ],
+            "n": [
+                "Y20",
+                "W20"
+            ]
+        },
+        "iostandard": "LVDS_25",
+        "comment": {
+            "hdl": "Differential LED",
+            "xdc": "Differential LED outputs"
+        }
+    },
+    {
+        "name": "btn_diff",
+        "group": "buttons",
+        "direction": "in",
+        "buffer": "ibufds",
+        "diff_pair": true,
+        "bus": false,
+        "width": 1,
+        "pinset": {
+            "p": "V17",
+            "n": "V18"
+        },
+        "iostandard": "LVDS_25",
+        "comment": {
+            "hdl": "Differential pushbutton scalar input",
+            "xdc": "BTN_DIFF input pair"
+        }
+    },
+    {
+        "name": "btn_bus_diff",
+        "group": "buttons",
+        "direction": "in",
+        "buffer": "ibufds",
+        "diff_pair": true,
+        "bus": true,
+        "width": 1,
+        "pinset": {
+            "p": "U17",
+            "n": "U18"
+        },
+        "iostandard": "LVDS_25",
+        "comment": {
+            "hdl": "Differential pushbutton treated as 1-bit bus",
+            "xdc": "BTN_BUS_DIFF input pair"
+        }
+    }
+]

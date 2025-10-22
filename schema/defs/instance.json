@@ -4,6 +4,6 @@
         "string",
         "null"
     ],
-    "description": "Optional buffer parameters or generics",
+    "description": "Optional HDL instance name for buffer instantiation",
     "additionalProperties": true
 }

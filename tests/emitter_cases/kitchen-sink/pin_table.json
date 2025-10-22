@@ -1,6 +1,6 @@
 [
     {
-        "signal": "led",
+        "name": "led",
         "group": "led",
         "index": 0,
         "direction": "out",
@@ -9,13 +9,13 @@
         "bus": true,
         "iostandard": "LVCMOS33",
         "comment": {
-            "hdl": "This is an HDL comment for LED[0]",
-            "xdc": "This is an XDC comment for LED[0]"
+            "hdl": "This is an HDL comment for LED",
+            "xdc": "This is an XDC comment for LED"
         },
         "pin": "T22"
     },
     {
-        "signal": "led",
+        "name": "led",
         "group": "led",
         "index": 1,
         "direction": "out",
@@ -24,15 +24,14 @@
         "bus": true,
         "iostandard": "LVCMOS33",
         "comment": {
-            "hdl": "This is an HDL comment for LED[1]",
-            "xdc": "This is an XDC comment for LED[1]"
+            "hdl": "This is an HDL comment for LED",
+            "xdc": "This is an XDC comment for LED"
         },
         "pin": "T23"
     },
     {
-        "signal": "btn",
+        "name": "btn",
         "group": "buttons",
-        "index": 0,
         "direction": "in",
         "buffer": "ibuf",
         "width": 1,
@@ -45,7 +44,7 @@
         "pin": "U19"
     },
     {
-        "signal": "btn_bus",
+        "name": "btn_bus",
         "group": "buttons",
         "index": 0,
         "direction": "in",
@@ -60,7 +59,7 @@
         "pin": "U20"
     },
     {
-        "signal": "led_diff",
+        "name": "led_diff",
         "group": "led",
         "index": 0,
         "direction": "out",
@@ -69,14 +68,14 @@
         "bus": true,
         "iostandard": "LVDS_25",
         "comment": {
-            "hdl": "Differential LED[0]",
-            "xdc": "Differential LED[0] outputs"
+            "hdl": "Differential LED",
+            "xdc": "Differential LED outputs"
         },
         "p": "Y19",
         "n": "Y20"
     },
     {
-        "signal": "led_diff",
+        "name": "led_diff",
         "group": "led",
         "index": 1,
         "direction": "out",
@@ -85,16 +84,15 @@
         "bus": true,
         "iostandard": "LVDS_25",
         "comment": {
-            "hdl": "Differential LED[1]",
-            "xdc": "Differential LED[1] outputs"
+            "hdl": "Differential LED",
+            "xdc": "Differential LED outputs"
         },
         "p": "W19",
         "n": "W20"
     },
     {
-        "signal": "btn_diff",
+        "name": "btn_diff",
         "group": "buttons",
-        "index": 0,
         "direction": "in",
         "buffer": "ibufds",
         "width": 1,
@@ -108,7 +106,7 @@
         "n": "V18"
     },
     {
-        "signal": "btn_bus_diff",
+        "name": "btn_bus_diff",
         "group": "buttons",
         "index": 0,
         "direction": "in",
@@ -118,7 +116,7 @@
         "iostandard": "LVDS_25",
         "comment": {
             "hdl": "Differential pushbutton treated as 1-bit bus",
-            "xdc": "BTN_BUS_DIFF[0] input pair"
+            "xdc": "BTN_BUS_DIFF input pair"
         },
         "p": "U17",
         "n": "U18"

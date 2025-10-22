@@ -1,0 +1,36 @@
+# This is an XDC comment for LED
+set_property PACKAGE_PIN T22 [get_ports {led_pad[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {led_pad[0]}]
+set_property PACKAGE_PIN T23 [get_ports {led_pad[1]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {led_pad[1]}]
+
+# BTN0 input
+set_property PACKAGE_PIN U19 [get_ports {btn_pad}]
+set_property IOSTANDARD LVCMOS33 [get_ports {btn_pad}]
+
+# BTN_BUS[0] input
+set_property PACKAGE_PIN U20 [get_ports {btn_bus_pad[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {btn_bus_pad[0]}]
+
+# Differential LED outputs
+set_property PACKAGE_PIN Y19 [get_ports {led_diff_p[0]}]
+set_property PACKAGE_PIN Y20 [get_ports {led_diff_n[0]}]
+set_property IOSTANDARD LVDS_25 [get_ports {led_diff_p[0]}]
+set_property IOSTANDARD LVDS_25 [get_ports {led_diff_n[0]}]
+set_property PACKAGE_PIN W19 [get_ports {led_diff_p[1]}]
+set_property PACKAGE_PIN W20 [get_ports {led_diff_n[1]}]
+set_property IOSTANDARD LVDS_25 [get_ports {led_diff_p[1]}]
+set_property IOSTANDARD LVDS_25 [get_ports {led_diff_n[1]}]
+
+# BTN_DIFF input pair
+set_property PACKAGE_PIN V17 [get_ports {btn_diff_p}]
+set_property PACKAGE_PIN V18 [get_ports {btn_diff_n}]
+set_property IOSTANDARD LVDS_25 [get_ports {btn_diff_p}]
+set_property IOSTANDARD LVDS_25 [get_ports {btn_diff_n}]
+
+# BTN_BUS_DIFF input pair
+set_property PACKAGE_PIN U17 [get_ports {btn_bus_diff_p[0]}]
+set_property PACKAGE_PIN U18 [get_ports {btn_bus_diff_n[0]}]
+set_property IOSTANDARD LVDS_25 [get_ports {btn_bus_diff_p[0]}]
+set_property IOSTANDARD LVDS_25 [get_ports {btn_bus_diff_n[0]}]
+
