@@ -1,7 +1,7 @@
 from pathlib import Path
 import pytest
 
-from tests.helpers import assert_signal_list_equal
+from tests.helpers import assert_vhdl_signal_list_equal
 from tests.helpers import load_signal_table
 from tests.helpers import read_vhdl_signals
 
@@ -31,4 +31,4 @@ def test_vhdl_signals_cases(case: Path):
     # Retrieve the actual signal declarations emitted
     actual = emit_vhdl_signals(sig_table)
 
-    assert_signal_list_equal(expected, actual)
+    assert_vhdl_signal_list_equal(expected, actual)

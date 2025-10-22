@@ -1,7 +1,7 @@
 from difflib import unified_diff
 
 
-def assert_signal_list_equal(
+def assert_vhdl_signal_list_equal(
     expected: list[dict[str, str]], actual: list[dict[str, str]]
 ) -> None:
     """Assert equality of lists of signals before formatting"""
