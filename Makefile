@@ -1,12 +1,17 @@
-.PHONY: install test clean
+UNAME			:= $(shell uname)
 
 SHELL			:= /bin/bash
 
-PRINTF			:= printf
+ifeq ($(UNAME),Darwin)
+	GREP := ggrep
+else
+	GREP := grep
+endif
+
+PRINTF			:= builtin printf
 RM			:= rm
 TOUCH			:= touch
 FIND			:= find
-GREP			:= grep
 
 VENV 			:= .venv
 VENV_INSTALLED_STAMP	:= .venv_installed_stamp
@@ -24,6 +29,8 @@ TEST_ARGS		:= ""
 # The IOGEN_LOG environment variable can be used to overide the default log level
 IOGEN			:= IOGEN_LOG=$(IOGEN_LOG) $(PYTHON) -m io_gen
 EXAMPLE_YAML		:= examples/arty-z7-20.yaml
+
+.PHONY: install test clean
 
 help:
 	@$(PRINTF) '%s\n' "Available targets:"
