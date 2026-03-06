@@ -1,0 +1,164 @@
+title: Digilent Arty Z7-20
+part: xc7z020clg400-1
+
+banks:
+
+signals:
+
+  - name: ext_clk_125m00
+    pins: H16
+    group: clock
+    direction: in
+    buffer: infer
+
+  - name: led
+    pins: [R14, P14, N16, M14]
+    width: 4
+    group: led
+    direction: out
+    buffer: infer
+
+  - name: led4
+    pins: [N15, G17, L15]
+    width: 3
+    group: led
+    direction: out
+    buffer: infer
+
+  - name: led5
+    pins: [M15, L14, G14]
+    width: 3
+    group: led
+    direction: out
+    buffer: infer
+
+  - name: pb_sw
+    pins: [D19, D20, L20, L19]
+    width: 4
+    group: switches
+    direction: in
+    buffer: infer
+
+  - name: slide_sw
+    pins: [M20, M19]
+    width: 2
+    group: switches
+    direction: in
+    buffer: infer
+
+  # Audio PWM and mute signals
+  - name: aud_pwm
+    pins: R18
+    comment:
+      hdl: PWM mono audio output to low-pass filter
+      xdc: PWM mono audio output (J13)
+    direction: out
+    buffer: infer
+
+  - name: aud_sd
+    comment:
+      hdl: Audio shutdown control - drive high to enable audio output
+    pins: T17
+    direction: out
+    buffer: infer
+
+  # HDMI RX (sink) J10 signals
+  - name: hdmi_rx_cec
+    pins: H17
+    direction: inout
+    buffer: iobuf
+
+  - name: hdmi_rx_clk
+    pinset:
+      n: P19
+      p: N18
+    direction: in
+    buffer:
+
+  - name: hdmi_rx_data
+    pinset:
+      n: [W20, U20, P20]
+      p: [V20, T20, N20]
+    width: 3
+    direction: in
+    buffer:
+
+  - name: hdmi_rx_hpd
+    pins: T19
+    comment:
+      hdl: Hot-plug assert (active high, indicates sink is present)
+    direction: output
+    buffer:
+
+  - name: hdmi_rx_scl
+    pins: U14
+    direction: inout
+    buffer: iobuf
+
+  - name: hdmi_rx_sda
+    pins: U15
+    direction: inout
+    buffer: iobuf
+
+  # HDMI TX (source) J11 signals
+  - name: hdmi_tx_cec
+    pins: G15
+    direction: inout
+    buffer: iobuf
+
+  - name: hdmi_tx_clk
+    pinset:
+      n: L17
+      p: L16
+    direction: out
+    buffer: obufds
+
+  - name: hdmi_tx_data
+    pinset:
+      n: [K18, J19, H18]
+      p: [K17, K19, J18]
+    width: 3
+    direction: out
+    buffer: obufds
+
+  - name: hdmi_tx_hpdn		
+    pins: R19
+    direction: input
+    buffer: infer
+
+  - name: hdmi_tx_scl	    
+    pins: M17
+    direction: inout
+    buffer: iobuf
+
+  - name: hdmi_tx_sda	    
+    pins: M18
+    direction: inout
+    buffer: iobuf
+
+  # Unused or reserved signals
+  - name: crypto_sda
+    pins: J15
+    direction: inout
+    comment:
+      hdl: Unused I2C signal to ATSHA204A decvice (SCL is NC)
+    generate: false
+
+  - name: pmod_ja
+    pinset:
+      n: [Y19, Y17, U19, W19]
+      p: [Y18, Y16, U18, W18]
+    width: 4
+    generate: false
+
+  - name: pmod_jb
+    pinset:
+      n: [Y14, T10, W16, W13]
+      p: [W14, T11, V16, V12]
+    width: 4
+    generate: false
+
+  - name: netic20_unused
+    pins: [F17, G18, T9, U9]
+    width: 4
+    generate: false
