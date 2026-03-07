@@ -17,11 +17,15 @@ YAML file
   -> 2. Table Construction (signal table + bank table)
   -> 3. Flattening (pin table)
   -> 4. Generation
-        -> XDC constraints         (from pin table)
+        -> XDC constraints         (from pin table + signal table)
         -> HDL port declarations   (from signal table)
         -> HDL signal declarations (from signal table)
         -> IO ring                 (from pin table + signal table)
 ```
+
+This is a one-shot generation tool. Output files are generated once,
+committed to version control, and owned by the engineer from that point
+forward. The tool does not update or patch existing files.
 
 After validation passes, all subsequent stages can trust their inputs
 completely. No defensive checks are needed downstream.
@@ -36,8 +40,8 @@ One row per signal. All properties are fully resolved - no inheritance,
 no implicit values. Constructed from the validated YAML using the bank
 table to resolve IOSTANDARD.
 
-| field        | type    | notes                                        |
-|--------------|---------|----------------------------------------------|
+| Field        | Type    | Notes                                        |
+| ------------ | ------- | -------------------------------------------- |
 | name         | string  | signal name                                  |
 | direction    | enum    | in, out, inout                               |
 | buffer       | enum    | ibuf, obuf, ibufds, obufds, iobuf, infer     |
@@ -58,8 +62,8 @@ One row per pin (or per differential pair for pinset signals). Fully
 resolved - no inheritance, no implicit values. Constructed from the
 signal table and the original pin assignment data.
 
-| field       | type    | notes                                                |
-|-------------|---------|------------------------------------------------------|
+| Field       | Type    | Notes                                                |
+| ----------- | ------- | ---------------------------------------------------- |
 | signal_name | string  | reference to parent signal                           |
 | index       | integer | bit position within the signal (0-based)             |
 | pin_p       | string  | physical pin name (or positive leg for differential) |
@@ -68,7 +72,7 @@ signal table and the original pin assignment data.
 | direction   | enum    | copied from signal table                             |
 | buffer      | enum    | copied from signal table                             |
 
-Rows are ordered by signal_name and then by index, so that buffer
+Rows are ordered by `signal_name` and then by `index`, so that buffer
 instantiations for a bus are always sequential and grouped by signal.
 
 The pin table has no knowledge of signal-level structure. It is used
@@ -79,8 +83,8 @@ for XDC generation and IO ring buffer instantiation.
 A temporary structure used only during table construction to resolve
 IOSTANDARD inheritance. Not passed to any generation stage.
 
-| field       | type    | notes                  |
-|-------------|---------|------------------------|
+| Field       | Type    | Notes                  |
+| ----------- | ------- | ---------------------- |
 | bank        | integer | bank number            |
 | iostandard  | string  | bank-level IO standard |
 | performance | enum    | HP, HR, HD             |
@@ -165,10 +169,11 @@ Signals with generate: false are skipped by all generators.
 
 #### XDC Constraints
 
-**Input:** pin table
+**Input:** pin table + signal table
 
 Emits one set_property PACKAGE_PIN and one set_property IOSTANDARD
-constraint per pin row.
+constraint per pin row. The signal table is used for grouping constraints
+by signal and emitting signal-level comments for readability.
 
 #### HDL Port Declarations
 
@@ -214,7 +219,6 @@ side pin assignments.
 - [ ] Define the meta table structure (title, part, RTL name)
 - [ ] Decide whether HDL port and signal declarations are one generator
       or two
-- [ ] Define the marker format for updating existing output files
 - [ ] Define the output file naming and directory structure
 
 ### Pending implementation
@@ -224,3 +228,4 @@ side pin assignments.
 - [ ] Write tests for table construction
 - [ ] Write tests for flattening
 - [ ] Write tests for each generator
+
