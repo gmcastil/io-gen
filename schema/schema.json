@@ -108,14 +108,14 @@
                     },
                     {
                         "if": {
+                            "required": [
+                                "pins"
+                            ],
                             "properties": {
                                 "pins": {
                                     "type": "array"
                                 }
-                            },
-                            "required": [
-                                "pins"
-                            ]
+                            }
                         },
                         "then": {
                             "required": [
@@ -146,6 +146,20 @@
                             "required": [
                                 "width"
                             ]
+                        }
+                    },
+                    {
+                        "if": {
+                            "required": [
+                                "multibank"
+                            ]
+                        },
+                        "then": {
+                            "not": {
+                                "required": [
+                                    "bank"
+                                ]
+                            }
                         }
                     }
                 ],

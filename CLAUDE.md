@@ -22,6 +22,12 @@ I am the architect. You are the assistant. Do not get ahead of me.
 3. **Implementation last** - only once tests exist do we write code to make them pass
 4. **One thing at a time** - we complete one pipeline stage before moving to the next
 
+## Context Loading
+
+At the start of every session, read all files in the `docs/` folder before
+doing anything else. These files are the source of truth for design decisions,
+schema rules, and pending work.
+
 ## Current Project State
 
 This is a code generation pipeline that will:

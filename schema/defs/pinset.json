@@ -6,10 +6,17 @@
         {
             "description": "Scalar diferential pair",
             "properties": {
-                "p": { "type": "string" },
-                "n": { "type": "string" }
+                "p": {
+                    "type": "string"
+                },
+                "n": {
+                    "type": "string"
+                }
             },
-            "required": ["p", "n"],
+            "required": [
+                "p",
+                "n"
+            ],
             "additionalProperties": false
         },
         {
@@ -17,20 +24,26 @@
             "properties": {
                 "p": {
                     "type": "array",
-                    "items": { "type": "string" },
-                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 2,
                     "uniqueItems": true
                 },
                 "n": {
                     "type": "array",
-                    "items": { "type": "string" },
-                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    },
+                    "minItems": 2,
                     "uniqueItems": true
                 }
             },
-            "required": ["p", "n"],
+            "required": [
+                "p",
+                "n"
+            ],
             "additionalProperties": false
         }
     ]
 }
-
