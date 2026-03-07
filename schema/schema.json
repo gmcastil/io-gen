@@ -24,9 +24,6 @@
                     "buffer": {
                         "$ref": "defs/buffer.json"
                     },
-                    "parameters": {
-                        "$ref": "defs/parameters.json"
-                    },
                     "instance": {
                         "$ref": "defs/instance.json"
                     },
