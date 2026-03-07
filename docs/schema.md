@@ -73,13 +73,24 @@ type constraint follows naturally.
 The signal-level `bank` field exists to support IOSTANDARD inheritance for
 `pins` and `pinset` signals. It is not meaningful for `multibank` signals
 because each segment already carries its own `bank` reference. The signal-
-level `bank` field should not be used on a `multibank` signal.
+level `bank` field should not be used on a `multibank` signal and is
+rejected by the schema if present.
+
+## Instance Names
+
+Buffer instance names are auto-generated from the signal name and bit index
+(e.g. `ibuf_clk_125m00` for a scalar, `ibuf_hdmi_rx_data_0` for a bus).
+The optional `instance` field on a signal overrides the auto-generated name
+for the entire signal. Per-pin instance name overrides are not supported.
 
 ---
 
 ## Pending Work
 
-### Requires code validation (not enforceable in JSON Schema)
+### Requires code validation
+
+The following constraints cannot be expressed in JSON Schema and must be
+enforced in the validation stage of the pipeline:
 
 - `pinset.p` and `pinset.n` arrays must have equal length
 - Bank numbers within a `multibank` array must be unique - JSON Schema cannot

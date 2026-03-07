@@ -54,7 +54,7 @@ table to resolve IOSTANDARD.
 | comment      | object  | optional xdc and hdl comment strings         |
 
 The signal table has no knowledge of pin assignments or bank numbers.
-It is used for HDL generation only after the pin table is built.
+It is used for HDL generation and for grouping and commenting XDC output.
 
 ### Pin Table
 
@@ -224,7 +224,7 @@ side pin assignments.
 ### Pending implementation
 
 - [ ] Write the validator tool
-- [ ] Define the signal table and pin table as Python data structures
+- [ ] Define the signal table and pin table as concrete data structures
 - [ ] Write tests for table construction
 - [ ] Write tests for flattening
 - [ ] Write tests for each generator
