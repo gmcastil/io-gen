@@ -93,7 +93,7 @@ rejected by the schema if present.
 ## Instance Names
 
 Buffer instance names are auto-generated from the signal name and bit index
-(e.g. `ibuf_clk_125m00` for a scalar, `ibuf_hdmi_rx_data_0` for a bus).
+(e.g. `ibuf_sys_clk` for a scalar, `obuf_led_0` for a bus).
 The optional `instance` field on a signal overrides the auto-generated name
 for the entire signal. Per-pin instance name overrides are not supported.
 

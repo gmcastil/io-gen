@@ -42,11 +42,27 @@ The data model is defined by a JSON schema (see schema file). The pipeline stage
 
 The `archive/` folder contains previous implementation attempts and should be ignored.
 
+## Conventions
+
+Output naming and structural conventions are defined in `docs/conventions.md`.
+This is the source of truth - do not infer conventions from examples alone.
+
+## Examples
+
+The files in `examples/` are canonical reference output. They represent
+agreed-upon correct structure and naming. Do not modify them without
+explicit discussion.
+
+## Formatting
+
+The generator produces readable, indented output but does not enforce
+project-specific style. Users may post-process output with:
+- Verilog: verible-verilog-format
+- VHDL: vsg --fix
+
+Do not add formatter invocation to the pipeline.
+
 ## Domain Knowledge
-
-### Validated Assumptions
-
-- TBD - to be filled in as we establish facts
 
 ### Known Edge Cases
 
