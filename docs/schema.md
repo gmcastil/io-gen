@@ -1,5 +1,19 @@
 # Schema Design Notes
 
+## Top-Level Fields
+
+The root of the YAML has four required fields:
+
+- `title` - a human-readable description of the design
+- `top` - the HDL module or entity name. Must be a valid HDL identifier
+  (letters, digits, underscores, must not start with a digit). Drives all
+  output filenames and module names.
+- `part` - the FPGA part number
+- `signals` - the list of signal descriptors
+
+The optional `banks` map defines bank-level defaults for IOSTANDARD and
+performance class.
+
 ## Signals
 
 A signal is a named logical IO that maps to one or more physical FPGA pins.
