@@ -17,10 +17,10 @@ YAML file
   -> 2. Table Construction (signal table + bank table)
   -> 3. Flattening (pin table)
   -> 4. Generation
-        -> XDC constraints         (from pin table + signal table)
-        -> HDL port declarations   (from signal table)
-        -> HDL signal declarations (from signal table)
-        -> IO ring                 (from pin table + signal table)
+        -> XDC constraints          (from pin table + signal table)
+        -> HDL port declarations    (from signal table)
+        -> HDL signal declarations  (from signal table)
+        -> IO ring                  (from pin table + signal table)
 ```
 
 This is a one-shot generation tool. Output files are generated once,
@@ -214,12 +214,7 @@ side pin assignments.
 
 ### Open design questions
 
-- [ ] Define the top-level RTL name field and add it to the schema and
-      meta table
-- [ ] Define the meta table structure (title, part, RTL name)
-- [ ] Decide whether HDL port and signal declarations are one generator
-      or two
-- [ ] Define the output file naming and directory structure
+None.
 
 ### Pending implementation
 

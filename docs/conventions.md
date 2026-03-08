@@ -83,6 +83,25 @@ the appropriate buffer from context.
 
 ---
 
+## Output Files
+
+The tool produces three output files per invocation. All file names are
+derived from the `--top` argument supplied at runtime. Files are written
+to the directory specified by `--output`.
+
+| File           | Contents                                   |
+| -------------- | ------------------------------------------ |
+| `<top>.xdc`    | Pin assignment and IOSTANDARD constraints  |
+| `<top>.<ext>`  | Top-level module or entity with port list  |
+| `<top>_io.<ext>` | IO ring with buffer instantiations       |
+
+Where `<ext>` is `v` for Verilog or `vhd` for VHDL, selected by `--lang`
+at runtime.
+
+The IO ring module or entity name matches the file stem: `<top>_io`.
+
+---
+
 ## Formatting
 
 Generated output is indented and readable by hand. For projects that

@@ -5,9 +5,6 @@
 The root of the YAML has four required fields:
 
 - `title` - a human-readable description of the design
-- `top` - the HDL module or entity name. Must be a valid HDL identifier
-  (letters, digits, underscores, must not start with a digit). Drives all
-  output filenames and module names.
 - `part` - the FPGA part number
 - `signals` - the list of signal descriptors
 
@@ -67,6 +64,13 @@ to determine the total bit count from segment structure alone.
 
 1. Signal-level `iostandard` override
 2. Bank-level `iostandard` from the top-level `banks` map
+
+A signal may specify both `bank` and `iostandard`. In that case the
+signal-level value takes precedence and the bank default is ignored for
+that signal. This is intentional — individual signals within a bank may
+use different IOSTANDARDs provided they are compatible with the bank's
+VCCO voltage. Compatibility checking is not enforced by the schema and
+is left to a future validation pass or the downstream toolchain.
 
 All pins in a signal share the same IOSTANDARD. Specifying different
 IOSTANDARDs within a single logical bus would be incoherent electrically and
