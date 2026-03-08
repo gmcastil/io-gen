@@ -19,16 +19,14 @@ PYTHON 			:= $(VENV)/bin/python3
 PIP			:= $(VENV)/bin/pip
 PYTEST			:= $(VENV)/bin/pytest
 
+PKG_NAME		:= io_gen
+
 PROJ_FILES		:= $(shell git ls-files)
 
 # Keywords to filter tests on (defaults to everything)
 TESTS			?= ""
 COVERAGE_ARGS		:= --cov=$(PKG_NAME) --cov-report=term-missing
 TEST_ARGS		:= ""
-
-# The IOGEN_LOG environment variable can be used to overide the default log level
-IOGEN			:= IOGEN_LOG=$(IOGEN_LOG) $(PYTHON) -m io_gen
-EXAMPLE_YAML		:= examples/arty-z7-20.yaml
 
 .PHONY: install test clean
 
@@ -39,9 +37,6 @@ help:
 	@$(PRINTF) '%-16s %s\n' "  debug" "Run entire test suite, with PDB and output directed to console"
 	@$(PRINTF) '%-16s %s\n' "  coverage" "Run tests with coverage"
 	@$(PRINTF) '%-16s %s\n' "  check-ascii" "Search the source tree for non-ASCII characters"
-	@$(PRINTF) '\n'
-	@$(PRINTF) '%s\n' "Development targets:"
-	@$(PRINTF) '%-16s %s\n' "  run-validate" "Schema validate"
 
 $(VENV_INSTALLED_STAMP): requirements.txt
 	@$(PRINTF) '%s\n' "Initializing virtual environment"
@@ -49,15 +44,6 @@ $(VENV_INSTALLED_STAMP): requirements.txt
 	$(PIP) install --upgrade pip
 	$(PIP) install -r requirements.txt
 	$(TOUCH) $(VENV_INSTALLED_STAMP)
-
-run-validate: $(VENV_INSTALLED_STAMP)
-	$(IOGEN) $(VERBOSE) validate --input $(EXAMPLE_YAML)
-
-run-xdc: $(VENV_INSTALLED_STAMP)
-	$(IOGEN) emit_xdc --input $(EXAMPLE_YAML)
-
-run-vhdl: $(VENV_INSTALLED_STAMP)
-	$(IOGEN) emit_vhdl --input $(EXAMPLE_YAML)
 
 test: $(VENV_INSTALLED_STAMP)
 	@$(PYTHON) -m pytest -k $(TESTS) $(TEST_ARGS)
@@ -87,4 +73,3 @@ clean: clean-pyc
 	$(RM) -rf $(VENV)
 	$(RM) -f $(VENV_INSTALLED_STAMP)
 	$(RM) -f .coverage
-
