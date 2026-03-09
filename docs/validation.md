@@ -46,6 +46,10 @@ with `generate: false` are excluded.
 The following constraints are enforced:
 
 - All bank numbers referenced by signals exist in the top-level `banks` map
+- Every signal with `generate: true` must have a resolvable IOSTANDARD: either
+  a signal-level `iostandard` override, or a `bank` reference that resolves to
+  a bank with an `iostandard`. For `multibank` signals, the signal-level
+  `iostandard` is always required - bank-level inheritance does not apply
 - `pinset.p` and `pinset.n` arrays have equal length
 - Multibank segment bank numbers are unique within a signal
 - Multibank segment offsets are non-overlapping and collectively cover the

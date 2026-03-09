@@ -24,10 +24,15 @@ signal consists of one of the following:
 
 ## Signal Generation
 
-Every signal must have `name`, `direction`, and `buffer` unless `generate`
-is explicitly set to `false`. When `generate` is false, only `name` is
-required. This allows a signal to be declared in the YAML for documentation
-or reservation purposes without producing any HDL output.
+Every signal must include a pin assignment strategy (`pins`, `pinset`, or
+`multibank`) regardless of whether `generate` is true or false. This ensures
+that every signal in the file corresponds to a real physical pin assignment.
+
+Beyond that, every signal must have `name`, `direction`, and `buffer` unless
+`generate` is explicitly set to `false`. When `generate` is false, only `name`
+and a pin assignment strategy are required. This allows a signal to be declared
+in the YAML for documentation or reservation purposes without producing any HDL
+output.
 
 ## Pin Assignment Strategies
 
