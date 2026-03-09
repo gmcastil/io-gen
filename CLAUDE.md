@@ -33,10 +33,14 @@ schema rules, and pending work.
 This is a code generation pipeline that will:
 
 - Read FPGA pin constraint data from a YAML file
-- Generate TCL constraint files, VHDL/Verilog port definitions, IO ring code, IO primitive instantiations, and signal declarations
-- Update existing output files by finding markers, deleting the range, and regenerating that section
+- Generate XDC constraint files, VHDL or Verilog port definitions, IO ring
+  code, IO primitive instantiations, and signal declarations
+- Output goes to files in a directory specified at runtime, or to stdout
 
-The data model is defined by a JSON schema (see schema file). The pipeline stages and data structures are still being designed - do not assume they are settled.
+The pipeline design is documented in `docs/pipeline.md` and the stage-level
+docs it references. The schema is defined in `schema/schema.json` and
+documented in `docs/schema.md`. The data structures are settled - see the
+stage docs for details.
 
 ## What Is In Archive
 
@@ -74,9 +78,9 @@ Do not add formatter invocation to the pipeline.
 
 ## Current Focus
 
-- [ ] Review and finalize the JSON schema / data model
-- [ ] Define the data structures that need to be produced
-- [ ] Design the pipeline interfaces
+- [x] Review and finalize the JSON schema / data model
+- [x] Define the data structures that need to be produced
+- [ ] Document each pipeline stage interface (in progress)
 - [ ] Write tests for each interface
 - [ ] Implement one stage at a time
 
@@ -84,11 +88,13 @@ Do not add formatter invocation to the pipeline.
 
 - **Pin** - a physical FPGA pin with a name, bank, IOSTANDARD, and signal name
 - **Bank** - a group of pins sharing power and (usually) IOSTANDARD characteristics
-- **TCL constraints** -
+- **XDC constraints** - Xilinx Design Constraints file containing pin assignments and IO standards
 - **IO ring** - the boundary logic between the top-level ports and internal signals
-- **Marker** - a comment delimiter in an output file that identifies a region to be regenerated
 
 ## Coding
 
-- ASCII only. Do not include not ASCII characters, emojis, or unicode characters.
--
+- Python is the implementation language
+- Use dataclasses for all domain data structures
+- Signal table entries are either `SingleEndedSignal` or `DifferentialSignal` dataclasses
+- `top` is a CLI argument (`--top`), not a YAML field
+- ASCII only. Do not include non-ASCII characters, emojis, or unicode characters
