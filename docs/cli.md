@@ -22,6 +22,11 @@ The output HDL language. Required unless `--xdc-only` is specified.
 Directory to write output files into. If omitted, output is written to
 stdout. See stdout mode below.
 
+### `--validate-only`
+
+Parse and validate the input YAML without generating any output. Exits with
+a non-zero status code if validation fails, zero if it passes.
+
 ### `--rtl-only`
 
 Generate only the HDL files (`<top>.<ext>` and `<top>_io.<ext>`). Skip
@@ -43,5 +48,6 @@ top-level HDL, IO ring HDL.
 ## Planned Features
 
 - [ ] Stdout mode
+- [ ] `--validate-only` flag
 - [ ] `--rtl-only` flag
 - [ ] `--xdc-only` flag

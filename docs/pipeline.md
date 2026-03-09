@@ -95,28 +95,7 @@ IOSTANDARD inheritance. Not passed to any generation stage.
 
 ### 1. Validation
 
-**Input:** a YAML file path
-
-**Structural validation** checks that the YAML conforms to the JSON
-schema. This catches missing required fields, invalid enum values,
-wrong types, and constraint violations defined in the schema.
-
-**Semantic validation** checks domain correctness that the schema cannot
-express:
-
-- All bank numbers referenced by signals exist in the banks map
-- Multibank segment bank numbers are unique within a signal
-- Multibank segment offsets are non-overlapping and collectively cover
-  the full signal width
-- pinset p and n arrays have equal length
-- Buffer type is compatible with direction (e.g. ibuf requires in)
-
-**Output on success:** the validated YAML document as a parsed object,
-guaranteed to be structurally and semantically correct.
-
-**Errors:** all validation errors are collected and reported together
-rather than stopping at the first error. Each error includes the signal
-name and field that caused it.
+See `docs/validation.md`.
 
 ---
 

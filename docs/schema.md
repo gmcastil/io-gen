@@ -101,22 +101,3 @@ Buffer instance names are auto-generated from the signal name and bit index
 The optional `instance` field on a signal overrides the auto-generated name
 for the entire signal. Per-pin instance name overrides are not supported.
 
----
-
-## Pending Work
-
-### Requires code validation
-
-The following constraints cannot be expressed in JSON Schema and must be
-enforced in the validation stage of the pipeline:
-
-- `pinset.p` and `pinset.n` arrays must have equal length
-- Bank numbers within a `multibank` array must be unique - JSON Schema cannot
-  enforce uniqueness of a property value across array items
-- A signal that references a `bank` number must have a corresponding entry in
-  the top-level `banks` map - cross-object reference checks are not possible
-  in JSON Schema
-- IOSTANDARD compatibility with bank VCCO voltage - this is a domain
-  constraint left to the toolchain or a separate validation pass
-- Mixing of `pins` and `pinset` across `multibank` segments is not yet
-  rejected by the schema
