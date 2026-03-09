@@ -37,12 +37,7 @@ entity example_io is
         gpio_pad     : inout std_logic_vector(4 downto 0);
         gpio_i       : out   std_logic_vector(4 downto 0);
         gpio_o       : in    std_logic_vector(4 downto 0);
-        gpio_t       : in    std_logic_vector(4 downto 0);
-
-        -- SerDes receive differential inputs
-        serdes_rx_p  : in    std_logic_vector(3 downto 0);
-        serdes_rx_n  : in    std_logic_vector(3 downto 0);
-        serdes_rx    : out   std_logic_vector(3 downto 0)
+        gpio_t       : in    std_logic_vector(4 downto 0)
     );
 end entity example_io;
 
@@ -141,32 +136,6 @@ begin
             I  => gpio_o(4),
             O  => gpio_i(4),
             T  => gpio_t(4)
-        );
-
-    -- SerDes receive differential inputs
-    ibufds_serdes_rx_0 : IBUFDS
-        port map (
-            I  => serdes_rx_p(0),
-            IB => serdes_rx_n(0),
-            O  => serdes_rx(0)
-        );
-    ibufds_serdes_rx_1 : IBUFDS
-        port map (
-            I  => serdes_rx_p(1),
-            IB => serdes_rx_n(1),
-            O  => serdes_rx(1)
-        );
-    ibufds_serdes_rx_2 : IBUFDS
-        port map (
-            I  => serdes_rx_p(2),
-            IB => serdes_rx_n(2),
-            O  => serdes_rx(2)
-        );
-    ibufds_serdes_rx_3 : IBUFDS
-        port map (
-            I  => serdes_rx_p(3),
-            IB => serdes_rx_n(3),
-            O  => serdes_rx(3)
         );
 
 end architecture rtl;

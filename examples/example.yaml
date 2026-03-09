@@ -6,18 +6,10 @@ banks:
         iostandard: LVCMOS18
         performance: HR
         comment: 1.8V single-ended bank
-    35:
-        iostandard: LVCMOS18
-        performance: HR
-        comment: 1.8V single-ended bank
     115:
         iostandard: LVDS
         performance: HP
-        comment: Differential HP bank A
-    116:
-        iostandard: LVDS
-        performance: HP
-        comment: Differential HP bank B
+        comment: Differential HP bank
 
 signals:
 
@@ -36,7 +28,7 @@ signals:
     - name: led
       pins: [A22, B22, C22, D22]
       width: 4
-      bank: 34
+      iostandard: LVCMOS18
       direction: out
       buffer: obuf
       group: led
@@ -63,50 +55,23 @@ signals:
           p: [AA1, AB1, AC1]
           n: [AA2, AB2, AC2]
       width: 3
-      bank: 115
+      iostandard: LVDS
       direction: out
       buffer: obufds
       comment:
           xdc: LVDS data outputs
           hdl: LVDS serial data outputs
 
-    # Multibank single-ended bus
+    # Bus inout single-ended
     - name: gpio
-      multibank:
-          - bank: 34
-            pins: [E22, F22, G23]
-            offset: 0
-          - bank: 35
-            pins: [A23, B23]
-            offset: 3
+      pins: [E22, F22, G23, A23, B23]
       width: 5
       iostandard: LVCMOS18
       direction: inout
       buffer: iobuf
       comment:
-          xdc: GPIO bus split across banks 34 and 35
+          xdc: GPIO bus
           hdl: General purpose IO
-
-    # Multibank differential bus
-    - name: serdes_rx
-      multibank:
-          - bank: 115
-            pinset:
-                p: [AD1, AE1]
-                n: [AD2, AE2]
-            offset: 0
-          - bank: 116
-            pinset:
-                p: [AF1, AG1]
-                n: [AF2, AG2]
-            offset: 2
-      width: 4
-      iostandard: LVDS
-      direction: in
-      buffer: ibufds
-      comment:
-          xdc: SerDes RX differential inputs
-          hdl: SerDes receive differential inputs
 
     # Reserved pin - no HDL output
     - name: reserved_nc

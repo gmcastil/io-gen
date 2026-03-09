@@ -14,9 +14,8 @@ The pipeline stages in order:
 ```
 YAML file
   -> 1. Validation (structural + semantic)
-  -> 2. Table Construction (signal table + bank table)
-  -> 3. Flattening (pin table)
-  -> 4. Generation
+  -> 2. Table Construction (signal table + pin table + bank table)
+  -> 3. Generation
         -> XDC constraints          (from pin table + signal table)
         -> HDL port declarations    (from signal table)
         -> HDL signal declarations  (from signal table)
@@ -38,50 +37,23 @@ completely. No defensive checks are needed downstream.
 
 One row per signal. All properties are fully resolved - no inheritance,
 no implicit values. Constructed from the validated YAML using the bank
-table to resolve IOSTANDARD.
+table to resolve IOSTANDARD for scalar signals.
 
-| Field        | Type    | Notes                                        |
-| ------------ | ------- | -------------------------------------------- |
-| name         | string  | signal name                                  |
-| direction    | enum    | in, out, inout                               |
-| buffer       | enum    | ibuf, obuf, ibufds, obufds, iobuf, infer     |
-| width        | integer | always explicit, 1 for scalars               |
-| iostandard   | string  | resolved from signal or bank, never implicit |
-| differential | boolean | true for pinset signals                      |
-| group        | string  | optional categorical label                   |
-| instance     | string  | optional HDL instance name, nullable         |
-| generate     | boolean | false signals are excluded from generation   |
-| comment      | object  | optional xdc and hdl comment strings         |
-
-The signal table has no knowledge of pin assignments or bank numbers.
-It is used for HDL generation and for grouping and commenting XDC output.
+See `docs/signal_table.md` for the concrete dataclass definition.
 
 ### Pin Table
 
 One row per pin (or per differential pair for pinset signals). Fully
 resolved - no inheritance, no implicit values. Constructed from the
-signal table and the original pin assignment data.
+signal table during table construction.
 
-| Field       | Type    | Notes                                                |
-| ----------- | ------- | ---------------------------------------------------- |
-| signal_name | string  | reference to parent signal                           |
-| index       | integer | bit position within the signal (0-based)             |
-| pin_p       | string  | physical pin name (or positive leg for differential) |
-| pin_n       | string  | negative leg for differential, null for single-ended |
-| iostandard  | string  | resolved, copied from signal table                   |
-| direction   | enum    | copied from signal table                             |
-| buffer      | enum    | copied from signal table                             |
-
-Rows are ordered by `signal_name` and then by `index`, so that buffer
-instantiations for a bus are always sequential and grouped by signal.
-
-The pin table has no knowledge of signal-level structure. It is used
-for XDC generation and IO ring buffer instantiation.
+See `docs/pin_table.md` for the concrete dataclass definition.
 
 ### Bank Table
 
 A temporary structure used only during table construction to resolve
-IOSTANDARD inheritance. Not passed to any generation stage.
+IOSTANDARD inheritance for scalar signals. Not passed to any generation
+stage.
 
 | Field       | Type    | Notes                  |
 | ----------- | ------- | ---------------------- |
@@ -103,45 +75,29 @@ See `docs/validation.md`.
 
 **Input:** the validated YAML document
 
-Constructs the signal table and bank table from the validated YAML.
-IOSTANDARD is resolved at this stage using the following precedence:
+Constructs the signal table, pin table, and bank table from the validated
+YAML. IOSTANDARD is resolved at this stage for scalar signals using the
+following precedence:
 
 1. Signal-level iostandard override
 2. Bank-level iostandard from the banks map
 
-Signals with generate: false are included in the signal table but
-flagged so that generation stages can skip them.
+Array signals always carry an explicit iostandard and require no resolution.
 
-**Output:** signal table + bank table, both fully resolved.
+The bank table is discarded after the signal table is complete. The signal
+table is used to construct the pin table.
 
-**Errors:** none expected - the input is already validated. Any error
-here is a pipeline bug.
+Signals with generate: false are included in the signal table but flagged
+so that generation stages can skip them.
 
----
-
-### 3. Flattening
-
-**Input:** signal table + bank table + original pin assignment data
-
-Expands each signal into individual pin rows in the pin table:
-
-- Scalar pins/pinset become a single row at index 0
-- Array pins/pinset become one row per element
-- Multibank signals are expanded using the offset field of each segment
-  to place rows at the correct index positions
-
-IOSTANDARD and all signal-level properties are copied into each row.
-After flattening, the bank table is no longer needed.
-
-**Output:** pin table, fully resolved and ordered by signal name and
-index.
+**Output:** signal table + pin table, both fully resolved.
 
 **Errors:** none expected - the input is already validated. Any error
 here is a pipeline bug.
 
 ---
 
-### 4. Generation
+### 3. Generation
 
 Each generator is independent and receives only the table(s) it needs.
 Signals with generate: false are skipped by all generators.
@@ -193,13 +149,11 @@ side pin assignments.
 
 ### Open design questions
 
-None.
+- [ ] Define the signal table dataclass (see signal_table.md - pending)
+- [ ] Define the pin table dataclass (see pin_table.md - pending)
 
 ### Pending implementation
 
 - [ ] Write the validator tool
-- [ ] Define the signal table and pin table as concrete data structures
 - [ ] Write tests for table construction
-- [ ] Write tests for flattening
 - [ ] Write tests for each generator
-

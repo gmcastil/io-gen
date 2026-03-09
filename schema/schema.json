@@ -42,9 +42,6 @@
                     "pinset": {
                         "$ref": "defs/pinset.json"
                     },
-                    "multibank": {
-                        "$ref": "defs/multibank.json"
-                    },
                     "width": {
                         "type": "integer",
                         "minimum": 1
@@ -94,18 +91,6 @@
                     {
                         "if": {
                             "required": [
-                                "multibank"
-                            ]
-                        },
-                        "then": {
-                            "required": [
-                                "width"
-                            ]
-                        }
-                    },
-                    {
-                        "if": {
-                            "required": [
                                 "pins"
                             ],
                             "properties": {
@@ -116,7 +101,8 @@
                         },
                         "then": {
                             "required": [
-                                "width"
+                                "width",
+                                "iostandard"
                             ]
                         }
                     },
@@ -141,22 +127,9 @@
                         },
                         "then": {
                             "required": [
-                                "width"
+                                "width",
+                                "iostandard"
                             ]
-                        }
-                    },
-                    {
-                        "if": {
-                            "required": [
-                                "multibank"
-                            ]
-                        },
-                        "then": {
-                            "not": {
-                                "required": [
-                                    "bank"
-                                ]
-                            }
                         }
                     }
                 ],
@@ -169,11 +142,6 @@
                     {
                         "required": [
                             "pinset"
-                        ]
-                    },
-                    {
-                        "required": [
-                            "multibank"
                         ]
                     }
                 ],

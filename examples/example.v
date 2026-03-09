@@ -14,11 +14,7 @@ module example (
     output wire [2:0]  lvds_data_n,
 
     // General purpose IO
-    inout  wire [4:0]  gpio_pad,
-
-    // SerDes receive differential inputs
-    input  wire [3:0]  serdes_rx_p,
-    input  wire [3:0]  serdes_rx_n
+    inout  wire [4:0]  gpio_pad
 );
 
     // 125 MHz system clock input
@@ -38,9 +34,6 @@ module example (
     wire [4:0] gpio_o;
     wire [4:0] gpio_t;
 
-    // SerDes receive differential inputs
-    wire [3:0] serdes_rx;
-
     example_io u_example_io (
         .sys_clk_pad   (sys_clk_pad),
         .sys_clk       (sys_clk),
@@ -59,11 +52,7 @@ module example (
         .gpio_pad      (gpio_pad),
         .gpio_i        (gpio_i),
         .gpio_o        (gpio_o),
-        .gpio_t        (gpio_t),
-
-        .serdes_rx_p   (serdes_rx_p),
-        .serdes_rx_n   (serdes_rx_n),
-        .serdes_rx     (serdes_rx)
+        .gpio_t        (gpio_t)
     );
 
 endmodule

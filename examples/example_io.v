@@ -30,12 +30,7 @@ module example_io (
     inout  wire [4:0]  gpio_pad,
     output wire [4:0]  gpio_i,
     input  wire [4:0]  gpio_o,
-    input  wire [4:0]  gpio_t,
-
-    // SerDes receive differential inputs
-    input  wire [3:0]  serdes_rx_p,
-    input  wire [3:0]  serdes_rx_n,
-    output wire [3:0]  serdes_rx
+    input  wire [4:0]  gpio_t
 );
 
     // 125 MHz system clock input
@@ -116,28 +111,6 @@ module example_io (
         .I  (gpio_o[4]),
         .O  (gpio_i[4]),
         .T  (gpio_t[4])
-    );
-
-    // SerDes receive differential inputs
-    IBUFDS ibufds_serdes_rx_0 (
-        .I  (serdes_rx_p[0]),
-        .IB (serdes_rx_n[0]),
-        .O  (serdes_rx[0])
-    );
-    IBUFDS ibufds_serdes_rx_1 (
-        .I  (serdes_rx_p[1]),
-        .IB (serdes_rx_n[1]),
-        .O  (serdes_rx[1])
-    );
-    IBUFDS ibufds_serdes_rx_2 (
-        .I  (serdes_rx_p[2]),
-        .IB (serdes_rx_n[2]),
-        .O  (serdes_rx[2])
-    );
-    IBUFDS ibufds_serdes_rx_3 (
-        .I  (serdes_rx_p[3]),
-        .IB (serdes_rx_n[3]),
-        .O  (serdes_rx[3])
     );
 
 endmodule
