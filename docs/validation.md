@@ -4,8 +4,8 @@
 
 Validation is the first pipeline stage. It takes a YAML file path as input.
 On success it returns the parsed YAML document as a plain dict, guaranteed
-to be structurally and semantically correct. On failure it returns a list of
-error strings describing every problem found.
+to be structurally and semantically correct. On failure it raises a
+`ValidationError` exception containing a message describing the problem.
 
 Validation has two passes that run in order:
 
@@ -13,8 +13,7 @@ Validation has two passes that run in order:
    schema using `jsonschema` against `schema/schema.json`.
 
 2. **Semantic validation** - checks domain correctness that the schema cannot
-   express. Returns a list of error strings. An empty list means the document
-   is semantically valid.
+   express.
 
 Structural validation runs first. If it fails, semantic validation does not
 run - a structurally invalid document cannot be safely interpreted.
@@ -27,11 +26,8 @@ run - a structurally invalid document cannot be safely interpreted.
 
 **Output on success:** the parsed YAML document as a plain dict
 
-**Output on failure:** a non-empty list of error strings
-
-Each error string identifies the signal name and the constraint that failed.
-All errors from both passes are collected before returning - the caller
-receives a complete picture of all problems.
+**On failure:** raises `ValidationError` with a message identifying the
+signal and constraint that failed. Raises on the first error encountered.
 
 ---
 
@@ -78,7 +74,5 @@ before a generation run.
 ## Pending
 
 - [ ] Define the exact error message format
-- [ ] Decide whether structural and semantic errors go into the same list
-      or are returned separately
 - [ ] IOSTANDARD compatibility with bank VCCO voltage - deferred to a future
       validation pass or left to the downstream toolchain

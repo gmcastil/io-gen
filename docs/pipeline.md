@@ -182,7 +182,7 @@ side pin assignments.
 ## Error Handling Philosophy
 
 - Validation is the only stage that handles user errors
-- All validation errors are collected and reported together, not one at a time
+- Validation raises on the first error encountered
 - Stages after validation treat unexpected conditions as pipeline bugs,
   not user errors
 - Generation stages do not validate their inputs
