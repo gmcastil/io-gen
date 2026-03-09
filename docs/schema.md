@@ -2,14 +2,18 @@
 
 ## Top-Level Fields
 
-The root of the YAML has four required fields:
+The root of the YAML has three required fields:
 
 - `title` - a human-readable description of the design
 - `part` - the FPGA part number
 - `signals` - the list of signal descriptors
 
 The optional `banks` map defines bank-level defaults for IOSTANDARD and
-performance class.
+performance class. When provided, scalar signals (single pin or single
+differential pair) that do not specify their own `iostandard` can inherit
+it from their bank entry. Array signals must always specify `iostandard`
+explicitly because a bus may span pins in different banks and there is no
+single bank to inherit from. Multibank inheritance is not supported.
 
 ## Signals
 
@@ -60,7 +64,8 @@ differential pair) may inherit from a bank:
 
 Array signals (buses) must always specify `iostandard` explicitly. A bus may
 span pins in different banks and there is no single bank to inherit from.
-This is enforced by the schema.
+Inheritance from multiple banks is not supported. This is enforced by the
+schema.
 
 A scalar signal may specify both `bank` and `iostandard`. In that case the
 signal-level value takes precedence and the bank default is ignored for that

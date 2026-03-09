@@ -1,9 +1,7 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": [
-        "string",
-        "null"
+        "string"
     ],
-    "description": "Optional HDL instance name for buffer instantiation",
-    "additionalProperties": true
+    "description": "Optional HDL instance name for buffer instantiation"
 }
