@@ -33,9 +33,6 @@
                     "iostandard": {
                         "$ref": "defs/iostandard.json"
                     },
-                    "group": {
-                        "$ref": "defs/group.json"
-                    },
                     "pins": {
                         "$ref": "defs/pins.json"
                     },
@@ -161,9 +158,6 @@
                     },
                     "performance": {
                         "$ref": "defs/performance.json"
-                    },
-                    "comment": {
-                        "type": "string"
                     }
                 },
                 "required": [

@@ -60,13 +60,13 @@ Examples: `ibuf_sys_clk`, `obuf_led_0`, `ibufds_serdes_rx_3`
 
 Xilinx primitive port conventions used in the IO ring:
 
-| Primitive | Ports                                      |
-| --------- | ------------------------------------------ |
-| IBUF      | I (pad in), O (fabric out)                 |
-| OBUF      | I (fabric in), O (pad out)                 |
-| IBUFDS    | I (pad p), IB (pad n), O (fabric out)      |
-| OBUFDS    | I (fabric in), O (pad p), OB (pad n)       |
-| IOBUF     | IO (pad), I (fabric _o), O (fabric _i), T (fabric _t) |
+| Primitive | Ports                                                    |
+| --------- | -------------------------------------------------------- |
+| IBUF      | I (pad in), O (fabric out)                               |
+| OBUF      | I (fabric in), O (pad out)                               |
+| IBUFDS    | I (pad p), IB (pad n), O (fabric out)                    |
+| OBUFDS    | I (fabric in), O (pad p), OB (pad n)                     |
+| IOBUF     | IO (pad), I (fabric \_o), O (fabric \_i), T (fabric \_t) |
 
 Both VHDL and Verilog use uppercase primitive names (IBUF, OBUF, IBUFDS, OBUFDS, IOBUF).
 This matches the Xilinx UNISIM library source and documentation style. VHDL is case-insensitive
@@ -87,13 +87,14 @@ the appropriate buffer from context.
 
 The tool produces three output files per invocation. All file names are
 derived from the `--top` argument supplied at runtime. Files are written
-to the directory specified by `--output`.
+to the directory specified by `--output`. Generation of HDL or XDC only is also
+supported.
 
-| File           | Contents                                   |
-| -------------- | ------------------------------------------ |
-| `<top>.xdc`    | Pin assignment and IOSTANDARD constraints  |
-| `<top>.<ext>`  | Top-level module or entity with port list  |
-| `<top>_io.<ext>` | IO ring with buffer instantiations       |
+| File             | Contents                                  |
+| ---------------- | ----------------------------------------- |
+| `<top>.xdc`      | Pin assignment and IOSTANDARD constraints |
+| `<top>.<ext>`    | Top-level module or entity with port list |
+| `<top>_io.<ext>` | IO ring with buffer instantiations        |
 
 Where `<ext>` is `v` for Verilog or `vhd` for VHDL, selected by `--lang`
 at runtime.

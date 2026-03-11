@@ -2,14 +2,14 @@ title: Example Design
 part: xc7k325tffg900-2
 
 banks:
+    # 1.8V single-ended bank
     34:
         iostandard: LVCMOS18
         performance: HR
-        comment: 1.8V single-ended bank
+    # Differential HP bank
     115:
         iostandard: LVDS
         performance: HP
-        comment: Differential HP bank
 
 signals:
 
@@ -19,7 +19,6 @@ signals:
       bank: 34
       direction: in
       buffer: ibuf
-      group: clock
       comment:
           xdc: 125 MHz system clock
           hdl: 125 MHz system clock input
@@ -31,7 +30,6 @@ signals:
       iostandard: LVCMOS18
       direction: out
       buffer: obuf
-      group: led
       comment:
           xdc: User LEDs
           hdl: User LED outputs
@@ -44,7 +42,6 @@ signals:
       bank: 115
       direction: in
       buffer: ibufds
-      group: clock
       comment:
           xdc: 200 MHz reference clock
           hdl: 200 MHz differential reference clock input

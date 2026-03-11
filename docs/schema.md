@@ -42,17 +42,17 @@ output.
 Every signal must use exactly one of two pin assignment strategies:
 
 - `pins` - single-ended, either a scalar string (one pin) or an array of
-  strings (a bus). Arrays must have more than one item - a single-element
-  array is disallowed; use a scalar string instead.
+  strings (a bus). A scalar string means no bus indexing; an array means
+  bus indexing applies even if only one element.
 - `pinset` - differential pair, with `p` and `n` legs each being either a
-  scalar string (one pair) or an array of strings (a bus of pairs). Arrays
-  must have more than one item for the same reason as above.
+  scalar string (one pair) or an array of strings (a bus of pairs). Same
+  scalar vs array distinction applies.
 
 ## Width
 
-`width` is required whenever a signal has more than one bit - that is,
-whenever `pins` or `pinset.p` is an array. For scalar `pins` or `pinset`,
-width is implicitly 1 and does not need to be declared.
+`width` is required whenever `pins` or `pinset.p` is an array, regardless
+of how many elements it contains. For scalar `pins` or `pinset`, width is
+implicitly 1 and does not need to be declared.
 
 ## IOSTANDARD Inheritance
 
@@ -84,6 +84,20 @@ All pins in a signal share the same buffer type. `buffer` is a signal-level
 property. There is an implicit relationship between buffer type and pin
 strategy: single-ended buffers (`ibuf`, `obuf`, `iobuf`) go with `pins`, and
 differential buffers (`ibufds`, `obufds`) go with `pinset`.
+
+## Comments
+
+The optional `comment` field on a signal carries human-readable annotations
+that are emitted in the generated output. It has two optional sub-fields:
+
+- `xdc` - comment emitted in the XDC file above the signal's constraints
+- `hdl` - comment emitted in the HDL files above the signal's port and
+  signal declarations
+
+Either or both sub-fields may be present. If `comment` is omitted entirely,
+no comment is emitted for that signal.
+
+---
 
 ## Instance Names
 

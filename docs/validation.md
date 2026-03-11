@@ -36,6 +36,10 @@ signal and constraint that failed. Raises on the first error encountered.
 Delegates to `jsonschema`. Catches missing required fields, wrong types,
 invalid enum values, and schema-defined constraint violations.
 
+The parsed YAML dict must have its banks keys converted to strings before
+passing to `jsonschema`, but the original dict (with integer keys) will be used
+to construct the signal and bank tables.
+
 ---
 
 ## Semantic Validation
@@ -48,7 +52,8 @@ The following constraints are enforced:
 - All bank numbers referenced by signals exist in the top-level `banks` map
 - Scalar signals with no signal-level `iostandard` must reference a `bank`
   that exists in the `banks` map and carries an `iostandard`
-- `pinset.p` and `pinset.n` arrays have equal length
+- `pinset.p` and `pinset.n` must be the same type (both scalar or both array)
+  and if arrays, must have equal length
 - Buffer type is compatible with direction:
   - `ibuf` requires `in`
   - `obuf` requires `out`
@@ -67,9 +72,3 @@ status code if validation fails. Useful for checking a YAML file in CI or
 before a generation run.
 
 ---
-
-## Pending
-
-- [ ] Define the exact error message format
-- [ ] IOSTANDARD compatibility with bank VCCO voltage - deferred to a future
-      validation pass or left to the downstream toolchain

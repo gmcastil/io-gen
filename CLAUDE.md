@@ -26,7 +26,8 @@ I am the architect. You are the assistant. Do not get ahead of me.
 
 At the start of every session, read all files in the `docs/` folder before
 doing anything else. These files are the source of truth for design decisions,
-schema rules, and pending work.
+schema rules, and pending work. Also read all files in `schema/` and `examples/`,
+then run a consistency check across all three and report any issues before proceeding.
 
 ## Current Project State
 
@@ -35,7 +36,7 @@ This is a code generation pipeline that will:
 - Read FPGA pin constraint data from a YAML file
 - Generate XDC constraint files, VHDL or Verilog port definitions, IO ring
   code, IO primitive instantiations, and signal declarations
-- Output goes to files in a directory specified at runtime, or to stdout
+- Output goes to files in a directory specified at runtime
 
 The pipeline design is documented in `docs/pipeline.md` and the stage-level
 docs it references. The schema is defined in `schema/schema.json` and
@@ -95,6 +96,5 @@ Do not add formatter invocation to the pipeline.
 
 - Python is the implementation language
 - Use dataclasses for all domain data structures
-- Signal table entries are either `SingleEndedSignal` or `DifferentialSignal` dataclasses
-- `top` is a CLI argument (`--top`), not a YAML field
+- `top` is a positional CLI argument, not a YAML field
 - ASCII only. Do not include non-ASCII characters, emojis, or unicode characters

@@ -21,11 +21,12 @@ here is a pipeline bug.
 
 ## Process
 
-1. Build the `BankTable` from the top-level `banks` map (see bank_table.md)
-2. Build the `SignalTable` from the signals list, resolving IOSTANDARD for
+1. Build the `MetaTable` from the top-level YAML fields (see meta_table.md)
+2. Build the `BankTable` from the top-level `banks` map (see bank_table.md)
+3. Build the `SignalTable` from the signals list, resolving IOSTANDARD for
    scalar signals using the bank table (see signal_table.md)
-3. Discard the bank table
-4. Build the `PinTable` from the signal table (see pin_table.md)
+4. Discard the bank table
+5. Build the `PinTable` from the signal table (see pin_table.md)
 
 ---
 

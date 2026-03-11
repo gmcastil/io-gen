@@ -10,7 +10,38 @@ stages.
 
 ## Fields
 
-TBD
+Each entry is a dict. The presence of `pins` or `pinset` distinguishes
+single-ended from differential signals.
+
+### Single-ended
+
+| Key           | Type             | Notes                                    |
+| ------------- | ---------------- | ---------------------------------------- |
+| `name`        | str              |                                          |
+| `direction`   | str              | `in` / `out` / `inout`                   |
+| `buffer`      | str              | see buffer types in schema.md            |
+| `iostandard`  | str              | fully resolved                           |
+| `width`       | int              | 1 for scalar, 1+ for bus                 |
+| `pins`        | str or list[str] | str = scalar, list = bus                 |
+| `generate`    | bool             |                                          |
+| `comment_xdc` | str or None      |                                          |
+| `comment_hdl` | str or None      |                                          |
+| `instance`    | str or None      | None = auto-generate                     |
+
+### Differential
+
+| Key           | Type             | Notes                                             |
+| ------------- | ---------------- | ------------------------------------------------- |
+| `name`        | str              |                                                   |
+| `direction`   | str              | `in` / `out`                                      |
+| `buffer`      | str              | see buffer types in schema.md                     |
+| `iostandard`  | str              | fully resolved                                    |
+| `width`       | int              | 1 for scalar pair, 1+ for bus                     |
+| `pinset`      | dict             | `{'p': str or list[str], 'n': str or list[str]}`  |
+| `generate`    | bool             |                                                   |
+| `comment_xdc` | str or None      |                                                   |
+| `comment_hdl` | str or None      |                                                   |
+| `instance`    | str or None      | None = auto-generate                              |
 
 ---
 
