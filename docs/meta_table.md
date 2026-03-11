@@ -4,7 +4,7 @@
 
 `MetaTable` is a simple dataclass containing the top-level descriptive fields from
 the validated YAML document. It is constructed first, before any other table,
-and passed to any stage that needs design-level metadata.
+and is available for future stages that need design-level metadata.
 
 ---
 

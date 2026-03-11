@@ -57,18 +57,19 @@ completely. No defensive checks are needed downstream.
 
 ## Data Structures
 
-- [Meta Table](meta_table.md)
-- [Bank Table](bank_table.md)
-- [Signal Table](signal_table.md)
-- [Pin Table](pin_table.md)
+- [Meta Table](docs/meta_table.md)
+- [Bank Table](docs/bank_table.md)
+- [Signal Table](docs/signal_table.md)
+- [Pin Table](docs/pin_table.md)
 
 ---
 
 ## Stages
 
-- [1. Validation](validation.md)
-- [2. Table Construction](table_construction.md)
-- [3. Generation](generation.md)
+- [1. Validation](docs/validation.md)
+- [2. Table Construction](docs/table_construction.md)
+- [3. Generation](docs/generation.md)
+- [Pipeline](docs/pipeline.md)
 
 ---
 

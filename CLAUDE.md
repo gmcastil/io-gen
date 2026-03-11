@@ -38,7 +38,7 @@ This is a code generation pipeline that will:
   code, IO primitive instantiations, and signal declarations
 - Output goes to files in a directory specified at runtime
 
-The pipeline design is documented in `docs/pipeline.md` and the stage-level
+The pipeline design is documented in `README.md` and the stage-level
 docs it references. The schema is defined in `schema/schema.json` and
 documented in `docs/schema.md`. The data structures are settled - see the
 stage docs for details.
@@ -95,6 +95,5 @@ Do not add formatter invocation to the pipeline.
 ## Coding
 
 - Python is the implementation language
-- Use dataclasses for all domain data structures
 - `top` is a positional CLI argument, not a YAML field
 - ASCII only. Do not include non-ASCII characters, emojis, or unicode characters

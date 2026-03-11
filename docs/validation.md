@@ -50,6 +50,7 @@ with `generate: false` are excluded.
 The following constraints are enforced:
 
 - All bank numbers referenced by signals exist in the top-level `banks` map
+- If no `banks` map is present, every signal must carry its own `iostandard`
 - Scalar signals with no signal-level `iostandard` must reference a `bank`
   that exists in the `banks` map and carries an `iostandard`
 - `pinset.p` and `pinset.n` must be the same type (both scalar or both array)
