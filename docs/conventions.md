@@ -43,6 +43,9 @@ exactly. This means:
 - Single-ended ports: `<name>_pad`
 - Differential ports: `<name>_p`, `<name>_n`
 
+When referring to `IOSTANDARD` and `PACKAGE_PIN` in documentation they should
+be capitalized and surrounded with back-ticks.
+
 ---
 
 ## Primitive Instance Naming
@@ -80,6 +83,13 @@ When `buffer: infer` is specified, no primitive is instantiated. The IO
 ring connects the pad-facing port directly to the fabric-facing port with
 a wire (Verilog) or signal assignment (VHDL). The synthesis tool infers
 the appropriate buffer from context.
+
+## IO Ring Bypass
+
+When `buffer: bypass` is specified, the signal will not be included in the IO
+ring, no internal signal will be created, and it will simply be dangling in the
+HDL. It will still receive a port in the top level RTL and the corresponding
+iostandard and pin constraints in the XDC.
 
 ---
 

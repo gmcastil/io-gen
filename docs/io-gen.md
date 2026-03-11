@@ -1,6 +1,30 @@
-# Pipeline
+# IO Gen
 
 ## Overview
+
+A common task for FPGA design engineers is to manage top level RTL port names,
+IO buffer types, and XDC pin constraints. This is typically a very manual and
+time-consuming process, with errors or mismatches not being found until
+implementation or bitstream generation. The purpose of `io-gen` is to automate
+the bulk of this process. In particular, it
+
+- Allows all top level port descriptions to be defined in a human-readable YAML file
+- Creates a top level RTL module or entity with consistently named ports and an IO
+  ring instantiated within that is responsible for all buffer instantiation.
+  Bypassing the IO ring and buffer inference are both supported.
+- Creates all signal declarations from the IO ring in the HDL
+- Creates an XDC file with all `IOSTANDARD` and `PACKAGE_PIN` constraints
+
+The goals for the tool are the following
+
+- Top level port names should follow a predictable and simple pattern: single-ended
+  signals denoted by `_pad` and differential signals denoted by `_p` and `_n`.
+- Minimize the use of strings like `_o` and `_i` to indicate direction.
+  Bidirectional buffers are an exception to this.
+- Produce generally human-readable output, with the expectation that users will
+  use an external tool to format their code (e.g., verible).
+
+## Processing Pipeline
 
 The pipeline takes a YAML file describing FPGA IO assignments and produces:
 
