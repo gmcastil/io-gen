@@ -10,8 +10,8 @@ All top-level ports are pad-facing. The naming convention is:
 - Differential positive leg: `<name>_p`
 - Differential negative leg: `<name>_n`
 
-This applies to every signal regardless of buffer type. A signal with
-`buffer: infer` still uses `_pad` or `_p`/`_n` at the top-level port.
+This applies to every signal regardless of buffer type, including signals with
+`infer: true` or `bypass: true`.
 
 ### IO Ring
 
@@ -77,19 +77,17 @@ so lowercase would also compile, but uppercase is the convention.
 
 ---
 
-## Infer Buffer
+## Infer and Bypass
 
-When `buffer: infer` is specified, no primitive is instantiated. The IO
-ring connects the pad-facing port directly to the fabric-facing port with
-a wire (Verilog) or signal assignment (VHDL). The synthesis tool infers
-the appropriate buffer from context.
+When `infer: true` is specified, no primitive is instantiated. The IO ring
+connects the pad-facing port directly to the fabric-facing port with a wire
+(Verilog) or signal assignment (VHDL). The synthesis tool infers the
+appropriate buffer from context.
 
-## IO Ring Bypass
-
-When `buffer: bypass` is specified, the signal will not be included in the IO
+When `bypass: true` is specified, the signal will not be included in the IO
 ring, no internal signal will be created, and it will simply be dangling in the
 HDL. It will still receive a port in the top level RTL and the corresponding
-iostandard and pin constraints in the XDC.
+`IOSTANDARD` and `PACKAGE_PIN` constraints in the XDC.
 
 ---
 

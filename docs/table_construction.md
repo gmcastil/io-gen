@@ -45,5 +45,6 @@ Array signals always carry an explicit `iostandard` and require no resolution.
 
 - Signals with `generate: false` are included in the signal table but flagged
   so that generation stages can skip them.
+- The meta table is currently unused after construction
 - The bank table is discarded after the signal table is complete.
 - The signal table is used to construct the pin table.

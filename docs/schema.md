@@ -32,10 +32,11 @@ regardless of whether `generate` is true or false. This ensures that every
 signal in the file corresponds to a real physical pin assignment.
 
 Beyond that, every signal must have `name`, `direction`, and `buffer` unless
-`generate` is explicitly set to `false`. When `generate` is false, only `name`
-and a pin assignment strategy are required. This allows a signal to be declared
-in the YAML for documentation or reservation purposes without producing any HDL
-output.
+`generate` is explicitly set to `false`, or `bypass` is set to `true`. When
+`generate` is false, only `name` and a pin assignment strategy are required.
+When `bypass` is true, `name` and `direction` are required but `buffer` is not.
+This allows a signal to be declared in the YAML for documentation or reservation
+purposes without producing any HDL output.
 
 ## Pin Assignment Strategies
 
@@ -84,6 +85,24 @@ All pins in a signal share the same buffer type. `buffer` is a signal-level
 property. There is an implicit relationship between buffer type and pin
 strategy: single-ended buffers (`ibuf`, `obuf`, `iobuf`) go with `pins`, and
 differential buffers (`ibufds`, `obufds`) go with `pinset`.
+
+## Infer
+
+`infer` is an optional boolean (default `false`). When `true`, no primitive is
+instantiated - the IO ring connects the pad-facing port directly to the
+fabric-facing signal and synthesis infers the buffer. Only buffer types that
+the synthesis tool can reliably infer are permitted when `infer: true`. `buffer`
+is still required when `infer: true`.
+
+## Bypass
+
+`bypass` is an optional boolean (default `false`). When `true`, the signal is
+excluded from the IO ring entirely and no internal signal is created. The signal
+still receives a top-level port and XDC constraints. `buffer` is not required
+when `bypass: true`.
+
+`infer: true` and `bypass: true` are mutually exclusive. Setting both is a
+validation error.
 
 ## Comments
 

@@ -34,7 +34,8 @@ Differential signals emit a port for each leg.
 **Input:** signal table
 
 Emits one internal signal declaration per signal. Same structure as port
-declarations but for internal wires or signals.
+declarations but for internal wires or signals. Signals with `bypass: true`
+are excluded.
 
 ---
 
@@ -45,3 +46,4 @@ declarations but for internal wires or signals.
 Emits one buffer instantiation per pin row, connected to the corresponding
 signal from the signal table. The signal table provides the port-side
 connection names; the pin table provides the primitive-side pin assignments.
+Signals with `bypass: true` are excluded.

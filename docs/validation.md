@@ -61,7 +61,9 @@ The following constraints are enforced:
   - `ibufds` requires `in`
   - `obufds` requires `out`
   - `iobuf` requires `inout`
-  - `infer` is compatible with any direction
+- `infer: true` and `bypass: true` are mutually exclusive
+- When `infer: true`, the buffer type must be in the set of inferrable types:
+  `ibuf`, `obuf`, `iobuf`
 
 ---
 

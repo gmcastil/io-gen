@@ -30,7 +30,3 @@
       check it to make sure that we have the IO that we think we do.
 - [ ] IOSTANDARD compatibility with bank VCCO voltage - left to a future
       validation pass or the downstream toolchain
-- [ ] There are use cases where an external pad might need to be tied to
-      something directly and bypassing the IO ring might be desirable. This can be done
-      by adding a buffer type of "bypass" which would leave the input or output
-      just dangling and not attaching it to the IO ring at all.

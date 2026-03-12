@@ -19,11 +19,13 @@ single-ended from differential signals.
 | ------------- | ---------------- | ---------------------------------------- |
 | `name`        | str              |                                          |
 | `direction`   | str              | `in` / `out` / `inout`                   |
-| `buffer`      | str              | see buffer types in schema.md            |
+| `buffer`      | str or None      | None when `bypass` is true               |
 | `iostandard`  | str              | fully resolved                           |
 | `width`       | int              | 1 for scalar, 1+ for bus                 |
 | `pins`        | str or list[str] | str = scalar, list = bus                 |
 | `generate`    | bool             |                                          |
+| `infer`       | bool             |                                          |
+| `bypass`      | bool             |                                          |
 | `comment_xdc` | str or None      |                                          |
 | `comment_hdl` | str or None      |                                          |
 | `instance`    | str or None      | None = auto-generate                     |
@@ -34,11 +36,13 @@ single-ended from differential signals.
 | ------------- | ---------------- | ------------------------------------------------- |
 | `name`        | str              |                                                   |
 | `direction`   | str              | `in` / `out`                                      |
-| `buffer`      | str              | see buffer types in schema.md                     |
+| `buffer`      | str or None      | None when `bypass` is true                        |
 | `iostandard`  | str              | fully resolved                                    |
 | `width`       | int              | 1 for scalar pair, 1+ for bus                     |
 | `pinset`      | dict             | `{'p': str or list[str], 'n': str or list[str]}`  |
 | `generate`    | bool             |                                                   |
+| `infer`       | bool             |                                                   |
+| `bypass`      | bool             |                                                   |
 | `comment_xdc` | str or None      |                                                   |
 | `comment_hdl` | str or None      |                                                   |
 | `instance`    | str or None      | None = auto-generate                              |
