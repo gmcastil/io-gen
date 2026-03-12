@@ -1,3 +1,7 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+norecursedirs = ["archive"]
+
 [tool.black]
 line-length = 88
 

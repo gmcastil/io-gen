@@ -23,8 +23,9 @@ PKG_NAME		:= io_gen
 
 PROJ_FILES		:= $(shell git ls-files)
 
-# Keywords to filter tests on (defaults to everything)
+# Keywords to filter tests on with `-k $(TESTS)` (default is all of them)
 TESTS			?= ""
+
 COVERAGE_ARGS		:= --cov=$(PKG_NAME) --cov-report=term-missing
 TEST_ARGS		:= ""
 

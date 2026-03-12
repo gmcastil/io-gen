@@ -3,8 +3,8 @@
 ## Overview
 
 Validation is the first pipeline stage. It takes a YAML file path as input.
-On success it returns the parsed YAML document as a plain dict, guaranteed
-to be structurally and semantically correct. On failure it raises a
+On success, it returns the parsed YAML document as a plain dict, guaranteed
+to be structurally and semantically correct. On failure, it raises a
 `ValidationError` exception containing a message describing the problem.
 
 Validation has two passes that run in order:
