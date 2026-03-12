@@ -90,9 +90,10 @@ differential buffers (`ibufds`, `obufds`) go with `pinset`.
 
 `infer` is an optional boolean (default `false`). When `true`, no primitive is
 instantiated - the IO ring connects the pad-facing port directly to the
-fabric-facing signal and synthesis infers the buffer. Only buffer types that
-the synthesis tool can reliably infer are permitted when `infer: true`. `buffer`
-is still required when `infer: true`.
+fabric-facing signal and synthesis infers the buffer. Only `ibuf` and `obuf`
+are permitted when `infer: true` - these are the only types where inference
+is predictable and guaranteed correct. `buffer` is still required when
+`infer: true`.
 
 ## Bypass
 

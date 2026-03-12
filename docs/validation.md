@@ -49,7 +49,8 @@ with `generate: false` are excluded.
 
 The following constraints are enforced:
 
-- Signal names are unique across all signals defined in the YAML (this applies to signals with `generate: false` as well)
+- Signal names are unique across all signals defined in the YAML (this applies
+  to signals with `generate: false` as well)
 - Pin names are unique across all signals (no two signals may reference the same physical pin)
 - All bank numbers referenced by signals exist in the top-level `banks` map
 - If no `banks` map is present, every signal must carry its own `iostandard`
@@ -68,8 +69,9 @@ The following constraints are enforced:
   - `ibufds`, `obufds` require `pinset`
 - `width` must equal the number of elements in `pins` or `pinset.p`
 - `infer: true` and `bypass: true` are mutually exclusive
-- When `infer: true`, the buffer type must be in the set of inferrable types:
-  `ibuf`, `obuf`, `iobuf`
+- When `infer: true`, the buffer type must be `ibuf` or `obuf`. These are the
+  only types where synthesis inference is predictable and guaranteed correct.
+  All other buffer types must be instantiated explicitly.
 
 ---
 

@@ -8,6 +8,8 @@
 ## Implementation
 
 - [ ] Write the validator
+- [ ] Write exhaustive unit tests for the buffer/direction compatibility checking logic
+- [ ] Write exhaustive unit tests for the buffer/pin strategy compatibility checking logic
 - [ ] Write tests for table construction
 - [ ] Write tests for each generator
 
