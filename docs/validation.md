@@ -49,6 +49,8 @@ with `generate: false` are excluded.
 
 The following constraints are enforced:
 
+- Signal names are unique across all signals
+- Pin names are unique across all signals (no two signals may reference the same physical pin)
 - All bank numbers referenced by signals exist in the top-level `banks` map
 - If no `banks` map is present, every signal must carry its own `iostandard`
 - Scalar signals with no signal-level `iostandard` must reference a `bank`
@@ -61,6 +63,10 @@ The following constraints are enforced:
   - `ibufds` requires `in`
   - `obufds` requires `out`
   - `iobuf` requires `inout`
+- Buffer type is compatible with pin strategy:
+  - `ibuf`, `obuf`, `iobuf` require `pins`
+  - `ibufds`, `obufds` require `pinset`
+- `width` must equal the number of elements in `pins` or `pinset.p`
 - `infer: true` and `bypass: true` are mutually exclusive
 - When `infer: true`, the buffer type must be in the set of inferrable types:
   `ibuf`, `obuf`, `iobuf`
