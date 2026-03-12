@@ -32,10 +32,6 @@ set_property IOSTANDARD LVDS [get_ports {lvds_data_p[2]}]
 set_property PACKAGE_PIN AC2 [get_ports {lvds_data_n[2]}]
 set_property IOSTANDARD LVDS [get_ports {lvds_data_n[2]}]
 
-# Spare output pin
-set_property PACKAGE_PIN J24 [get_ports spare_pad]
-set_property IOSTANDARD LVCMOS18 [get_ports spare_pad]
-
 # GPIO bus
 set_property PACKAGE_PIN E22 [get_ports {gpio_pad[0]}]
 set_property IOSTANDARD LVCMOS18 [get_ports {gpio_pad[0]}]
@@ -47,3 +43,8 @@ set_property PACKAGE_PIN A23 [get_ports {gpio_pad[3]}]
 set_property IOSTANDARD LVCMOS18 [get_ports {gpio_pad[3]}]
 set_property PACKAGE_PIN B23 [get_ports {gpio_pad[4]}]
 set_property IOSTANDARD LVCMOS18 [get_ports {gpio_pad[4]}]
+
+# Spare output pin
+set_property PACKAGE_PIN J24 [get_ports spare_pad]
+set_property IOSTANDARD LVCMOS18 [get_ports spare_pad]
+

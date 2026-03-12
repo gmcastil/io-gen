@@ -103,3 +103,4 @@ Do not add formatter invocation to the pipeline.
 - Python is the implementation language
 - `top` is a positional CLI argument, not a YAML field
 - ASCII only. Do not include non-ASCII characters, emojis, or unicode characters
+- Type hints are required on all functions and methods in both application and test code

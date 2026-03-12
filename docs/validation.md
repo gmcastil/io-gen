@@ -49,7 +49,7 @@ with `generate: false` are excluded.
 
 The following constraints are enforced:
 
-- Signal names are unique across all signals
+- Signal names are unique across all signals defined in the YAML (this applies to signals with `generate: false` as well)
 - Pin names are unique across all signals (no two signals may reference the same physical pin)
 - All bank numbers referenced by signals exist in the top-level `banks` map
 - If no `banks` map is present, every signal must carry its own `iostandard`
