@@ -26,8 +26,9 @@ I am the architect. You are the assistant. Do not get ahead of me.
 
 At the start of every session, read all files in the `docs/` folder before
 doing anything else. These files are the source of truth for design decisions,
-schema rules, and pending work. Also read all files in `schema/` and `examples/`,
-then run a consistency check across all three and report any issues before proceeding.
+schema rules, and pending work. Also read all files in `io_gen/schema/` and
+`examples/`, then run a consistency check across all three and report any
+issues before proceeding.
 
 ## Current Project State
 
@@ -97,6 +98,24 @@ Do not add formatter invocation to the pipeline.
 - **Bank** - a group of pins sharing power and (usually) IOSTANDARD characteristics
 - **XDC constraints** - Xilinx Design Constraints file containing pin assignments and IO standards
 - **IO ring** - the boundary logic between the top-level ports and internal signals
+
+## Distribution
+
+This tool is intended to be installable via pip, distributed via GitHub.
+Keep the following in mind throughout development:
+
+- Schema files live inside `io_gen/schema/` so they are included in the installed
+  package. Do not move them back to the repo root.
+- Use `importlib.resources` to locate schema files at runtime. Do not use relative
+  paths like `../../schema/` that break when the package is installed.
+- Runtime dependencies belong in `pyproject.toml` under `[project] dependencies`.
+  Do not add runtime dependencies only to `requirements.txt`.
+- `pytest` and `pytest-cov` are dev-only and must not appear in `[project] dependencies`.
+- The terminal command is `io-gen`, defined in `[project.scripts]`.
+- Installation methods:
+  - From GitHub: `pip install git+https://github.com/gmcastil/io-gen.git`
+  - From a local clone: `pip install .`
+  - Editable install for development: `pip install -e .`
 
 ## Coding
 

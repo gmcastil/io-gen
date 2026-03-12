@@ -19,6 +19,8 @@
 - [ ] `--validate-only` flag
 - [ ] `--rtl-only` flag
 - [ ] `--xdc-only` flag
+- [ ] Per-stage progress feedback - consider a callback passed from CLI to pipeline
+      so the pipeline stays decoupled from presentation
 
 ## Deferred
 
