@@ -28,10 +28,11 @@ The goals for the tool are the following
 
 The pipeline takes a YAML file describing FPGA IO assignments and produces:
 
-- XDC constraint files (pin assignments and IO standards)
-- HDL port declarations (VHDL or Verilog)
-- HDL signal declarations
-- IO ring code (buffer instantiations and connections)
+- An XDC constraint file containing `PACKAGE_PIN` assignments and `IOSTANDARD`
+- A top level HDL file with port declarations (VHDL or Verilog)
+- An IO ring HDL file with buffer instantiations and connections
+- An instantiation of the IO ring in the top level HDL file
+- HDL signal declarations from the IO ring to user logic
 
 The pipeline stages in order:
 
@@ -46,9 +47,12 @@ YAML file
         -> IO ring                  (from pin table + signal table)
 ```
 
-This is a one-shot generation tool. Output files are generated once,
-committed to version control, and owned by the engineer from that point
-forward. The tool does not update or patch existing files.
+This is a one-shot code generation tool. The intent is that the YAML would be
+written and checked against the schematic and vendor documentation by the
+engineer, then `io-gen` would be run to generate the output files. At point,
+the output files would be committed to version control and owned by the project
+as the design matured. The tool does not attempt to update or patch existing
+files.
 
 After validation passes, all subsequent stages can trust their inputs
 completely. No defensive checks are needed downstream.
