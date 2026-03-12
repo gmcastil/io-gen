@@ -20,6 +20,7 @@
 
 ## Deferred
 
+- [ ] Add support for marking inputs as clocks and inserting BUFG into the design
 - [ ] Once the tool is working, make a legit YAML for a Basys 3 that can be
       used along with a basic user core of keepers so that the example can be
       checked in Vivado. This actually becomes an end to end integration test

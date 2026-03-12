@@ -41,10 +41,27 @@ Array signals always carry an explicit `iostandard` and require no resolution.
 
 ---
 
+## Pin Table Flattening
+
+Each signal row in the signal table is expanded into one or more pin rows:
+
+- A scalar `pins` signal produces one `PinRow` with `is_bus: false`
+- An array `pins` signal produces one `PinRow` per element with `is_bus: true`
+- A scalar `pinset` signal produces one `PinSetRow` with `is_bus: false`
+- An array `pinset` signal produces one `PinSetRow` per pair with `is_bus: true`
+
+`is_bus` is derived from the type of the signal table `pins` or `pinset` field
+(str vs list) and is not present in the YAML. Signals with `generate: false`
+are excluded from the pin table.
+
+---
+
 ## Notes
 
 - Signals with `generate: false` are included in the signal table but flagged
   so that generation stages can skip them.
-- The meta table is currently unused after construction
+- The meta table is currently unused after construction.
 - The bank table is discarded after the signal table is complete.
-- The signal table is used to construct the pin table.
+- The signal table is the primary data structure. The pin table is a lookup
+  structure keyed by signal name, used by generators that need physical pin
+  details.
