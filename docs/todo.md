@@ -3,7 +3,7 @@
 ## Design
 
 - [x] Define the signal table dataclass fields (see signal_table.md)
-- [ ] Define the pin table dataclass fields (see pin_table.md)
+- [x] Define the pin table dataclass fields (see pin_table.md)
 
 ## Implementation
 

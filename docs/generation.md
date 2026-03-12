@@ -12,11 +12,12 @@ generators, each receiving only the table(s) it needs. Signals with
 
 ### XDC Constraints
 
-**Input:** pin table + signal table
+**Input:** signal table + pin table
 
-Emits one `set_property PACKAGE_PIN` and one `set_property IOSTANDARD`
-constraint per pin row. The signal table is used for grouping constraints
-by signal and emitting signal-level comments for readability.
+Iterates the signal table. For each signal, emits any signal-level comment,
+then looks up the signal's pin rows in the pin table and emits one
+`set_property PACKAGE_PIN` and one `set_property IOSTANDARD` constraint
+per pin row.
 
 ---
 
@@ -41,9 +42,9 @@ are excluded.
 
 ### IO Ring
 
-**Input:** pin table + signal table
+**Input:** signal table + pin table
 
-Emits one buffer instantiation per pin row, connected to the corresponding
-signal from the signal table. The signal table provides the port-side
-connection names; the pin table provides the primitive-side pin assignments.
-Signals with `bypass: true` are excluded.
+Iterates the signal table. For each signal, looks up the signal's pin rows
+in the pin table and emits one buffer instantiation per pin row. The signal
+table provides the port-side connection names; the pin table provides the
+primitive-side pin assignments. Signals with `bypass: true` are excluded.

@@ -35,7 +35,7 @@ single-ended from differential signals.
 | Key           | Type             | Notes                                             |
 | ------------- | ---------------- | ------------------------------------------------- |
 | `name`        | str              |                                                   |
-| `direction`   | str              | `in` / `out`                                      |
+| `direction`   | str              | `in` / `out` / `inout`                            |
 | `buffer`      | str or None      | None when `bypass` is true                        |
 | `iostandard`  | str              | fully resolved                                    |
 | `width`       | int              | 1 for scalar pair, 1+ for bus                     |

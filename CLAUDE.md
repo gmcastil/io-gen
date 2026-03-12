@@ -73,6 +73,12 @@ Do not add formatter invocation to the pipeline.
 
 - TBD - to be filled in as we discover them
 
+### Deferred Buffer Types
+
+- `iobufds` - differential tristate buffer. Valid use case, intentionally omitted
+  from the buffer enum until the base set (ibuf, obuf, ibufds, obufds, iobuf) is
+  working end-to-end. Do not add it without being asked.
+
 ### Invalid Assumptions From Previous Attempts
 
 - TBD - to be filled in as we identify them
