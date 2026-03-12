@@ -18,7 +18,10 @@ entity example is
         lvds_data_n  : out   std_logic_vector(2 downto 0);
 
         -- General purpose IO
-        gpio_pad     : inout std_logic_vector(4 downto 0)
+        gpio_pad     : inout std_logic_vector(4 downto 0);
+
+        -- Spare output, driven directly
+        spare_pad    : out   std_logic
     );
 end entity example;
 

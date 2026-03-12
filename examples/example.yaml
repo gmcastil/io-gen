@@ -70,6 +70,16 @@ signals:
           xdc: GPIO bus
           hdl: General purpose IO
 
+    # Spare output - bypasses IO ring, driven directly by user logic
+    - name: spare
+      pins: J24
+      bank: 34
+      direction: out
+      bypass: true
+      comment:
+          xdc: Spare output pin
+          hdl: Spare output, driven directly
+
     # Reserved pin - no HDL output
     - name: reserved_nc
       pins: H24

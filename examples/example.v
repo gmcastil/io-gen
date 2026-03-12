@@ -14,7 +14,10 @@ module example (
     output wire [2:0]  lvds_data_n,
 
     // General purpose IO
-    inout  wire [4:0]  gpio_pad
+    inout  wire [4:0]  gpio_pad,
+
+    // Spare output, driven directly
+    output wire        spare_pad
 );
 
     // 125 MHz system clock input
