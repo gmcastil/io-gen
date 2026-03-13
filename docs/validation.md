@@ -54,13 +54,13 @@ The following constraints are enforced:
   that exists in the `banks` map and carries an `iostandard`
 - `pinset.p` and `pinset.n` must be the same type (both scalar or both array)
   and if arrays, must have equal length
-- Buffer type is compatible with direction:
+- Buffer type is compatible with direction (see [buffers.md](buffers.md)):
   - `ibuf` requires `in`
   - `obuf` requires `out`
   - `ibufds` requires `in`
   - `obufds` requires `out`
   - `iobuf` requires `inout`
-- Buffer type is compatible with pin strategy:
+- Buffer type is compatible with pin strategy (see [buffers.md](buffers.md)):
   - `ibuf`, `obuf`, `iobuf` require `pins`
   - `ibufds`, `obufds` require `pinset`
 - `width` must equal the number of elements in `pins` or `pinset.p`

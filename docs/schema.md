@@ -84,7 +84,8 @@ is not supported.
 All pins in a signal share the same buffer type. `buffer` is a signal-level
 property. There is an implicit relationship between buffer type and pin
 strategy: single-ended buffers (`ibuf`, `obuf`, `iobuf`) go with `pins`, and
-differential buffers (`ibufds`, `obufds`) go with `pinset`.
+differential buffers (`ibufds`, `obufds`) go with `pinset`. See
+[buffers.md](buffers.md) for the full list of supported buffer types.
 
 ## Infer
 

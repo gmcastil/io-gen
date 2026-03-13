@@ -21,7 +21,7 @@ run_pipeline(yaml_path, top, lang, output_dir, validate_only, rtl_only, xdc_only
 | --------------- | ---- | ----------------------------------------------- |
 | `yaml_path`     | str  | Path to the input YAML file                     |
 | `top`           | str  | HDL module or entity name, drives output names  |
-| `lang`          | str  | `verilog` or `vhdl`. Not required if xdc_only   |
+| `lang`          | str  | `verilog` or `vhdl`. Not required if XDC only   |
 | `output_dir`    | str  | Directory to write output files into            |
 | `validate_only` | bool | Run validation only, no generation              |
 | `rtl_only`      | bool | Generate HDL files only, skip XDC               |
