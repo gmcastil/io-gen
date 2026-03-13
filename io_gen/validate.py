@@ -14,11 +14,9 @@ SCHEMA_TOP = "schema.json"
 SCHEMA_REFS = [
     "direction.json",
     "buffer.json",
-    "bank.json",
     "pinset.json",
     "iostandard.json",
     "instance.json",
-    "performance.json",
     "pins.json",
 ]
 
@@ -61,7 +59,7 @@ def _build_registry() -> Registry:
 
 
 def _validate_structural(doc: dict) -> None:
-    """Validate JSON content against the schema"""
+    """Validate parsed YAML against the schema"""
 
     # Load the schema from wherever it was
     with importlib.resources.as_file(
@@ -79,6 +77,21 @@ def _validate_structural(doc: dict) -> None:
         validator.validate(doc)
     except jsonschema.ValidationError as e:
         raise ValidationError(e.message)
+
+
+# f"signal '{name}': length mismatch"  (in reg z)
+
+
+def _validate_semantic(doc: dict) -> None:
+    """Validate parsed YAML for domain consistency"""
+
+    # Explicitly assuming that structural validation was successful
+    signals = doc["signals"]
+
+    # Check for unique signal names
+    _validate_unique_signal_names(signals)
+    # Check for unique pins
+    _validate_unique_pins(signals)
 
 
 def validate(yaml_file: Path) -> dict:

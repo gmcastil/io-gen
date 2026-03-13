@@ -1,22 +1,12 @@
 title: Example Design
 part: xc7k325tffg900-2
 
-banks:
-    # 1.8V single-ended bank
-    34:
-        iostandard: LVCMOS18
-        performance: HR
-    # Differential HP bank
-    115:
-        iostandard: LVDS
-        performance: HP
-
 signals:
 
     # Scalar single-ended input
     - name: sys_clk
       pins: G22
-      bank: 34
+      iostandard: LVCMOS18
       direction: in
       buffer: ibuf
       comment:
@@ -39,7 +29,7 @@ signals:
       pinset:
           p: H22
           n: H23
-      bank: 115
+      iostandard: LVDS
       direction: in
       buffer: ibufds
       comment:
@@ -73,7 +63,7 @@ signals:
     # Spare output - bypasses IO ring, driven directly by user logic
     - name: spare
       pins: J24
-      bank: 34
+      iostandard: LVCMOS18
       direction: out
       bypass: true
       comment:

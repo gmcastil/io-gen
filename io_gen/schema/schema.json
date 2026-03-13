@@ -28,9 +28,6 @@
                     "instance": {
                         "$ref": "defs/instance.json"
                     },
-                    "bank": {
-                        "$ref": "defs/bank.json"
-                    },
                     "iostandard": {
                         "$ref": "defs/iostandard.json"
                     },
@@ -100,14 +97,16 @@
                             "then": {
                                 "required": [
                                     "name",
-                                    "direction"
+                                    "direction",
+                                    "iostandard"
                                 ]
                             },
                             "else": {
                                 "required": [
                                     "name",
                                     "direction",
-                                    "buffer"
+                                    "buffer",
+                                    "iostandard"
                                 ]
                             }
                         }
@@ -196,28 +195,6 @@
                             "pinset"
                         ]
                     }
-                ],
-                "additionalProperties": false
-            }
-        },
-        "banks": {
-            "type": "object",
-            "propertyNames": {
-                "pattern": "^[0-9]+$"
-            },
-            "additionalProperties": {
-                "type": "object",
-                "properties": {
-                    "iostandard": {
-                        "$ref": "defs/iostandard.json"
-                    },
-                    "performance": {
-                        "$ref": "defs/performance.json"
-                    }
-                },
-                "required": [
-                    "iostandard",
-                    "performance"
                 ],
                 "additionalProperties": false
             }

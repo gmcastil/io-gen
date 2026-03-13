@@ -47,11 +47,8 @@ The following constraints are enforced:
 
 - Signal names are unique across all signals defined in the YAML (this applies
   to signals with `generate: false` as well)
-- Pin names are unique across all signals (no two signals may reference the same physical pin)
-- All bank numbers referenced by signals exist in the top-level `banks` map
-- If no `banks` map is present, every signal must carry its own `iostandard`
-- Scalar signals with no signal-level `iostandard` must reference a `bank`
-  that exists in the `banks` map and carries an `iostandard`
+- Pin names are unique across all signals (no two signals may reference the
+  same physical pin, including signals with `generate: false` as well)
 - `pinset.p` and `pinset.n` must be the same type (both scalar or both array)
   and if arrays, must have equal length
 - Buffer type is compatible with direction (see [buffers.md](buffers.md)):

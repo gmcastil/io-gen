@@ -48,7 +48,6 @@ completely. No defensive checks are needed downstream.
 ## Data Structures
 
 - [Meta Table](meta_table.md)
-- [Bank Table](bank_table.md)
 - [Signal Table](signal_table.md)
 - [Pin Table](pin_table.md)
 

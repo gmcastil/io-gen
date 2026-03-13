@@ -8,12 +8,7 @@ The root of the YAML has three required fields:
 - `part` - the FPGA part number
 - `signals` - the list of signal descriptors
 
-The optional `banks` map defines bank-level defaults for IOSTANDARD and
-performance class. When provided, scalar signals (single pin or single
-differential pair) that do not specify their own `iostandard` can inherit
-it from their bank entry. Array signals must always specify `iostandard`
-explicitly because a bus may span pins in different banks and there is no
-single bank to inherit from. Multibank inheritance is not supported.
+There are three required fields and no optional top-level fields.
 
 ## Signals
 
@@ -31,12 +26,12 @@ Every signal must include a pin assignment strategy (`pins` or `pinset`)
 regardless of whether `generate` is true or false. This ensures that every
 signal in the file corresponds to a real physical pin assignment.
 
-Beyond that, every signal must have `name`, `direction`, and `buffer` unless
-`generate` is explicitly set to `false`, or `bypass` is set to `true`. When
-`generate` is false, only `name` and a pin assignment strategy are required.
-When `bypass` is true, `name` and `direction` are required but `buffer` is not.
-This allows a signal to be declared in the YAML for documentation or reservation
-purposes without producing any HDL output.
+Beyond that, every signal must have `name`, `direction`, `buffer`, and
+`iostandard` unless `generate` is explicitly set to `false`, or `bypass` is set
+to `true`. When `generate` is false, only `name` and a pin assignment strategy
+are required. When `bypass` is true, `name`, `direction`, and `iostandard` are
+required but `buffer` is not. This allows a signal to be declared in the YAML
+for documentation or reservation purposes without producing any HDL output.
 
 ## Pin Assignment Strategies
 
@@ -55,29 +50,11 @@ Every signal must use exactly one of two pin assignment strategies:
 of how many elements it contains. For scalar `pins` or `pinset`, width is
 implicitly 1 and does not need to be declared.
 
-## IOSTANDARD Inheritance
+## IOSTANDARD
 
-`iostandard` is resolved at signal scope. Scalar signals (one pin or one
-differential pair) may inherit from a bank:
-
-1. Signal-level `iostandard` override
-2. Bank-level `iostandard` from the top-level `banks` map
-
-Array signals (buses) must always specify `iostandard` explicitly. A bus may
-span pins in different banks and there is no single bank to inherit from.
-Inheritance from multiple banks is not supported. This is enforced by the
-schema.
-
-A scalar signal may specify both `bank` and `iostandard`. In that case the
-signal-level value takes precedence and the bank default is ignored for that
-signal. This is intentional - individual signals within a bank may use
-different IOSTANDARDs provided they are compatible with the bank's VCCO
-voltage. Compatibility checking is not enforced by the schema and is left to
-a future validation pass or the downstream toolchain.
-
-All pins in a signal share the same IOSTANDARD. Specifying different
-IOSTANDARDs within a single logical bus would be incoherent electrically and
-is not supported.
+Every signal except `generate: false` must carry an explicit `iostandard`.
+There is no inheritance or bank-level default. All pins in a signal share the
+same `iostandard`.
 
 ## Buffer Types
 

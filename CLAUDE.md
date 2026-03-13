@@ -128,3 +128,5 @@ Keep the following in mind throughout development:
 - `top` is a positional CLI argument, not a YAML field
 - ASCII only. Do not include non-ASCII characters, emojis, or unicode characters
 - Type hints are required on all functions and methods in both application and test code
+- When iterating over signals, use `sig` as the loop variable, not `signal` (avoid shadowing the standard library `signal` module)
+- When reviewing code, check that variable and parameter names are consistent across the codebase (e.g., the same concept is not called `sig` in one place and `signal` in another)

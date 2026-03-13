@@ -42,42 +42,6 @@ VALID_CASES = [
         },
     ),
     (
-        "scalar_pin_bank_inheritance",
-        """
-        title: Test
-        part: xc7k325tffg900-2
-        banks:
-          34:
-            iostandard: LVCMOS18
-            performance: HR
-        signals:
-          - name: sys_clk
-            pins: G22
-            bank: 34
-            direction: in
-            buffer: ibuf
-        """,
-        {
-            "title": "Test",
-            "part": "xc7k325tffg900-2",
-            "banks": {
-                34: {
-                    "iostandard": "LVCMOS18",
-                    "performance": "HR",
-                }
-            },
-            "signals": [
-                {
-                    "name": "sys_clk",
-                    "pins": "G22",
-                    "bank": 34,
-                    "direction": "in",
-                    "buffer": "ibuf",
-                }
-            ],
-        },
-    ),
-    (
         "generate_false",
         """
         title: Test
@@ -162,6 +126,32 @@ INVALID_STRUCTURAL_CASES = [
             direction: out
             buffer: obuf
             iostandard: LVCMOS18
+        """,
+    ),
+    (
+        "scalar_pin_missing_iostandard",
+        """
+        title: Test
+        part: xc7k325tffg900-2
+        signals:
+          - name: sys_clk
+            pins: G22
+            direction: in
+            buffer: ibuf
+        """,
+    ),
+    (
+        "scalar_pinset_missing_iostandard",
+        """
+        title: Test
+        part: xc7k325tffg900-2
+        signals:
+          - name: ref_clk
+            pinset:
+              p: H22
+              n: H23
+            direction: in
+            buffer: ibufds
         """,
     ),
     (
@@ -251,48 +241,6 @@ INVALID_SEMANTIC_CASES = [
             direction: in
             buffer: ibufds
             iostandard: LVDS
-        """,
-    ),
-    (
-        "scalar_no_iostandard_no_bank",
-        """
-        title: Test
-        part: xc7k325tffg900-2
-        signals:
-          - name: sys_clk
-            pins: G22
-            direction: in
-            buffer: ibuf
-        """,
-    ),
-    (
-        "no_banks_map_signal_references_bank",
-        """
-        title: Test
-        part: xc7k325tffg900-2
-        signals:
-          - name: sys_clk
-            pins: G22
-            bank: 34
-            direction: in
-            buffer: ibuf
-        """,
-    ),
-    (
-        "bank_not_in_banks_map",
-        """
-        title: Test
-        part: xc7k325tffg900-2
-        banks:
-          34:
-            iostandard: LVCMOS18
-            performance: HR
-        signals:
-          - name: sys_clk
-            pins: G22
-            bank: 99
-            direction: in
-            buffer: ibuf
         """,
     ),
     (
