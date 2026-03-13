@@ -61,6 +61,7 @@ The following constraints are enforced:
   - `ibufds`, `obufds` require `pinset`
 - `width` must equal the number of elements in `pins` or `pinset.p`
 - `infer: true` and `bypass: true` are mutually exclusive
+- If `bypass: true` then `buffer` cannot be provided
 - When `infer: true`, the buffer type must be `ibuf` or `obuf`. These are the
   only types where synthesis inference is predictable and guaranteed correct.
   All other buffer types must be instantiated explicitly.

@@ -8,8 +8,6 @@ The root of the YAML has three required fields:
 - `part` - the FPGA part number
 - `signals` - the list of signal descriptors
 
-There are three required fields and no optional top-level fields.
-
 ## Signals
 
 A signal is a named logical IO that maps to one or more physical FPGA pins.
@@ -31,9 +29,10 @@ Beyond that, every signal must have `name`, `direction`, `buffer`, and
 to `true`. When `generate` is false, only `name` and a pin assignment strategy
 are required. This allows a signal to be declared in the YAML for documentation
 or reservation purposes without producing any HDL output. When `bypass` is
-true, `name`, `direction`, and `iostandard` are required but `buffer` is not.
-This allows top level HDL ports to be connected to internal components (e.g.,
-IP instances) that contain their own buffer instances (e.g., SERDES).
+true, `name`, `direction`, and `iostandard` must be provided. Additionally, if
+`bypass` is true, `buffer` cannot be provided. This allows top level HDL ports
+to be connected to internal components that provide their own buffer instances
+(e.g., IP containing SERDES instances).
 
 ## Pin Assignment Strategies
 
@@ -79,8 +78,8 @@ is predictable and guaranteed correct. `buffer` is still required when
 
 `bypass` is an optional boolean (default `false`). When `true`, the signal is
 excluded from the IO ring entirely and no internal signal is created. The signal
-still receives a top-level port and XDC constraints. `buffer` is not required
-when `bypass: true`.
+still receives a top-level port and XDC constraints. If `bypass: true` then `buffer`
+must be omitted.
 
 `infer: true` and `bypass: true` are mutually exclusive. Setting both is a
 validation error.

@@ -89,13 +89,34 @@ Do not add formatter invocation to the pipeline.
 
 - TBD - to be filled in as we identify them
 
+### Design Decisions
+
+- **No bank inheritance** - there is no bank-level IOSTANDARD inheritance. Every
+  signal except `generate: false` must carry an explicit `iostandard`. This was
+  a deliberate simplification - the target user is disciplined enough to be
+  explicit. The `banks` map and `bank` field were removed from the schema entirely.
+- **`bypass: true` prohibits `buffer`** - a signal with `bypass: true` must not
+  include a `buffer` field. This is enforced by the schema. Providing `buffer`
+  with `bypass: true` is a contradiction - bypass means an external component
+  (e.g., Xilinx IP) provides the buffer, and specifying one in the YAML would
+  silently mislead the user.
+
 ## Current Focus
 
 - [x] Review and finalize the JSON schema / data model
 - [x] Define the data structures that need to be produced
-- [ ] Document each pipeline stage interface (in progress)
+- [x] Document each pipeline stage interface
 - [ ] Write tests for each interface
 - [ ] Implement one stage at a time
+
+### Validation Stage Status
+
+- [x] Structural validation implemented and tested
+- [x] Semantic validation tests written (in `tests/test_validate.py`)
+- [ ] Semantic validation functions stubbed in `validate.py` - implementation in progress
+  - `_validate_unique_signal_names()`
+  - `_validate_unique_pins()`
+  - remaining semantic checks TBD
 
 ## Definitions
 
