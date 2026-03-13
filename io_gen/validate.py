@@ -8,6 +8,20 @@ import yaml
 from referencing import Registry, Resource
 from referencing.jsonschema import DRAFT202012
 
+from .exceptions import ValidationError
+from io_gen.checks import (
+    _check_pin_name_format,
+    _check_unique_signal_names,
+    _check_unique_pins,
+    _check_pinset_array_mismatch,
+    _check_pins_array_width_match,
+    _check_pinset_array_width_match,
+    _check_buffer_direction,
+    _check_buffer_strategy_match,
+    _check_buffer_infer_bypass_mismatch,
+    _check_buffer_inferable,
+)
+
 # Top level JSON schema file for validating input YAML stored in schema/
 SCHEMA_TOP = "schema.json"
 # Referenced JSON files stored in schema/defs
@@ -19,10 +33,6 @@ SCHEMA_REFS = [
     "instance.json",
     "pins.json",
 ]
-
-
-class ValidationError(Exception):
-    pass
 
 
 # Resolving references in the top level JSON schema requires pairing each discrete JSON object (including
@@ -79,106 +89,14 @@ def _validate_structural(doc: dict) -> None:
         raise ValidationError(e.message)
 
 
-# f"signal '{name}': length mismatch"  (in reg z)
-
-
-def _check_unique_signal_names(signals: list[dict]) -> None:
-    """Check that no two signals share the same name.
-
-    Raises ValidationError identifying the first duplicate name found.
-    Applies to all signals, including those with generate: false.
-    """
-    raise NotImplementedError
-
-
-def _check_unique_pins(signals: list[dict]) -> None:
-    """Check that no physical pin is assigned to more than one signal.
-
-    Checks both pins (scalar and array) and pinset (p and n legs).
-    Applies to all signals, including those with generate: false.
-    Raises ValidationError identifying the first duplicate pin found.
-    """
-    raise NotImplementedError
-
-
-def _check_pinset_array_mismatch(sig: dict) -> None:
-    """Check that pinset.p and pinset.n are the same type and length.
-
-    Both must be scalar strings or both must be arrays. If arrays,
-    they must have equal length.
-    Raises ValidationError identifying the signal and the mismatch.
-    Skips signals that do not use pinset.
-    """
-    raise NotImplementedError
-
-
-def _check_pins_array_width_match(sig: dict) -> None:
-    """Check that the declared width matches the length of the pins array.
-
-    Only applies when pins is an array. Raises ValidationError identifying
-    the signal, the declared width, and the actual pin count.
-    Skips signals that use scalar pins, pinset, or generate: false.
-    """
-    raise NotImplementedError
-
-
-def _check_pinset_array_width_match(sig: dict) -> None:
-    """Check that the declared width matches the length of the pinset.p array.
-
-    Only applies when pinset.p is an array. Raises ValidationError identifying
-    the signal, the declared width, and the actual pin count.
-    Skips signals that use scalar pinset, pins, or generate: false.
-    """
-    raise NotImplementedError
-
-
-def _check_buffer_direction(sig: dict) -> None:
-    """Check that the buffer type is compatible with the declared direction.
-
-    Required pairings: ibuf->in, obuf->out, ibufds->in, obufds->out, iobuf->inout.
-    Raises ValidationError identifying the signal, buffer, and direction.
-    Skips signals with generate: false or bypass: true (no buffer required).
-    """
-    raise NotImplementedError
-
-
-def _check_buffer_strategy_match(sig: dict) -> None:
-    """Check that the buffer type is compatible with the pin assignment strategy.
-
-    ibuf, obuf, and iobuf require pins. ibufds and obufds require pinset.
-    Raises ValidationError identifying the signal, buffer, and pin strategy used.
-    Skips signals with generate: false or bypass: true (no buffer required).
-    """
-    raise NotImplementedError
-
-
-def _check_buffer_infer_bypass_mismatch(sig: dict) -> None:
-    """Check that bypass: true and infer: true are not both set on the same signal.
-
-    These are mutually exclusive: bypass means an external component provides
-    the buffer, while infer asks the synthesis tool to infer one.
-    Raises ValidationError identifying the signal.
-    """
-    raise NotImplementedError
-
-
-def _check_buffer_inferable(sig: dict) -> None:
-    """Check that infer: true is only used with ibuf or obuf.
-
-    Synthesis inference is predictable and guaranteed correct only for these
-    two single-ended buffer types. All other types must be instantiated explicitly.
-    Raises ValidationError identifying the signal and buffer type.
-    Skips signals where infer is false or not set.
-    """
-    raise NotImplementedError
-
-
 def _validate_semantic(doc: dict) -> None:
     """Validate parsed YAML for domain consistency"""
 
     # Explicitly assuming that structural validation was successful
     signals = doc["signals"]
 
+    # Check that all pin names are valid before any other pin-related checks
+    _check_pin_name_format(signals)
     # Check for unique signal names across all signals
     _check_unique_signal_names(signals)
     # Check for unique pins across all signals
@@ -201,7 +119,6 @@ def _validate_semantic(doc: dict) -> None:
         # Check that buffer inference is allowed
         _check_buffer_inferable(sig)
 
-    # Semantic validation is complete
     return None
 
 
@@ -212,7 +129,7 @@ def validate(yaml_file: Path) -> dict:
     with open(yaml_file) as f:
         doc = yaml.safe_load(f)
 
-    # Each of these can raise a ValidationException, which you'll just let fail
+    # Each of these can raise a ValidationError, which we just let fail
     _validate_structural(doc)
     _validate_semantic(doc)
 

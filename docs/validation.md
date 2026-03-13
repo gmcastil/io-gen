@@ -46,6 +46,10 @@ The following constraints are enforced:
 
 - Signal names are unique across all signals defined in the YAML (this applies
   to signals with `generate: false` as well)
+- Every pin name (in `pins` and both legs of `pinset`) must match the pattern
+  `^[A-Z0-9]+$` - uppercase letters and digits only. Lowercase letters,
+  whitespace, commas, brackets, and any other characters are rejected. Applies
+  to all signals, including those with `generate: false`.
 - Pin names are unique across all signals (no two signals may reference the
   same physical pin, including signals with `generate: false` as well)
 - `pinset.p` and `pinset.n` must be the same type (both scalar or both array)
