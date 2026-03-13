@@ -50,6 +50,8 @@ The following constraints are enforced:
   same physical pin, including signals with `generate: false` as well)
 - `pinset.p` and `pinset.n` must be the same type (both scalar or both array)
   and if arrays, must have equal length
+- Pin arrays and `width` must match
+- Pinset arrays and `width` must match
 - Buffer type is compatible with direction (see [buffers.md](buffers.md)):
   - `ibuf` requires `in`
   - `obuf` requires `out`

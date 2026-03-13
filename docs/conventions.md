@@ -94,7 +94,7 @@ HDL. It will still receive a port in the top level RTL and the corresponding
 ## Output Files
 
 The tool produces three output files per invocation. All file names are
-derived from the `--top` argument supplied at runtime. Files are written
+derived from the `<top>` positional argument supplied at runtime. Files are written
 to the directory specified by `--output`. Generation of HDL or XDC only is also
 supported.
 
