@@ -155,6 +155,20 @@ INVALID_STRUCTURAL_CASES = [
         """,
     ),
     (
+        "bypass_with_buffer",
+        """
+        title: Test
+        part: xc7k325tffg900-2
+        signals:
+          - name: spare
+            pins: J24
+            iostandard: LVCMOS18
+            direction: out
+            buffer: obuf
+            bypass: true
+        """,
+    ),
+    (
         "both_pins_and_pinset",
         """
         title: Test

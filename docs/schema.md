@@ -29,9 +29,11 @@ signal in the file corresponds to a real physical pin assignment.
 Beyond that, every signal must have `name`, `direction`, `buffer`, and
 `iostandard` unless `generate` is explicitly set to `false`, or `bypass` is set
 to `true`. When `generate` is false, only `name` and a pin assignment strategy
-are required. When `bypass` is true, `name`, `direction`, and `iostandard` are
-required but `buffer` is not. This allows a signal to be declared in the YAML
-for documentation or reservation purposes without producing any HDL output.
+are required. This allows a signal to be declared in the YAML for documentation
+or reservation purposes without producing any HDL output. When `bypass` is
+true, `name`, `direction`, and `iostandard` are required but `buffer` is not.
+This allows top level HDL ports to be connected to internal components (e.g.,
+IP instances) that contain their own buffer instances (e.g., SERDES).
 
 ## Pin Assignment Strategies
 

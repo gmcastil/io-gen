@@ -10,7 +10,7 @@ to be structurally and semantically correct. On failure, it raises a
 Validation has two passes that run in order:
 
 1. **Structural validation** - checks that the document conforms to the JSON
-   schema using `jsonschema` against `schema/schema.json`.
+   schema using `jsonschema` against `io_gen/schema/schema.json`.
 
 2. **Semantic validation** - checks domain correctness that the schema cannot
    express.
@@ -40,8 +40,7 @@ invalid enum values, and schema-defined constraint violations.
 
 ## Semantic Validation
 
-Checks that the document is meaningful and internally consistent. Signals
-with `generate: false` are excluded from semantic validation.
+Checks that the document is meaningful and internally consistent.
 
 The following constraints are enforced:
 

@@ -3,9 +3,8 @@
 ## Overview
 
 `pipeline.py` is the orchestrator. It drives all stages in order and
-owns the handoff between them. It has no knowledge of how it was invoked
-
-- CLI, test, or otherwise.
+owns the handoff between them. It has no knowledge of how it was invoked - CLI,
+test, or otherwise.
 
 ---
 

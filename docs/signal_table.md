@@ -15,48 +15,47 @@ single-ended from differential signals.
 
 ### Single-ended
 
-| Key           | Type             | Notes                                    |
-| ------------- | ---------------- | ---------------------------------------- |
-| `name`        | str              |                                          |
-| `direction`   | str              | `in` / `out` / `inout`                   |
-| `buffer`      | str or None      | None when `bypass` is true               |
-| `iostandard`  | str              | fully resolved                           |
-| `width`       | int              | 1 for scalar, 1+ for bus                 |
-| `pins`        | str or list[str] | str = scalar, list = bus                 |
-| `generate`    | bool             |                                          |
-| `infer`       | bool             |                                          |
-| `bypass`      | bool             |                                          |
-| `comment_xdc` | str or None      |                                          |
-| `comment_hdl` | str or None      |                                          |
-| `instance`    | str or None      | None = auto-generate                     |
+| Key           | Type             | Notes                      |
+| ------------- | ---------------- | -------------------------- |
+| `name`        | str              |                            |
+| `direction`   | str              | `in` / `out` / `inout`     |
+| `buffer`      | str or None      | None when `bypass` is true |
+| `iostandard`  | str              | fully resolved             |
+| `width`       | int              | 1 for scalar, 1+ for bus   |
+| `pins`        | str or list[str] | str = scalar, list = bus   |
+| `generate`    | bool             |                            |
+| `infer`       | bool             |                            |
+| `bypass`      | bool             |                            |
+| `comment_xdc` | str or None      |                            |
+| `comment_hdl` | str or None      |                            |
+| `instance`    | str or None      | None = auto-generate       |
 
 ### Differential
 
-| Key           | Type             | Notes                                             |
-| ------------- | ---------------- | ------------------------------------------------- |
-| `name`        | str              |                                                   |
-| `direction`   | str              | `in` / `out` / `inout`                            |
-| `buffer`      | str or None      | None when `bypass` is true                        |
-| `iostandard`  | str              | fully resolved                                    |
-| `width`       | int              | 1 for scalar pair, 1+ for bus                     |
-| `pinset`      | dict             | `{'p': str or list[str], 'n': str or list[str]}`  |
-| `generate`    | bool             |                                                   |
-| `infer`       | bool             |                                                   |
-| `bypass`      | bool             |                                                   |
-| `comment_xdc` | str or None      |                                                   |
-| `comment_hdl` | str or None      |                                                   |
-| `instance`    | str or None      | None = auto-generate                              |
+| Key           | Type        | Notes                                            |
+| ------------- | ----------- | ------------------------------------------------ |
+| `name`        | str         |                                                  |
+| `direction`   | str         | `in` / `out` / `inout`                           |
+| `buffer`      | str or None | None when `bypass` is true                       |
+| `iostandard`  | str         | fully resolved                                   |
+| `width`       | int         | 1 for scalar pair, 1+ for bus                    |
+| `pinset`      | dict        | `{'p': str or list[str], 'n': str or list[str]}` |
+| `generate`    | bool        |                                                  |
+| `infer`       | bool        |                                                  |
+| `bypass`      | bool        |                                                  |
+| `comment_xdc` | str or None |                                                  |
+| `comment_hdl` | str or None |                                                  |
+| `instance`    | str or None | None = auto-generate                             |
 
 ---
 
 ## Construction
 
 ```
-SignalTable(doc, bank_table)
+SignalTable(doc)
 ```
 
-**Input:** the validated YAML document as a plain dict and a `BankTable`
-instance
+**Input:** the validated YAML document as a plain dict
 
 **Output:** a `SignalTable` instance
 
@@ -64,9 +63,6 @@ instance
 
 ## Notes
 
-- Signals with `generate: false` are included but flagged so generation
+- Signals with `generate: false` are included but flagged, so that generation
   stages can skip them.
-- IOSTANDARD is resolved at this stage for scalar signals using the bank
-  table. Array signals carry an explicit `iostandard` and require no
-  resolution.
 - Used as input to `PinTable` construction.
