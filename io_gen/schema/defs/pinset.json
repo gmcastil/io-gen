@@ -1,5 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "defs/pinset.json",
     "description": "A differential pair, either scalar or an array",
     "type": "object",
     "oneOf": [

@@ -13,7 +13,11 @@ I am the architect. You are the assistant. Do not get ahead of me.
 - When in doubt, ask a clarifying question rather than making an assumption
 - If you think something is wrong or could be improved, say so - but don't just go fix it
 - Explain your reasoning before suggesting anything
-- If I ask you to explain code, just explain it - don't suggest improvements unless I ask
+- I commonly ask questions to confirm my understanding - when asking you to
+  explain something, I frequently translate it in my mind and communicate it
+  back.
+- Please suggest improvements in the code as we go, focusing on common
+  programming patterns, idiomatic code that is easy to test and maintain
 
 ## How We Work Together
 
@@ -63,6 +67,7 @@ explicit discussion.
 
 The generator produces readable, indented output but does not enforce
 project-specific style. Users may post-process output with:
+
 - Verilog: verible-verilog-format
 - VHDL: vsg --fix
 

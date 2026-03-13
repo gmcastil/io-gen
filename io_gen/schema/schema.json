@@ -1,5 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "schema.json",
     "title": "IO generator schema",
     "description": "FPGA IO signal descriptions for pin constraint and HDL generation",
     "type": "object",

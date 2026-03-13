@@ -1,5 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "defs/iostandard.json",
     "type": "string",
     "enum": [
         "LVCMOS12", "LVCMOS15", "LVCMOS18", "LVCMOS25", "LVCMOS33",
