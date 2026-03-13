@@ -36,16 +36,12 @@ signal and constraint that failed. Raises on the first error encountered.
 Delegates to `jsonschema`. Catches missing required fields, wrong types,
 invalid enum values, and schema-defined constraint violations.
 
-The parsed YAML dict must have its banks keys converted to strings before
-passing to `jsonschema`, but the original dict (with integer keys) will be used
-to construct the signal and bank tables.
-
 ---
 
 ## Semantic Validation
 
 Checks that the document is meaningful and internally consistent. Signals
-with `generate: false` are excluded.
+with `generate: false` are excluded from semantic validation.
 
 The following constraints are enforced:
 

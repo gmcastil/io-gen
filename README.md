@@ -70,10 +70,10 @@ completely. No defensive checks are needed downstream.
 
 ## Stages
 
-- [1. Validation](docs/validation.md)
-- [2. Table Construction](docs/table_construction.md)
-- [3. Generation](docs/generation.md)
 - [Pipeline](docs/pipeline.md)
+- [Validation](docs/validation.md)
+- [Table Construction](docs/table_construction.md)
+- [Generation](docs/generation.md)
 
 ---
 

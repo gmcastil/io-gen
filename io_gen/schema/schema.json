@@ -137,6 +137,12 @@
                                 "pins": {
                                     "type": "array"
                                 }
+                            },
+                            "not": {
+                                "required": ["generate"],
+                                "properties": {
+                                    "generate": { "const": false }
+                                }
                             }
                         },
                         "then": {
@@ -162,6 +168,12 @@
                                             "type": "array"
                                         }
                                     }
+                                }
+                            },
+                            "not": {
+                                "required": ["generate"],
+                                "properties": {
+                                    "generate": { "const": false }
                                 }
                             }
                         },

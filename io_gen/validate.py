@@ -4,6 +4,7 @@ from pathlib import Path
 
 import jsonschema
 import yaml
+
 from referencing import Registry, Resource
 from referencing.jsonschema import DRAFT202012
 
@@ -59,12 +60,8 @@ def _build_registry() -> Registry:
     return registry
 
 
-def validate(yaml_file: Path) -> dict:
-    """Validate a YAML file for structural and semantical accuracy"""
-
-    # Load the YAML from the provided path
-    with open(yaml_file) as f:
-        doc = yaml.safe_load(f)
+def _validate_structural(doc: dict) -> None:
+    """Validate JSON content against the schema"""
 
     # Load the schema from wherever it was
     with importlib.resources.as_file(
@@ -73,7 +70,7 @@ def validate(yaml_file: Path) -> dict:
         with open(schema_path) as f:
             schema = json.load(f)
 
-    #
+    # Create a registry containing the referenced JSON files in io_gen/schema/defs
     registry = _build_registry()
 
     validator = jsonschema.Draft202012Validator(schema, registry=registry)
@@ -82,6 +79,17 @@ def validate(yaml_file: Path) -> dict:
         validator.validate(doc)
     except jsonschema.ValidationError as e:
         raise ValidationError(e.message)
+
+
+def validate(yaml_file: Path) -> dict:
+    """Validate a YAML file for structural and semantical accuracy"""
+
+    # Load the YAML from the provided path
+    with open(yaml_file) as f:
+        doc = yaml.safe_load(f)
+
+    # Each of these can raise a ValidationException, which you'll just let fail
+    _validate_structural(doc)
 
     # If we're validated, then we can just return the validated doc
     return doc
