@@ -100,6 +100,18 @@ Do not add formatter invocation to the pipeline.
   with `bypass: true` is a contradiction - bypass means an external component
   (e.g., Xilinx IP) provides the buffer, and specifying one in the YAML would
   silently mislead the user.
+- **No `BankTable`** - an earlier iteration included a `BankTable` to support
+  bank-level IOSTANDARD inheritance. It was removed along with the banks concept.
+  `bank_table.py` no longer exists.
+- **Instance names are always resolved in the signal table** - `instance` in a
+  signal table row is always a `str`, never `None`. `build_signal_table()` either
+  uses the user-supplied override or auto-generates `<buffer_type>_<signal_name>`.
+  `bypass: true` signals have no buffer and no IO ring instantiation, so their
+  `instance` is `None`. The pin table appends `_i<N>` to produce the final name.
+  Generators read the pin table directly and never infer anything.
+- **Instance indexing is always `_i<N>`** - there is no special case for scalars.
+  A scalar gets `_i0`. A bus gets `_i0` through `_iN`. This applies to both
+  auto-generated and user-supplied instance names.
 
 ## Current Focus
 
@@ -122,21 +134,24 @@ Do not add formatter invocation to the pipeline.
 ### Table Construction Stage Status
 
 - [x] `SignalTable` interface designed and documented (`docs/signal_table.md`)
-- [ ] `io_gen/tables/` package does not exist yet - next thing to create
-- [ ] Tests for `SignalTable` construction not yet written
+- [x] `io_gen/tables/` package skeleton exists with stubs
+- [x] `MetaTable` implemented and tested (`tests/test_meta_table.py`)
+- [x] `tests/test_signal_table.py` written - not yet passing (implementation pending)
 - [ ] `SignalTable` and `build_signal_table()` not yet implemented
+- [ ] `PinTable` and `build_pin_table()` not yet implemented
 
 Key design decisions:
 
 - `SignalTable` is a thin wrapper class over `list[dict]`
 - Rows are plain dicts with variable shape (three shapes - see `docs/signal_table.md`)
-- `build_signal_table(doc: dict) -> SignalTable` is the factory function
+- Each factory function lives in the same module as its class
 - Tables are a package: `io_gen/tables/`
   - `io_gen/tables/signal_table.py` - `SignalTable` class + `build_signal_table()`
   - `io_gen/tables/pin_table.py` - `PinTable`, `PinRow`, `PinSetRow` + `build_pin_table()`
   - `io_gen/tables/meta_table.py` - `MetaTable` + `build_meta_table()`
-  - `io_gen/tables/__init__.py` - re-exports factory functions and classes
+  - `io_gen/tables/__init__.py` - re-exports all classes and factory functions
 - `SignalTable` interface: `__init__()`, `add(sig: dict)`, `__iter__`, `__len__`
+- **Next step: implement `SignalTable`, `add()`, and `build_signal_table()`**
 
 ## Definitions
 
