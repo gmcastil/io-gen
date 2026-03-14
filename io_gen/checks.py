@@ -1,11 +1,32 @@
+import re
+
 from .exceptions import ValidationError
 
 
-# raise ValidationError(f"signal '{name}': length mismatch")
+# Pair supported buffers with their directions
+BUFFER_DIRECTIONS = {
+    "ibuf": "in",
+    "obuf": "out",
+    "ibufds": "in",
+    "obufds": "out",
+    "iobuf": "inout",
+}
+
+# Pair buffer with whether they are single or differential
+BUFFER_STRATEGIES = {
+    "ibuf": "pins",
+    "obuf": "pins",
+    "ibufds": "pinset",
+    "obufds": "pinset",
+    "iobuf": "pins",
+}
+
+# Inference only supported for certain buffer types
+BUFFER_INFERABLE = ["ibuf", "obuf"]
 
 
-def _get_pins_names_from_signal(sig: dict) -> list[str]:
-    """Get a list of pins used by a signal"""
+def _get_pin_names_from_signal(sig: dict) -> list[str]:
+    """Get a list of all pins used by a signal"""
     pins: list[str] = []
     # Single-ended signal
     if "pins" in sig:
@@ -32,11 +53,18 @@ def _check_pin_name_format(signals: list[dict]) -> None:
 
     Validates all pin names across all signals, including both legs of pinset and
     signals with generate: false. Rejects anything containing whitespace, commas,
-    brackets, lowercase letters, or any other non-alphanumeric characters.
-    The required pattern is ^[A-Z0-9]+$.
+    brackets, lowercase letters, or any other non-alphanumeric characters. Also requires
+    that the package pin is at least two characters in length
+
     Raises ValidationError identifying the first malformed pin name found.
     """
-    raise NotImplementedError
+    pattern = re.compile(r"^[A-Z]+[0-9]+$")
+    for sig in signals:
+        name = sig["name"]
+        pins = _get_pin_names_from_signal(sig)
+        for pin in pins:
+            if not re.match(pattern, pin):
+                raise ValidationError(f"signal '{name}' has pin '{pin}': is malformed")
 
 
 def _check_unique_signal_names(signals: list[dict]) -> None:
@@ -64,7 +92,7 @@ def _check_unique_pins(signals: list[dict]) -> None:
     pins = list()
     # Get all of the pins of every signal in the design
     for sig in signals:
-        pins.extend(_get_pins_names_from_signal(sig))
+        pins.extend(_get_pin_names_from_signal(sig))
     # Iterate and check for duplicates
     for pin in pins:
         if pin in uniq_pins:
@@ -85,13 +113,14 @@ def _check_pinset_array_mismatch(sig: dict) -> None:
         name = sig["name"]
         p_pins = sig["pinset"]["p"]
         n_pins = sig["pinset"]["n"]
+
         if isinstance(p_pins, str) and isinstance(n_pins, str):
             return
         elif isinstance(p_pins, list) and isinstance(n_pins, list):
             if len(p_pins) != len(n_pins):
                 raise ValidationError(f"signal '{name}': pinset array mismatch")
         else:
-            raise ValidationError(f"signal '{name}': pinset p and n must be the same type")
+            raise ValidationError(f"signal '{name}': pinset type mismatch")
 
 
 def _check_pins_array_width_match(sig: dict) -> None:
@@ -101,7 +130,16 @@ def _check_pins_array_width_match(sig: dict) -> None:
     the signal, the declared width, and the actual pin count.
     Skips signals that use scalar pins, pinset, or generate: false.
     """
-    raise NotImplementedError
+    if "pins" in sig and sig.get("generate", True):
+        name = sig["name"]
+        pins = sig["pins"]
+        if isinstance(pins, str):
+            return
+        elif isinstance(pins, list):
+            # Recall, from the schema that width is only required for arrays
+            width = sig["width"]
+            if len(pins) != width:
+                raise ValidationError(f"signal '{name}': pins array width mismatch")
 
 
 def _check_pinset_array_width_match(sig: dict) -> None:
@@ -111,7 +149,21 @@ def _check_pinset_array_width_match(sig: dict) -> None:
     the signal, the declared width, and the actual pin count.
     Skips signals that use scalar pinset, pins, or generate: false.
     """
-    raise NotImplementedError
+
+    if "pinset" in sig and sig.get("generate", True):
+        name = sig["name"]
+        p_pins = sig["pinset"]["p"]
+        n_pins = sig["pinset"]["n"]
+
+        if isinstance(p_pins, str) and isinstance(n_pins, str):
+            return
+        elif isinstance(p_pins, list) and isinstance(n_pins, list):
+            # Recall, from the schema that width is only required for arrays
+            width = sig["width"]
+            if len(p_pins) != width:
+                raise ValidationError(f"signal '{name}': pinset array width mismatch")
+            elif len(n_pins) != width:
+                raise ValidationError(f"signal '{name}': pinset array width mismatch")
 
 
 def _check_buffer_direction(sig: dict) -> None:
@@ -121,7 +173,17 @@ def _check_buffer_direction(sig: dict) -> None:
     Raises ValidationError identifying the signal, buffer, and direction.
     Skips signals with generate: false or bypass: true (no buffer required).
     """
-    raise NotImplementedError
+    if not sig.get("generate", True) or sig.get("bypass", False):
+        return
+
+    name = sig["name"]
+    buffer = sig["buffer"]
+    direction = sig["direction"]
+
+    if BUFFER_DIRECTIONS[buffer] != direction:
+        raise ValidationError(
+            f"signal '{name}': buffer {buffer} direction is {direction}"
+        )
 
 
 def _check_buffer_strategy_match(sig: dict) -> None:
@@ -131,7 +193,21 @@ def _check_buffer_strategy_match(sig: dict) -> None:
     Raises ValidationError identifying the signal, buffer, and pin strategy used.
     Skips signals with generate: false or bypass: true (no buffer required).
     """
-    raise NotImplementedError
+
+    if not sig.get("generate", True) or sig.get("bypass", False):
+        return
+
+    name = sig["name"]
+    buffer = sig["buffer"]
+    if "pins" in sig:
+        strategy = "pins"
+    else:
+        strategy = "pinset"
+
+    if BUFFER_STRATEGIES[buffer] != strategy:
+        raise ValidationError(
+            f"signal '{name}': buffer {buffer} incompatible with '{strategy}'"
+        )
 
 
 def _check_buffer_infer_bypass_mismatch(sig: dict) -> None:
@@ -141,7 +217,11 @@ def _check_buffer_infer_bypass_mismatch(sig: dict) -> None:
     the buffer, while infer asks the synthesis tool to infer one.
     Raises ValidationError identifying the signal.
     """
-    raise NotImplementedError
+    name = sig["name"]
+    if sig.get("bypass", False) and sig.get("infer", False):
+        raise ValidationError(
+            f"signal '{name}': cannot infer buffer and bypass IO ring"
+        )
 
 
 def _check_buffer_inferable(sig: dict) -> None:
@@ -152,4 +232,11 @@ def _check_buffer_inferable(sig: dict) -> None:
     Raises ValidationError identifying the signal and buffer type.
     Skips signals where infer is false or not set.
     """
-    raise NotImplementedError
+    if not sig.get("infer", False):
+        return
+
+    name = sig["name"]
+    buffer = sig["buffer"]
+    if buffer not in BUFFER_INFERABLE and sig.get("infer", False):
+        raise ValidationError(f"signal '{name}': buffer {buffer} not inferable")
+

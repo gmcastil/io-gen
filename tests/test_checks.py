@@ -85,6 +85,14 @@ INVALID_PIN_NAME_FORMAT = [
         "lowercase_in_pinset",
         [{"name": "ref_clk", "pinset": {"p": "h22", "n": "H23"}}],
     ),
+    (
+        "all_letters_no_digit",
+        [{"name": "sys_clk", "pins": "ABC"}],
+    ),
+    (
+        "all_digits_no_letter",
+        [{"name": "sys_clk", "pins": "123"}],
+    ),
 ]
 
 

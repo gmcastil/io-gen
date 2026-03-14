@@ -23,6 +23,18 @@
 - [ ] Per-stage progress feedback - consider a callback passed from CLI to pipeline
       so the pipeline stays decoupled from presentation
 
+## Validation - Pending Checks
+
+- [ ] Signal name format - must be a valid HDL identifier. Rules are
+      language-specific (Verilog and VHDL differ), so this check should
+      run after the target language is known or enforce the intersection
+      of both sets of rules.
+- [ ] Instance name format - the optional `instance` field becomes an HDL
+      identifier in the IO ring. Must be validated as a legal identifier
+      before generation. Same language considerations as signal names.
+- [ ] Top level HDL module name needs to be valid VHDL or Verilog
+- [ ] Signal and signal + instance should be capped, maybe? Future discussion
+
 ## Deferred
 
 - [ ] Add support for marking inputs as clocks and inserting BUFG into the design
