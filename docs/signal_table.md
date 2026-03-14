@@ -29,7 +29,7 @@ Signals with `generate: false` have a reduced row shape - see below.
 | `infer`      | bool             | Normalized to False if absent in YAML          |
 | `bypass`     | bool             | Normalized to False if absent in YAML          |
 | `comment`    | dict             | optional `xdc` and/or `hdl` string keys - empty dict if absent |
-| `instance`   | str or None      | None = auto-generate                           |
+| `instance`   | str              | Auto-generated as `<buffer_type>_<signal_name>` if absent in YAML |
 
 ### Differential (generate: true)
 
@@ -45,7 +45,7 @@ Signals with `generate: false` have a reduced row shape - see below.
 | `infer`      | bool        | Normalized to False if absent in YAML              |
 | `bypass`     | bool        | Normalized to False if absent in YAML              |
 | `comment`    | dict        | optional `xdc` and/or `hdl` string keys - empty dict if absent |
-| `instance`   | str or None | None = auto-generate                               |
+| `instance`   | str         | Auto-generated as `<buffer_type>_<signal_name>` if absent in YAML |
 
 ### generate: false
 
@@ -73,7 +73,7 @@ when the corresponding field is absent from the YAML:
 | `bypass`   | False   |
 | `width`    | 1       |
 | `comment`  | `{}`    |
-| `instance` | None    |
+| `instance` | `<buffer_type>_<signal_name>` |
 | `buffer`   | None    |
 
 For `generate: false` signals, only `width` is normalized (to 1 for scalar

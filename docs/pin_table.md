@@ -33,7 +33,7 @@ never mixed.
 | `direction`  | str         | `in` / `out` / `inout`                 |
 | `buffer`     | str or None | None when `bypass: true`               |
 | `infer`      | bool        |                                        |
-| `instance`   | str or None | None = auto-generate                   |
+| `instance`   | str         | Fully resolved: `<stem>_i<N>`          |
 | `is_bus`     | bool        | True if signal uses array `pins`       |
 
 ---
@@ -47,7 +47,7 @@ never mixed.
 | `direction`  | str         | `in` / `out` / `inout`                 |
 | `buffer`     | str or None | None when `bypass: true`               |
 | `infer`      | bool        |                                        |
-| `instance`   | str or None | None = auto-generate                   |
+| `instance`   | str         | Fully resolved: `<stem>_i<N>`          |
 | `is_bus`     | bool        | True if signal uses array `pinset`     |
 
 ---

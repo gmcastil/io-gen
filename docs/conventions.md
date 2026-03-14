@@ -50,12 +50,21 @@ be capitalized and surrounded with back-ticks.
 
 ## Primitive Instance Naming
 
-Buffer instance names are auto-generated as:
+Buffer instance names always include a `_i<N>` index suffix, starting at 0.
+There is no special case for scalars.
 
-- Scalar: `<buffer_type>_<signal_name>`
-- Bus: `<buffer_type>_<signal_name>_<index>`
+Auto-generated base name: `<buffer_type>_<signal_name>`
 
-Examples: `ibuf_sys_clk`, `obuf_led_0`, `ibufds_serdes_rx_3`
+- Scalar: `<buffer_type>_<signal_name>_i0`
+- Bus: `<buffer_type>_<signal_name>_i0`, `<buffer_type>_<signal_name>_i1`, ...
+
+If the optional `instance` field is supplied on a signal, it overrides the
+auto-generated base name. The `_i<N>` suffix is still appended by the generator.
+
+- Scalar with override: `<instance>_i0`
+- Bus with override: `<instance>_i0`, `<instance>_i1`, ...
+
+Examples: `ibuf_sys_clk_i0`, `obuf_led_i0`, `obuf_led_i1`, `ibufds_serdes_rx_i3`
 
 ---
 

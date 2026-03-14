@@ -100,7 +100,8 @@ no comment is emitted for that signal.
 
 ## Instance Names
 
-Buffer instance names are auto-generated from the signal name and bit index
-(e.g. `ibuf_sys_clk` for a scalar, `obuf_led_0` for a bus).
-The optional `instance` field on a signal overrides the auto-generated name
-for the entire signal. Per-pin instance name overrides are not supported.
+Buffer instance names are auto-generated as `<buffer_type>_<signal_name>_i<N>`,
+where `N` starts at 0. There is no special case for scalars - they always get
+`_i0`. The optional `instance` field on a signal overrides the auto-generated
+base name; the `_i<N>` suffix is still appended by the generator. Per-pin
+instance name overrides are not supported.
