@@ -1,7 +1,8 @@
-from .bank_table import BankTable
-
-
 class SignalTable:
 
-    def __init__(self, doc: dict, bank_table: BankTable):
+    def __init__(self) -> None:
         pass
+
+
+def build_signal_table(doc: dict) -> "SignalTable":
+    raise NotImplementedError

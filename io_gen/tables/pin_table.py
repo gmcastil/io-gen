@@ -27,5 +27,9 @@ class PinSetRow:
 
 class PinTable:
 
-    def __init__(self, signal_table: SignalTable):
+    def __init__(self) -> None:
         pass
+
+
+def build_pin_table(signal_table: SignalTable) -> "PinTable":
+    raise NotImplementedError

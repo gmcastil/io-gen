@@ -1,10 +1,8 @@
-from dataclasses import dataclass
-
-
-@dataclass
 class MetaTable:
-    title: str
-    part: str
+    def __init__(self, title: str, part: str) -> None:
+        self.title = title
+        self.part = part
 
-    def __init__(self, doc: dict):
-        pass
+
+def build_meta_table(doc: dict) -> MetaTable:
+    return MetaTable(doc["title"], doc["part"])
