@@ -111,18 +111,39 @@ Do not add formatter invocation to the pipeline.
 
 ### Validation Stage Status
 
-- [x] Structural validation implemented and tested
-- [x] Semantic validation tests written (in `tests/test_validate.py`)
-- [ ] Semantic validation functions stubbed in `validate.py` - implementation in progress
-  - `_validate_unique_signal_names()`
-  - `_validate_unique_pins()`
-  - remaining semantic checks TBD
+- [x] Structural validation implemented and tested (`io_gen/validate.py`)
+- [x] Semantic validation fully implemented (`io_gen/checks.py`)
+- [x] All check functions tested in `tests/test_checks.py`
+- [x] Structural and integration tests in `tests/test_validate.py`
+- `io_gen/exceptions.py` defines `ValidationError` in isolation (no imports)
+- `io_gen/checks.py` contains all `_check_*` functions and `_get_pin_names_from_signal` helper
+- `io_gen/validate.py` orchestrates structural and semantic validation only
+
+### Table Construction Stage Status
+
+- [x] `SignalTable` interface designed and documented (`docs/signal_table.md`)
+- [ ] `io_gen/tables/` package does not exist yet - next thing to create
+- [ ] Tests for `SignalTable` construction not yet written
+- [ ] `SignalTable` and `build_signal_table()` not yet implemented
+
+Key design decisions:
+
+- `SignalTable` is a thin wrapper class over `list[dict]`
+- Rows are plain dicts with variable shape (three shapes - see `docs/signal_table.md`)
+- `build_signal_table(doc: dict) -> SignalTable` is the factory function
+- Tables are a package: `io_gen/tables/`
+  - `io_gen/tables/signal_table.py` - `SignalTable` class + `build_signal_table()`
+  - `io_gen/tables/pin_table.py` - `PinTable`, `PinRow`, `PinSetRow` + `build_pin_table()`
+  - `io_gen/tables/meta_table.py` - `MetaTable` + `build_meta_table()`
+  - `io_gen/tables/__init__.py` - re-exports factory functions and classes
+- `SignalTable` interface: `__init__()`, `add(sig: dict)`, `__iter__`, `__len__`
 
 ## Definitions
 
 - **Pin** - a physical FPGA pin with a name, bank, IOSTANDARD, and signal name
 - **Bank** - a group of pins sharing power and (usually) IOSTANDARD characteristics
-- **XDC constraints** - Xilinx Design Constraints file containing pin assignments and IO standards
+- **XDC constraints** - Xilinx Design Constraints file containing pin
+  assignments and IO standards
 - **IO ring** - the boundary logic between the top-level ports and internal signals
 
 ## Distribution
@@ -146,8 +167,14 @@ Keep the following in mind throughout development:
 ## Coding
 
 - Python is the implementation language
+- Follow PEP 8 for all code style (naming, spacing, line length, imports, etc.)
+  with the understanding that formatting is enforced by the black formatting
+  plugin.
 - `top` is a positional CLI argument, not a YAML field
 - ASCII only. Do not include non-ASCII characters, emojis, or unicode characters
 - Type hints are required on all functions and methods in both application and test code
-- When iterating over signals, use `sig` as the loop variable, not `signal` (avoid shadowing the standard library `signal` module)
-- When reviewing code, check that variable and parameter names are consistent across the codebase (e.g., the same concept is not called `sig` in one place and `signal` in another)
+- When iterating over signals, use `sig` as the loop variable, not `signal`
+  (avoid shadowing the standard library `signal` module)
+- When reviewing code, check that variable and parameter names are consistent
+  across the codebase (e.g., the same concept is not called `sig` in one place
+  and `signal` in another)
