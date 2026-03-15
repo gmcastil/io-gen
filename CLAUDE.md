@@ -179,6 +179,20 @@ Keep the following in mind throughout development:
   - From a local clone: `pip install .`
   - Editable install for development: `pip install -e .`
 
+## Testing Conventions
+
+- No test classes - use plain `test_` functions throughout
+- Parametrized cases are defined as module-level lists of `(name, ...)` tuples
+  and passed to `@pytest.mark.parametrize` using `pytest.param(..., id=name)`
+- Test data is inline dicts, not loaded from YAML files or example fixtures.
+  `test_validate.py` uses YAML strings as an exception because `validate()`
+  requires a file path - all other tests work directly with dicts
+- Sections within a test file are separated by comment banners matching the
+  style in existing test files
+- For table construction tests, `generate:false` row shapes are asserted both
+  positively (required keys present with correct values) and negatively (keys
+  that belong only to `generate:true` rows are explicitly absent)
+
 ## Coding
 
 - Python is the implementation language

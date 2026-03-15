@@ -29,7 +29,7 @@ Signals with `generate: false` have a reduced row shape - see below.
 | `infer`      | bool             | Normalized to False if absent in YAML          |
 | `bypass`     | bool             | Normalized to False if absent in YAML          |
 | `comment`    | dict             | optional `xdc` and/or `hdl` string keys - empty dict if absent |
-| `instance`   | str              | Auto-generated as `<buffer_type>_<signal_name>` if absent in YAML |
+| `instance`   | str or None      | None when `bypass: true`; auto-generated as `<buffer_type>_<signal_name>` otherwise |
 
 ### Differential (generate: true)
 
@@ -45,7 +45,7 @@ Signals with `generate: false` have a reduced row shape - see below.
 | `infer`      | bool        | Normalized to False if absent in YAML              |
 | `bypass`     | bool        | Normalized to False if absent in YAML              |
 | `comment`    | dict        | optional `xdc` and/or `hdl` string keys - empty dict if absent |
-| `instance`   | str         | Auto-generated as `<buffer_type>_<signal_name>` if absent in YAML |
+| `instance`   | str or None | None when `bypass: true`; auto-generated as `<buffer_type>_<signal_name>` otherwise |
 
 ### generate: false
 
@@ -73,7 +73,7 @@ when the corresponding field is absent from the YAML:
 | `bypass`   | False   |
 | `width`    | 1       |
 | `comment`  | `{}`    |
-| `instance` | `<buffer_type>_<signal_name>` |
+| `instance` | `<buffer_type>_<signal_name>` (None for `bypass: true`) |
 | `buffer`   | None    |
 
 For `generate: false` signals, only `width` is normalized (to 1 for scalar
@@ -84,7 +84,7 @@ pins or pinset).
 ## Construction
 
 ```
-SignalTable(doc)
+build_signal_table(doc)
 ```
 
 **Input:** the validated YAML document as a plain dict

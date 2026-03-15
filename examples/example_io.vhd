@@ -45,36 +45,36 @@ architecture rtl of example_io is
 begin
 
     -- 125 MHz system clock input
-    ibuf_sys_clk : IBUF
+    ibuf_sys_clk_i0 : IBUF
         port map (
             I => sys_clk_pad,
             O => sys_clk
         );
 
     -- User LED outputs
-    obuf_led_0 : OBUF
+    obuf_led_i0 : OBUF
         port map (
             I => led(0),
             O => led_pad(0)
         );
-    obuf_led_1 : OBUF
+    obuf_led_i1 : OBUF
         port map (
             I => led(1),
             O => led_pad(1)
         );
-    obuf_led_2 : OBUF
+    obuf_led_i2 : OBUF
         port map (
             I => led(2),
             O => led_pad(2)
         );
-    obuf_led_3 : OBUF
+    obuf_led_i3 : OBUF
         port map (
             I => led(3),
             O => led_pad(3)
         );
 
     -- 200 MHz differential reference clock input
-    ibufds_ref_clk : IBUFDS
+    ibufds_ref_clk_i0 : IBUFDS
         port map (
             I  => ref_clk_p,
             IB => ref_clk_n,
@@ -82,19 +82,19 @@ begin
         );
 
     -- LVDS serial data outputs
-    obufds_lvds_data_0 : OBUFDS
+    obufds_lvds_data_i0 : OBUFDS
         port map (
             I  => lvds_data(0),
             O  => lvds_data_p(0),
             OB => lvds_data_n(0)
         );
-    obufds_lvds_data_1 : OBUFDS
+    obufds_lvds_data_i1 : OBUFDS
         port map (
             I  => lvds_data(1),
             O  => lvds_data_p(1),
             OB => lvds_data_n(1)
         );
-    obufds_lvds_data_2 : OBUFDS
+    obufds_lvds_data_i2 : OBUFDS
         port map (
             I  => lvds_data(2),
             O  => lvds_data_p(2),
@@ -102,35 +102,35 @@ begin
         );
 
     -- General purpose IO
-    iobuf_gpio_0 : IOBUF
+    iobuf_gpio_i0 : IOBUF
         port map (
             IO => gpio_pad(0),
             I  => gpio_o(0),
             O  => gpio_i(0),
             T  => gpio_t(0)
         );
-    iobuf_gpio_1 : IOBUF
+    iobuf_gpio_i1 : IOBUF
         port map (
             IO => gpio_pad(1),
             I  => gpio_o(1),
             O  => gpio_i(1),
             T  => gpio_t(1)
         );
-    iobuf_gpio_2 : IOBUF
+    iobuf_gpio_i2 : IOBUF
         port map (
             IO => gpio_pad(2),
             I  => gpio_o(2),
             O  => gpio_i(2),
             T  => gpio_t(2)
         );
-    iobuf_gpio_3 : IOBUF
+    iobuf_gpio_i3 : IOBUF
         port map (
             IO => gpio_pad(3),
             I  => gpio_o(3),
             O  => gpio_i(3),
             T  => gpio_t(3)
         );
-    iobuf_gpio_4 : IOBUF
+    iobuf_gpio_i4 : IOBUF
         port map (
             IO => gpio_pad(4),
             I  => gpio_o(4),

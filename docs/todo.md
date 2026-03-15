@@ -7,7 +7,7 @@
 
 ## Implementation
 
-- [ ] Write the validator
+- [x] Write the validator
 - [ ] Cache the JSON schema registry as a module global in validate.py
 - [ ] Write exhaustive unit tests for the buffer/direction compatibility checking logic
 - [ ] Write exhaustive unit tests for the buffer/pin strategy compatibility checking logic
