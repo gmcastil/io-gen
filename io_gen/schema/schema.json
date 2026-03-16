@@ -149,18 +149,11 @@
                                 "pins": {
                                     "type": "array"
                                 }
-                            },
-                            "not": {
-                                "required": ["generate"],
-                                "properties": {
-                                    "generate": { "const": false }
-                                }
                             }
                         },
                         "then": {
                             "required": [
-                                "width",
-                                "iostandard"
+                                "width"
                             ]
                         }
                     },
@@ -181,18 +174,11 @@
                                         }
                                     }
                                 }
-                            },
-                            "not": {
-                                "required": ["generate"],
-                                "properties": {
-                                    "generate": { "const": false }
-                                }
                             }
                         },
                         "then": {
                             "required": [
-                                "width",
-                                "iostandard"
+                                "width"
                             ]
                         }
                     }

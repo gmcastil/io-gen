@@ -28,7 +28,7 @@ Beyond that, every signal must have `name`, `direction`, `buffer`, and
 `iostandard` unless `generate` is explicitly set to `false`, or `bypass` is set
 to `true`. When `generate` is false, only `name` and a pin assignment strategy
 are required. This allows a signal to be declared in the YAML for documentation
-or reservation purposes without producing any HDL output. When `bypass` is
+or reservation purposes without producing any HDL or XDC output. When `bypass` is
 true, `name`, `direction`, and `iostandard` must be provided. Additionally, if
 `bypass` is true, `buffer` cannot be provided. This allows top level HDL ports
 to be connected to internal components that provide their own buffer instances
