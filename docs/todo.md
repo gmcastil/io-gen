@@ -7,12 +7,26 @@
 
 ## Implementation
 
+### Validation
+
+- [x] Write exhaustive unit tests for the buffer/direction compatibility checking logic
+- [x] Write exhaustive unit tests for the buffer/pin strategy compatibility checking logic
 - [x] Write the validator
 - [ ] Cache the JSON schema registry as a module global in validate.py
-- [ ] Write exhaustive unit tests for the buffer/direction compatibility checking logic
-- [ ] Write exhaustive unit tests for the buffer/pin strategy compatibility checking logic
-- [ ] Write tests for table construction
+
+### Table Construction
+
+- [x] Write tests for MetaTable
+- [x] Implement MetaTable and build_meta_table()
+- [x] Write tests for SignalTable
+- [x] Implement SignalTable and build_signal_table()
+- [ ] Write tests for PinTable
+- [ ] Implement PinTable and build_pin_table()
+
+### Generation
+
 - [ ] Write tests for each generator
+- [ ] Implement each generator
 
 ## CLI
 
