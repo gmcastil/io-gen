@@ -12,57 +12,94 @@ up pin details by signal name when needed.
 ## Structure
 
 ```
-PinTable: dict[str, list[PinRow | PinSetRow]]
+PinTable: dict[str, list[dict]]
 ```
 
-The key is the signal name. The value is an ordered list of `PinRow` or
-`PinSetRow` dataclass instances, one per pin or differential pair. Position
-in the list corresponds to bus index.
+The key is the signal name. The value is a list of dicts, one per pin or
+differential pair. Each row carries its own `index` field.
 
-A signal's list contains either all `PinRow` or all `PinSetRow` instances -
-never mixed.
-
----
-
-## PinRow (single-ended)
-
-| Field        | Type        | Notes                                  |
-| ------------ | ----------- | -------------------------------------- |
-| `pin`        | str         | Package pin name                       |
-| `iostandard` | str         | Fully resolved                         |
-| `direction`  | str         | `in` / `out` / `inout`                 |
-| `buffer`     | str or None | None when `bypass: true`               |
-| `infer`      | bool        |                                        |
-| `instance`   | str or None | Fully resolved: `<stem>_i<N>`; None when `bypass: true` |
-| `is_bus`     | bool        | True if signal uses array `pins`       |
+A signal's list contains either all single-ended rows (with a `pin` key) or
+all differential rows (with a `pinset` key) - never mixed.
 
 ---
 
-## PinSetRow (differential)
+## Single-ended row
 
-| Field        | Type        | Notes                                  |
-| ------------ | ----------- | -------------------------------------- |
-| `pinset`     | dict        | `{'p': str, 'n': str}`                 |
-| `iostandard` | str         | Fully resolved                         |
-| `direction`  | str         | `in` / `out` / `inout`                 |
-| `buffer`     | str or None | None when `bypass: true`               |
-| `infer`      | bool        |                                        |
-| `instance`   | str or None | Fully resolved: `<stem>_i<N>`; None when `bypass: true` |
-| `is_bus`     | bool        | True if signal uses array `pinset`     |
+| Field        | Type        | Notes                                                                     |
+| ------------ | ----------- | ------------------------------------------------------------------------- |
+| `pin`        | str         | Package pin name                                                          |
+| `iostandard` | str         | Fully resolved                                                            |
+| `direction`  | str         | `in` / `out` / `inout`                                                    |
+| `buffer`     | str or None | None when `bypass: true`                                                  |
+| `infer`      | bool        |                                                                           |
+| `instance`   | str or None | Fully resolved: `<stem>_i<N>`; None when `bypass: true` or `infer: true` |
+| `is_bus`     | bool        | True if signal uses array `pins`                                          |
+| `index`      | int         | Position in the bus, 0-based; 0 for scalar signals                        |
+
+---
+
+## Differential row
+
+| Field        | Type        | Notes                                                                     |
+| ------------ | ----------- | ------------------------------------------------------------------------- |
+| `pinset`     | dict        | `{'p': str, 'n': str}`                                                    |
+| `iostandard` | str         | Fully resolved                                                            |
+| `direction`  | str         | `in` / `out` / `inout`                                                    |
+| `buffer`     | str or None | None when `bypass: true`                                                  |
+| `infer`      | bool        |                                                                           |
+| `instance`   | str or None | Fully resolved: `<stem>_i<N>`; None when `bypass: true` or `infer: true` |
+| `is_bus`     | bool        | True if signal uses array `pinset`                                        |
+| `index`      | int         | Position in the bus, 0-based; 0 for scalar signals                        |
 
 ---
 
 ## Construction
 
 ```
-PinTable(signal_table)
+build_pin_table(signal_table: SignalTable) -> PinTable
 ```
 
 **Input:** a `SignalTable` instance
 
 **Output:** a `PinTable` instance
 
-See table_construction.md for details of the flattening process.
+Iterates the signal table and calls `PinTable.add(sig_row)` for each row,
+skipping rows where `generate` is `False`.
+
+---
+
+## PinTable.add()
+
+```
+add(sig_row: dict) -> None
+```
+
+Calls `_flatten_signal(sig_row)` and stores the resulting list under
+`sig_row["name"]` in the internal dict.
+
+---
+
+## _flatten_signal()
+
+```
+_flatten_signal(sig: dict) -> list[dict]
+```
+
+Module-level private function. Takes a single normalized signal table row
+and returns a list of dicts, one per pin or differential pair.
+
+Responsibilities:
+- Asserts `sig["generate"]` is `True` - calling with a `generate: false` row is a pipeline bug
+- Derives `is_bus` from whether `pins` or `pinset["p"]` is a `list`
+- Expands scalar or array `pins` into one row per pin
+- Expands scalar or array `pinset` into one row per pair, pairing `pinset["p"][i]`
+  with `pinset["n"][i]` to produce `{"p": ..., "n": ...}` per row
+- Copies `iostandard`, `direction`, and `infer` from the signal row into every pin row unchanged
+- Sets `index` to the bus position (0-based); scalars always get 0
+- Appends `_i<N>` to the signal table `instance` base name to produce
+  the fully-resolved instance name for each row
+- For `bypass: true` signals, `instance` is `None` and `buffer` is `None`
+- For `infer: true` signals, `instance` is `None` but `buffer` is preserved
 
 ---
 
