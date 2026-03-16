@@ -17,34 +17,34 @@ Signals with `generate: false` have a reduced row shape - see below.
 
 ### Single-ended (generate: true)
 
-| Key          | Type             | Notes                                          |
-| ------------ | ---------------- | ---------------------------------------------- |
-| `name`       | str              |                                                |
-| `direction`  | str              | `in` / `out` / `inout`                         |
-| `buffer`     | str or None      | None when `bypass: true`                       |
-| `iostandard` | str              |                                                |
-| `width`      | int              | Always present - 1 for scalar, 1+ for bus      |
-| `pins`       | str or list[str] | str = scalar, list = bus                       |
-| `generate`   | bool             | Always True for this row shape                 |
-| `infer`      | bool             | Normalized to False if absent in YAML          |
-| `bypass`     | bool             | Normalized to False if absent in YAML          |
-| `comment`    | dict             | optional `xdc` and/or `hdl` string keys - empty dict if absent |
+| Key          | Type             | Notes                                                                               |
+| ------------ | ---------------- | ----------------------------------------------------------------------------------- |
+| `name`       | str              |                                                                                     |
+| `direction`  | str              | `in` / `out` / `inout`                                                              |
+| `buffer`     | str or None      | None when `bypass: true`                                                            |
+| `iostandard` | str              |                                                                                     |
+| `width`      | int              | Always present - 1 for scalar, 1+ for bus                                           |
+| `pins`       | str or list[str] | str = scalar, list = bus                                                            |
+| `generate`   | bool             | Always True for this row shape                                                      |
+| `infer`      | bool             | Normalized to False if absent in YAML                                               |
+| `bypass`     | bool             | Normalized to False if absent in YAML                                               |
+| `comment`    | dict             | optional `xdc` and/or `hdl` string keys - empty dict if absent                      |
 | `instance`   | str or None      | None when `bypass: true`; auto-generated as `<buffer_type>_<signal_name>` otherwise |
 
 ### Differential (generate: true)
 
-| Key          | Type        | Notes                                              |
-| ------------ | ----------- | -------------------------------------------------- |
-| `name`       | str         |                                                    |
-| `direction`  | str         | `in` / `out` / `inout`                             |
-| `buffer`     | str or None | None when `bypass: true`                           |
-| `iostandard` | str         |                                                    |
-| `width`      | int         | Always present - 1 for scalar pair, 1+ for bus     |
-| `pinset`     | dict        | `{'p': str or list[str], 'n': str or list[str]}`   |
-| `generate`   | bool        | Always True for this row shape                     |
-| `infer`      | bool        | Normalized to False if absent in YAML              |
-| `bypass`     | bool        | Normalized to False if absent in YAML              |
-| `comment`    | dict        | optional `xdc` and/or `hdl` string keys - empty dict if absent |
+| Key          | Type        | Notes                                                                               |
+| ------------ | ----------- | ----------------------------------------------------------------------------------- |
+| `name`       | str         |                                                                                     |
+| `direction`  | str         | `in` / `out` / `inout`                                                              |
+| `buffer`     | str or None | None when `bypass: true`                                                            |
+| `iostandard` | str         |                                                                                     |
+| `width`      | int         | Always present - 1 for scalar pair, 1+ for bus                                      |
+| `pinset`     | dict        | `{'p': str or list[str], 'n': str or list[str]}`                                    |
+| `generate`   | bool        | Always True for this row shape                                                      |
+| `infer`      | bool        | Normalized to False if absent in YAML                                               |
+| `bypass`     | bool        | Normalized to False if absent in YAML                                               |
+| `comment`    | dict        | optional `xdc` and/or `hdl` string keys - empty dict if absent                      |
 | `instance`   | str or None | None when `bypass: true`; auto-generated as `<buffer_type>_<signal_name>` otherwise |
 
 ### generate: false
@@ -64,22 +64,23 @@ these rows entirely.
 
 ## Normalization
 
-`build_signal_table()` is responsible for applying all defaults. The `jsonschema`
-validator does not inject default values - it only validates. Fields absent from
-the YAML will not appear in the signal dict, so every default listed here must
-be applied explicitly in `build_signal_table()` using `sig.get(field, default)`.
+`add()` is responsible for applying all defaults. `build_signal_table()` calls
+`add()` for each signal in the document. The `jsonschema` validator does not
+inject default values - it only validates. Fields absent from the YAML will not
+appear in the signal dict, so every default listed here must be applied
+explicitly in `add()` using `sig.get(field, default)`.
 
 The following defaults apply for `generate: true` signals:
 
-| Field      | Default |
-| ---------- | ------- |
-| `generate` | `True`  |
-| `infer`    | `False` |
-| `bypass`   | `False` |
-| `width`    | `1`     |
-| `comment`  | `{}`    |
+| Field      | Default                                                 |
+| ---------- | ------------------------------------------------------- |
+| `generate` | `True`                                                  |
+| `infer`    | `False`                                                 |
+| `bypass`   | `False`                                                 |
+| `width`    | `1`                                                     |
+| `comment`  | `{}`                                                    |
 | `instance` | `<buffer_type>_<signal_name>` (None for `bypass: true`) |
-| `buffer`   | `None`  |
+| `buffer`   | `None`                                                  |
 
 For `generate: false` signals, only `width` is normalized (to 1 for scalar
 pins or pinset).
