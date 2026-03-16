@@ -305,8 +305,8 @@ VALID_PINS_ARRAY_WIDTH_MATCH = [
         {"name": "sys_clk", "pins": ["G22"], "width": 1},
     ),
     (
-        "generate_false_skipped",
-        {"name": "reserved", "pins": ["X0", "X1"], "generate": False},
+        "generate_false_array_with_width",
+        {"name": "reserved", "pins": ["X0", "X1"], "generate": False, "width": 2},
     ),
 ]
 
@@ -316,7 +316,7 @@ VALID_PINS_ARRAY_WIDTH_MATCH = [
     [pytest.param(s, id=n) for n, s in VALID_PINS_ARRAY_WIDTH_MATCH],
 )
 def test_valid_pins_array_width_match(sig: dict) -> None:
-    """Check that correct or skipped width declarations pass"""
+    """Check that correct width declarations pass"""
     _check_pins_array_width_match(sig)
 
 
@@ -328,6 +328,10 @@ INVALID_PINS_ARRAY_WIDTH_MATCH = [
     (
         "width_too_small",
         {"name": "led", "pins": ["A22", "B22"], "width": 1},
+    ),
+    (
+        "generate_false_width_mismatch",
+        {"name": "reserved", "pins": ["X0", "X1"], "generate": False, "width": 3},
     ),
 ]
 
@@ -356,8 +360,8 @@ VALID_PINSET_ARRAY_WIDTH_MATCH = [
         {"name": "ref_clk", "pinset": {"p": "H22", "n": "H23"}},
     ),
     (
-        "generate_false_skipped",
-        {"name": "reserved", "pinset": {"p": ["H22", "H24"], "n": ["H23", "H25"]}, "generate": False},
+        "generate_false_array_with_width",
+        {"name": "reserved", "pinset": {"p": ["H22", "H24"], "n": ["H23", "H25"]}, "generate": False, "width": 2},
     ),
 ]
 
@@ -367,7 +371,7 @@ VALID_PINSET_ARRAY_WIDTH_MATCH = [
     [pytest.param(s, id=n) for n, s in VALID_PINSET_ARRAY_WIDTH_MATCH],
 )
 def test_valid_pinset_array_width_match(sig: dict) -> None:
-    """Check that correct or skipped pinset width declarations pass"""
+    """Check that correct pinset width declarations pass"""
     _check_pinset_array_width_match(sig)
 
 
@@ -379,6 +383,10 @@ INVALID_PINSET_ARRAY_WIDTH_MATCH = [
     (
         "width_too_small",
         {"name": "lvds_data", "pinset": {"p": ["AA1", "AB1"], "n": ["AA2", "AB2"]}, "width": 1},
+    ),
+    (
+        "generate_false_width_mismatch",
+        {"name": "reserved", "pinset": {"p": ["H22", "H24"], "n": ["H23", "H25"]}, "generate": False, "width": 3},
     ),
 ]
 

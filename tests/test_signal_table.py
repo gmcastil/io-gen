@@ -138,6 +138,52 @@ GENERATE_TRUE_SHAPE_CASES = [
             "instance": "obufds_lvds_data",
         },
     ),
+    (
+        "scalar_inout_single_ended",
+        {
+            "name": "gpio",
+            "pins": "E22",
+            "direction": "inout",
+            "buffer": "iobuf",
+            "iostandard": "LVCMOS18",
+        },
+        {
+            "name": "gpio",
+            "direction": "inout",
+            "buffer": "iobuf",
+            "iostandard": "LVCMOS18",
+            "width": 1,
+            "pins": "E22",
+            "generate": True,
+            "infer": False,
+            "bypass": False,
+            "comment": {},
+            "instance": "iobuf_gpio",
+        },
+    ),
+    (
+        "bypass_single_ended",
+        {
+            "name": "spare",
+            "pins": "J24",
+            "direction": "out",
+            "iostandard": "LVCMOS18",
+            "bypass": True,
+        },
+        {
+            "name": "spare",
+            "direction": "out",
+            "buffer": None,
+            "iostandard": "LVCMOS18",
+            "width": 1,
+            "pins": "J24",
+            "generate": True,
+            "infer": False,
+            "bypass": True,
+            "comment": {},
+            "instance": None,
+        },
+    ),
 ]
 
 
@@ -160,7 +206,7 @@ def test_generate_true_row_shape(sig: dict, expected_row: dict) -> None:
 
 GENERATE_FALSE_SHAPE_CASES = [
     (
-        "single_ended",
+        "single_ended_scalar",
         {
             "name": "reserved_nc",
             "pins": "H24",
@@ -174,7 +220,22 @@ GENERATE_FALSE_SHAPE_CASES = [
         },
     ),
     (
-        "differential",
+        "single_ended_bus",
+        {
+            "name": "reserved_bus",
+            "pins": ["A1", "A2", "A3"],
+            "width": 3,
+            "generate": False,
+        },
+        {
+            "name": "reserved_bus",
+            "pins": ["A1", "A2", "A3"],
+            "width": 3,
+            "generate": False,
+        },
+    ),
+    (
+        "differential_scalar",
         {
             "name": "reserved_diff",
             "pinset": {"p": "H22", "n": "H23"},
@@ -184,6 +245,24 @@ GENERATE_FALSE_SHAPE_CASES = [
             "name": "reserved_diff",
             "pinset": {"p": "H22", "n": "H23"},
             "width": 1,
+            "generate": False,
+        },
+    ),
+    (
+        "differential_bus",
+        {
+            "name": "reserved_diff_bus",
+            "pinset": {
+                "p": ["AA1", "AB1"],
+                "n": ["AA2", "AB2"],
+            },
+            "width": 2,
+            "generate": False,
+        },
+        {
+            "name": "reserved_diff_bus",
+            "pinset": {"p": ["AA1", "AB1"], "n": ["AA2", "AB2"]},
+            "width": 2,
             "generate": False,
         },
     ),

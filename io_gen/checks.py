@@ -130,7 +130,7 @@ def _check_pins_array_width_match(sig: dict) -> None:
     the signal, the declared width, and the actual pin count.
     Skips signals that use scalar pins, pinset, or generate: false.
     """
-    if "pins" in sig and sig.get("generate", True):
+    if "pins" in sig:
         name = sig["name"]
         pins = sig["pins"]
         if isinstance(pins, str):
@@ -150,7 +150,7 @@ def _check_pinset_array_width_match(sig: dict) -> None:
     Skips signals that use scalar pinset, pins, or generate: false.
     """
 
-    if "pinset" in sig and sig.get("generate", True):
+    if "pinset" in sig:
         name = sig["name"]
         p_pins = sig["pinset"]["p"]
         n_pins = sig["pinset"]["n"]
@@ -239,4 +239,3 @@ def _check_buffer_inferable(sig: dict) -> None:
     buffer = sig["buffer"]
     if buffer not in BUFFER_INFERABLE and sig.get("infer", False):
         raise ValidationError(f"signal '{name}': buffer {buffer} not inferable")
-
