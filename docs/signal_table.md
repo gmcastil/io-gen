@@ -64,17 +64,22 @@ these rows entirely.
 
 ## Normalization
 
-Table construction fills in the following defaults for `generate: true` signals
-when the corresponding field is absent from the YAML:
+`build_signal_table()` is responsible for applying all defaults. The `jsonschema`
+validator does not inject default values - it only validates. Fields absent from
+the YAML will not appear in the signal dict, so every default listed here must
+be applied explicitly in `build_signal_table()` using `sig.get(field, default)`.
+
+The following defaults apply for `generate: true` signals:
 
 | Field      | Default |
 | ---------- | ------- |
-| `infer`    | False   |
-| `bypass`   | False   |
-| `width`    | 1       |
+| `generate` | `True`  |
+| `infer`    | `False` |
+| `bypass`   | `False` |
+| `width`    | `1`     |
 | `comment`  | `{}`    |
 | `instance` | `<buffer_type>_<signal_name>` (None for `bypass: true`) |
-| `buffer`   | None    |
+| `buffer`   | `None`  |
 
 For `generate: false` signals, only `width` is normalized (to 1 for scalar
 pins or pinset).

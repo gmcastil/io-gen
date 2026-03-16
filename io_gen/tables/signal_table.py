@@ -1,3 +1,4 @@
+from typing import cast
 from collections.abc import Iterator
 from copy import deepcopy
 
@@ -12,7 +13,7 @@ class SignalTable:
     def __len__(self) -> int:
         return len(self.table)
 
-    def add(self, sig[dict[str, object]]) -> None:
+    def add(self, sig: dict[str, object]) -> None:
         """Add a signal to the signal table, resolving fields as needed"""
 
         # Assert that the common fields exist first - name, pins or pinset, generate, and width
@@ -23,12 +24,16 @@ class SignalTable:
             assert isinstance(sig["pins"], str) or isinstance(sig["pins"], list)
         elif "pinset" in sig:
             assert isinstance(sig["pinset"], dict)
-            assert isinstance(sig["pinset"]["p"], str) or isinstance(sig["pinset"]["p"], list)
-            assert isinstance(sig["pinset"]["n"], str) or isinstance(sig["pinset"]["n"], list)
-        assert "generate" in sig
+            assert isinstance(sig["pinset"]["p"], str) or isinstance(
+                sig["pinset"]["p"], list
+            )
+            assert isinstance(sig["pinset"]["n"], str) or isinstance(
+                sig["pinset"]["n"], list
+            )
 
-        row = dict()
-
+        # Row entries are mixed value dicts - so there's going to be some casting to get the linter
+        # to shut up.
+        row: dict[str, object] = dict()
         # The philospohy here is that we are building up our row entry, not just
         # reassigning what came out of the YAML. Start with the common stuff
         row["name"] = sig["name"]
@@ -40,43 +45,55 @@ class SignalTable:
             else:
                 # Here, width actually is required, so we grab it directly
                 row["width"] = sig["width"]
-                # Shallow copying here as best practice
-                row["pins"] = list(sig["pins"])
+                # Linter can't tell that this is list[str] so we cast it (that's why have those assertions earlier)
+                row["pins"] = list(cast(list[str], sig["pins"]))
         else:
-            if isinstance(sig["pinset"]["p"], str):
+            # Linter can't identify this either, so we csat to a dict[str, obj] before we try to get the 'p' value
+            if isinstance(cast(dict[str, object], sig["pinset"])["p"], str):
                 row["width"] = 1
                 row["pinset"] = deepcopy(sig["pinset"])
             else:
                 row["width"] = sig["width"]
                 row["pinset"] = deepcopy(sig["pinset"])
 
-        row["generate"] = sig["generate"]
+        # The schema gives this as a default, but can't enforce it
+        row["generate"] = sig.get("generate", True)
+        # For rows that aren't going to be generated, we have all of the required keys and none of what isn't allowed,
+        # so we're done if we aren't generating this row
+        if not row["generate"]:
+            self.table.append(row)
+            return None
 
+        # These are required for everybody
+        row["iostandard"] = sig["iostandard"]
+        row["direction"] = sig["direction"]
 
-        
-        # The largest differnet in objects added to the signal table are whether or not they
-        # are intended to actually be generated, so we'll separate those out at first.
-        
+        # These have default values in the schema but that doesn't guarantee they exist so we normalize here
+        row["infer"] = sig.get("infer", False)
+        row["bypass"] = sig.get("bypass", False)
+        row["comment"] = sig.get("comment", {})
 
-
-
-            # Do a shallow copy here
-            row["pins"] = list(sig["pins"])
-            if isinstance(sig["pins"], str):
-                row["width"] = 1
-            else:
-                assert(isinstance(sig["pins"], list))
-                row["width"] = len(sig["pins"])
+        # Get the buffer name if we're not bypasing (save for later, to name the instance)
+        if row["bypass"]:
+            row["buffer"] = None
         else:
-            if 
+            row["buffer"] = sig["buffer"]
+
+        # Consruct the instance name that everything in the IO ring will use later, if we're not bypassing
+        if row["bypass"]:
+            row["instance"] = None
+        else:
+            row["instance"] = sig.get("instance", f"{row['buffer']}_{row['name']}")
+
+        self.table.append(row)
 
 
+def build_signal_table(doc: dict) -> SignalTable:
+    """Add signal information from valiated input data and build the SignalTable"""
 
-        if not sig["generate"]:
-            if pins
+    table = SignalTable()
+    signals = doc["signals"]
+    for sig in signals:
+        table.add(sig)
 
-            
-
-
-def build_signal_table(doc: dict) -> "SignalTable":
-    raise NotImplementedError
+    return table
