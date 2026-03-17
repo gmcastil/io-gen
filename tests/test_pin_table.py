@@ -289,3 +289,131 @@ def test_build_pin_table_returns_pin_table_instance() -> None:
     signal_table = build_signal_table(_INTEGRATION_DOC)
     pin_table = build_pin_table(signal_table)
     assert isinstance(pin_table, PinTable)
+
+
+# ---------------------------------------------------------------------------
+# PinTable.__getitem__
+# ---------------------------------------------------------------------------
+
+
+def test_getitem_returns_rows_for_scalar_signal() -> None:
+    """pt[name] returns the list of pin rows for a scalar signal."""
+    table = PinTable()
+    table.add({
+        "name": "sys_clk",
+        "pins": "G22",
+        "width": 1,
+        "direction": "in",
+        "buffer": "ibuf",
+        "iostandard": "LVCMOS18",
+        "generate": True,
+        "infer": False,
+        "bypass": False,
+        "comment": {},
+        "instance": "ibuf_sys_clk",
+    })
+    rows = table["sys_clk"]
+    assert isinstance(rows, list)
+    assert len(rows) == 1
+
+
+def test_getitem_returns_rows_for_bus_signal() -> None:
+    """pt[name] returns one row per pin for a bus signal."""
+    table = PinTable()
+    table.add({
+        "name": "led",
+        "pins": ["A22", "B22", "C22", "D22"],
+        "width": 4,
+        "direction": "out",
+        "buffer": "obuf",
+        "iostandard": "LVCMOS18",
+        "generate": True,
+        "infer": False,
+        "bypass": False,
+        "comment": {},
+        "instance": "obuf_led",
+    })
+    rows = table["led"]
+    assert isinstance(rows, list)
+    assert len(rows) == 4
+
+
+def test_getitem_missing_key_raises_key_error() -> None:
+    """pt[name] raises KeyError for a signal not in the table."""
+    table = PinTable()
+    with pytest.raises(KeyError):
+        _ = table["nonexistent"]
+
+
+def test_getitem_scalar_row_contents() -> None:
+    """pt[name] for a scalar returns a row with correct pin, index, and iostandard."""
+    table = PinTable()
+    table.add({
+        "name": "sys_clk",
+        "pins": "G22",
+        "width": 1,
+        "direction": "in",
+        "buffer": "ibuf",
+        "iostandard": "LVCMOS18",
+        "generate": True,
+        "infer": False,
+        "bypass": False,
+        "comment": {},
+        "instance": "ibuf_sys_clk",
+    })
+    rows = table["sys_clk"]
+    assert rows[0]["pin"] == "G22"
+    assert rows[0]["index"] == 0
+    assert rows[0]["iostandard"] == "LVCMOS18"
+    assert rows[0]["is_bus"] is False
+    assert rows[0]["instance"] == "ibuf_sys_clk_i0"
+
+
+def test_getitem_bus_row_contents() -> None:
+    """pt[name] for a bus returns rows with correct pin, index, and iostandard per element."""
+    table = PinTable()
+    table.add({
+        "name": "led",
+        "pins": ["A22", "B22", "C22", "D22"],
+        "width": 4,
+        "direction": "out",
+        "buffer": "obuf",
+        "iostandard": "LVCMOS18",
+        "generate": True,
+        "infer": False,
+        "bypass": False,
+        "comment": {},
+        "instance": "obuf_led",
+    })
+    rows = table["led"]
+    assert rows[0]["pin"] == "A22"
+    assert rows[0]["index"] == 0
+    assert rows[2]["pin"] == "C22"
+    assert rows[2]["index"] == 2
+    assert rows[3]["instance"] == "obuf_led_i3"
+    assert all(row["iostandard"] == "LVCMOS18" for row in rows)
+    assert all(row["is_bus"] is True for row in rows)
+
+
+def test_getitem_differential_scalar_row_contents() -> None:
+    """pt[name] for a differential scalar returns a row with correct pinset and index."""
+    table = PinTable()
+    table.add({
+        "name": "ref_clk",
+        "pinset": {"p": "H22", "n": "H23"},
+        "width": 1,
+        "direction": "in",
+        "buffer": "ibufds",
+        "iostandard": "LVDS",
+        "generate": True,
+        "infer": False,
+        "bypass": False,
+        "comment": {},
+        "instance": "ibufds_ref_clk",
+    })
+    rows = table["ref_clk"]
+    assert rows[0]["pinset"] == {"p": "H22", "n": "H23"}
+    assert rows[0]["index"] == 0
+    assert rows[0]["iostandard"] == "LVDS"
+    assert rows[0]["is_bus"] is False
+    assert rows[0]["instance"] == "ibufds_ref_clk_i0"

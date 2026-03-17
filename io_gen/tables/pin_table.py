@@ -7,10 +7,17 @@ class PinTable:
         self.table = dict()
 
     def add(self, sig: dict[str, Any]) -> None:
-        self.table[sig["name"]] = _flatten_signal(sig)
+        sig_name = sig["name"]
+        self.table[sig_name] = _flatten_signal(sig)
 
     def __len__(self) -> int:
         return len(self.table)
+
+    def __getitem__(self, sig_name: str) -> list:
+        if sig_name in self.table:
+            return self.table[sig_name]
+        else:
+            raise KeyError(f"'{sig_name}' not found in pin table")
 
 
 def _flatten_signal(sig: dict[str, Any]) -> list[dict]:
@@ -91,6 +98,17 @@ def _flatten_array(sig: dict[str, Any]) -> list[dict]:
         flat_sig.append(row)
 
     return flat_sig
+
+
+def pin_is_diff(pin: dict[str, Any]) -> bool:
+    """Returns True if an element of the pin table is a diff pair, else False"""
+
+    if "pinset" in pin:
+        assert "p" in pin["pinset"] and "n" in pin["pinset"]
+        return True
+    else:
+        assert "pin" in pin
+        return False
 
 
 def build_pin_table(signal_table: SignalTable) -> PinTable:

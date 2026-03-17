@@ -151,7 +151,22 @@ Key design decisions:
   - `io_gen/tables/meta_table.py` - `MetaTable`, `build_meta_table()`
   - `io_gen/tables/__init__.py` - re-exports all classes, factory functions, and `signal_is_scalar`
 - `signal_is_scalar(sig)` is a utility used by pin table flattening and available to generators
-- **Next step: generation stage**
+- `PinTable.__getitem__(name)` is the public retrieval interface for generators — use `pt[sig["name"]]`
+
+### Generation Stage Status
+
+- [x] XDC generator implemented and tested (`io_gen/generate/xdc.py`, `tests/test_xdc.py`)
+- [ ] HDL port declarations generator
+- [ ] HDL signal declarations generator
+- [ ] IO ring generator
+
+Key design decisions:
+
+- Generators live in `io_gen/generate/`
+- Each generator is a module-level function: `generate_xdc(st, pt)`, etc.
+- Generators iterate the signal table and skip `generate: false` rows
+- Port name formatting: `<name>_pad` (scalar SE), `{<name>_pad[i]}` (bus SE), `<name>_p`/`<name>_n` (scalar diff), `{<name>_p[i]}`/`{<name>_n[i]}` (bus diff)
+- **Next step: HDL port declarations generator**
 
 ## Definitions
 

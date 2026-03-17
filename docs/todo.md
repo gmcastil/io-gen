@@ -22,11 +22,18 @@
 - [x] Implement SignalTable and build_signal_table()
 - [x] Write tests for PinTable
 - [x] Implement PinTable and build_pin_table()
+- [x] Add PinTable.__getitem__ (missing retrieval interface - discovered when writing generators)
 
 ### Generation
 
-- [ ] Write tests for each generator
-- [ ] Implement each generator
+- [x] Write tests for XDC generator (`tests/test_xdc.py`)
+- [x] Implement XDC generator (`io_gen/generate/xdc.py`)
+- [ ] Write tests for HDL port declarations generator
+- [ ] Implement HDL port declarations generator
+- [ ] Write tests for HDL signal declarations generator
+- [ ] Implement HDL signal declarations generator
+- [ ] Write tests for IO ring generator
+- [ ] Implement IO ring generator
 
 ## CLI
 
