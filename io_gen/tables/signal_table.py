@@ -1,4 +1,4 @@
-from typing import cast
+from typing import Any
 from collections.abc import Iterator
 from copy import deepcopy
 
@@ -7,13 +7,13 @@ class SignalTable:
     def __init__(self) -> None:
         self.table = list()
 
-    def __iter__(self) -> Iterator[dict[str, object]]:
+    def __iter__(self) -> Iterator[dict[str, Any]]:
         return iter(self.table)
 
     def __len__(self) -> int:
         return len(self.table)
 
-    def add(self, sig: dict[str, object]) -> None:
+    def add(self, sig: dict[str, Any]) -> None:
         """Add a signal to the signal table, resolving fields as needed"""
 
         # Assert that the common fields exist first - name, pins or pinset, generate, and width
@@ -31,9 +31,8 @@ class SignalTable:
                 sig["pinset"]["n"], list
             )
 
-        # Row entries are mixed value dicts - so there's going to be some casting to get the linter
-        # to shut up.
-        row: dict[str, object] = dict()
+        # Row entries are mixed value dicts
+        row: dict[str, Any] = dict()
         # The philospohy here is that we are building up our row entry, not just
         # reassigning what came out of the YAML. Start with the common stuff
         row["name"] = sig["name"]
@@ -46,10 +45,10 @@ class SignalTable:
                 # Here, width actually is required, so we grab it directly
                 row["width"] = sig["width"]
                 # Linter can't tell that this is list[str] so we cast it (that's why have those assertions earlier)
-                row["pins"] = list(cast(list[str], sig["pins"]))
+                row["pins"] = deepcopy(sig["pins"])
         else:
             # Linter can't identify this either, so we csat to a dict[str, obj] before we try to get the 'p' value
-            if isinstance(cast(dict[str, object], sig["pinset"])["p"], str):
+            if isinstance(sig["pinset"]["p"], str):
                 row["width"] = 1
                 row["pinset"] = deepcopy(sig["pinset"])
             else:
@@ -62,7 +61,7 @@ class SignalTable:
         # so we're done if we aren't generating this row
         if not row["generate"]:
             self.table.append(row)
-            return None
+            return
 
         # These are required for everybody
         row["iostandard"] = sig["iostandard"]
