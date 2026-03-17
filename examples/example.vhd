@@ -27,19 +27,10 @@ end entity example;
 
 architecture rtl of example is
 
-    -- 125 MHz system clock input
     signal sys_clk      : std_logic;
-
-    -- User LED outputs
     signal led          : std_logic_vector(3 downto 0);
-
-    -- 200 MHz differential reference clock input
     signal ref_clk      : std_logic;
-
-    -- LVDS serial data outputs
     signal lvds_data    : std_logic_vector(2 downto 0);
-
-    -- General purpose IO
     signal gpio_i       : std_logic_vector(4 downto 0);
     signal gpio_o       : std_logic_vector(4 downto 0);
     signal gpio_t       : std_logic_vector(4 downto 0);
