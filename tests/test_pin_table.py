@@ -169,6 +169,51 @@ def test_add_row_count(sig: dict, expected_count: int) -> None:
 
 
 # ---------------------------------------------------------------------------
+# add() - instance field
+# ---------------------------------------------------------------------------
+
+
+def test_infer_true_produces_instance_none() -> None:
+    """A signal with infer:true produces instance=None in every pin row."""
+    table = PinTable()
+    table.add({
+        "name": "sys_clk",
+        "pins": "G22",
+        "width": 1,
+        "direction": "in",
+        "buffer": "ibuf",
+        "iostandard": "LVCMOS18",
+        "generate": True,
+        "infer": True,
+        "bypass": False,
+        "comment": {},
+        "instance": "ibuf_sys_clk",
+    })
+    rows = table.table["sys_clk"]
+    assert all(row["instance"] is None for row in rows)
+
+
+def test_bypass_true_produces_instance_none() -> None:
+    """A signal with bypass:true produces instance=None in every pin row."""
+    table = PinTable()
+    table.add({
+        "name": "spare",
+        "pins": "J24",
+        "width": 1,
+        "direction": "out",
+        "buffer": None,
+        "iostandard": "LVCMOS18",
+        "generate": True,
+        "infer": False,
+        "bypass": True,
+        "comment": {},
+        "instance": None,
+    })
+    rows = table.table["spare"]
+    assert all(row["instance"] is None for row in rows)
+
+
+# ---------------------------------------------------------------------------
 # build_pin_table() - integration
 # ---------------------------------------------------------------------------
 
