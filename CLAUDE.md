@@ -134,24 +134,24 @@ Do not add formatter invocation to the pipeline.
 ### Table Construction Stage Status
 
 - [x] `SignalTable` interface designed and documented (`docs/signal_table.md`)
-- [x] `io_gen/tables/` package skeleton exists with stubs
+- [x] `io_gen/tables/` package implemented and tested
 - [x] `MetaTable` implemented and tested (`tests/test_meta_table.py`)
-- [x] `tests/test_signal_table.py` written - not yet passing (implementation pending)
-- [ ] `SignalTable` and `build_signal_table()` not yet implemented
-- [ ] `PinTable` and `build_pin_table()` not yet implemented
+- [x] `SignalTable` and `build_signal_table()` implemented and tested (`tests/test_signal_table.py`)
+- [x] `PinTable` and `build_pin_table()` implemented and tested (`tests/test_pin_table.py`, `tests/test_flatten.py`)
 
 Key design decisions:
 
 - `SignalTable` is a thin wrapper class over `list[dict]`
+- `PinTable` is a thin wrapper class over `dict[str, list[dict]]`, keyed by signal name
 - Rows are plain dicts with variable shape (three shapes - see `docs/signal_table.md`)
 - Each factory function lives in the same module as its class
 - Tables are a package: `io_gen/tables/`
-  - `io_gen/tables/signal_table.py` - `SignalTable` class + `build_signal_table()`
-  - `io_gen/tables/pin_table.py` - `PinTable`, `PinRow`, `PinSetRow` + `build_pin_table()`
-  - `io_gen/tables/meta_table.py` - `MetaTable` + `build_meta_table()`
-  - `io_gen/tables/__init__.py` - re-exports all classes and factory functions
-- `SignalTable` interface: `__init__()`, `add(sig: dict)`, `__iter__`, `__len__`
-- **Next step: implement `SignalTable`, `add()`, and `build_signal_table()`**
+  - `io_gen/tables/signal_table.py` - `SignalTable`, `build_signal_table()`, `signal_is_scalar()`
+  - `io_gen/tables/pin_table.py` - `PinTable`, `build_pin_table()`
+  - `io_gen/tables/meta_table.py` - `MetaTable`, `build_meta_table()`
+  - `io_gen/tables/__init__.py` - re-exports all classes, factory functions, and `signal_is_scalar`
+- `signal_is_scalar(sig)` is a utility used by pin table flattening and available to generators
+- **Next step: generation stage**
 
 ## Definitions
 

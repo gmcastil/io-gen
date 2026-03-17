@@ -20,8 +20,8 @@
 - [x] Implement MetaTable and build_meta_table()
 - [x] Write tests for SignalTable
 - [x] Implement SignalTable and build_signal_table()
-- [ ] Write tests for PinTable
-- [ ] Implement PinTable and build_pin_table()
+- [x] Write tests for PinTable
+- [x] Implement PinTable and build_pin_table()
 
 ### Generation
 
