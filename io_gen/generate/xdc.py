@@ -3,18 +3,7 @@ from io_gen.tables import SignalTable
 
 
 def generate_xdc(signal_table: SignalTable, pin_table: PinTable) -> str:
-    """Generate XDC constraints from the signal and pin tables
-
-    Constraints should look like this:
-
-        set_property PACKAGE_PIN B22 [get_ports {led_pad[1]}]
-        set_property IOSTANDARD LVCMOS18 [get_ports {led_pad[1]}]
-
-        # 200 MHz reference clock
-        set_property PACKAGE_PIN H22 [get_ports ref_clk_p]
-        set_property IOSTANDARD LVDS [get_ports ref_clk_p]
-
-    """
+    """Generate XDC constraints from the signal and pin tables"""
     result = []
     for sig in signal_table:
         # Make sure to filter out signals that we aren't generating (and won't be in the pin table)

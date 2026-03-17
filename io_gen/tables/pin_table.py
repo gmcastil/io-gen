@@ -100,17 +100,6 @@ def _flatten_array(sig: dict[str, Any]) -> list[dict]:
     return flat_sig
 
 
-def pin_is_diff(pin: dict[str, Any]) -> bool:
-    """Returns True if an element of the pin table is a diff pair, else False"""
-
-    if "pinset" in pin:
-        assert "p" in pin["pinset"] and "n" in pin["pinset"]
-        return True
-    else:
-        assert "pin" in pin
-        return False
-
-
 def build_pin_table(signal_table: SignalTable) -> PinTable:
     pin_table = PinTable()
     for sig in signal_table:
