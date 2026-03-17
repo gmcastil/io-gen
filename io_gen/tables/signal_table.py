@@ -87,6 +87,24 @@ class SignalTable:
         self.table.append(row)
 
 
+def signal_is_scalar(sig: dict[str, Any]) -> bool:
+    """Returns True if signal is a scalar, otherwise False"""
+
+    # Depending on who calls this, this might not have been validated yet
+    if "pinset" in sig:
+        assert type(sig["pinset"]["p"]) == type(sig["pinset"]["n"])
+
+    # Are we dealing with a scalar or an array?
+    if "pins" in sig and isinstance(sig["pins"], str):
+        result = True
+    elif "pinset" in sig and isinstance(sig["pinset"]["p"], str):
+        result = True
+    else:
+        result = False
+
+    return result
+
+
 def build_signal_table(doc: dict) -> SignalTable:
     """Add signal information from valiated input data and build the SignalTable"""
 

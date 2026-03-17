@@ -1,4 +1,4 @@
-from .signal_table import SignalTable
+from .signal_table import SignalTable, signal_is_scalar
 from typing import Any
 
 
@@ -14,112 +14,81 @@ class PinTable:
 
 
 def _flatten_signal(sig: dict[str, Any]) -> list[dict]:
-    """Flattens a scalar or bus signal into a list of pin or pinset details"""
+    """Flattens a signal table row into a list of pin or pinset rows."""
 
     # Before doing anything, make sure we're being passed a signal that belongs in the pin table
     assert sig["generate"]
-    if "pins" in sig:
-        return _flatten_pins(sig)
+    # Operate on scalars and arrays (instead of pins vs pinsets)
+    if signal_is_scalar(sig):
+        return _flatten_scalar(sig)
     else:
-        return _flatten_pinset(sig)
+        return _flatten_array(sig)
 
 
-def _flatten_pins(sig: dict[str, Any]) -> list[dict]:
-    """Flattens a single-ended signal into a list of pin details"""
-    assert "pins" in sig
+def _flatten_scalar(sig: dict[str, Any]) -> list[dict]:
+    """Flattens a scalar single-ended or differential signal"""
+
+    row: dict[str, Any] = {}
+    row["iostandard"] = sig["iostandard"]
+    row["direction"] = sig["direction"]
+    row["buffer"] = sig["buffer"]
+    row["infer"] = sig["infer"]
+
+    # When we're not inferring or bypassing the buffer , we use the provided name
+    # and the index to set the name of the component or module to be instantiated
+    if not sig["infer"] and not sig["bypass"]:
+        row["instance"] = f"{sig['instance']}_i0"
+    # Otherwise its just None
+    else:
+        row["instance"] = None
+    # Intrinsic to the signal
+    row["is_bus"] = False
+    row["index"] = 0
+    # The only thing different between pins and pinsets
+    if "pins" in sig:
+        row["pin"] = sig["pins"]
+    else:
+        row["pinset"] = {"p": sig["pinset"]["p"], "n": sig["pinset"]["n"]}
+    # Scalars need to be list-ified because the PinTable associates signal names with lists of pins
+    return [row]
+
+
+def _flatten_array(sig: dict[str, Any]) -> list[dict]:
+    """Flattens single-ended or differential array signal"""
+
+    if "pins" in sig:
+        items = sig["pins"]
+    else:
+        p_pins = sig["pinset"]["p"]
+        n_pins = sig["pinset"]["n"]
+        assert len(p_pins) == len(n_pins)
+        items = zip(p_pins, n_pins)
 
     flat_sig = list()
-    if isinstance(sig["pins"], str):
-        row = {}
+    for index, item in enumerate(items):
+        row: dict[str, Any] = {}
         row["iostandard"] = sig["iostandard"]
         row["direction"] = sig["direction"]
         row["buffer"] = sig["buffer"]
         row["infer"] = sig["infer"]
+
         # When we're not inferring or bypassing the buffer , we use the provided name
         # and the index to set the name of the component or module to be instantiated
         if not sig["infer"] and not sig["bypass"]:
-            row["instance"] = f"{sig['instance']}_i0"
+            row["instance"] = f"{sig['instance']}_i{index}"
         # Otherwise its just None
         else:
             row["instance"] = None
-        # These are the nature of the signal
-        row["is_bus"] = False
-        row["index"] = 0
-        # Now we deal with pins (the singleton)
-        row["pin"] = sig["pins"]
-        flat_sig.append(row)
+        # Intrinsic to the signal
+        row["is_bus"] = True
+        row["index"] = index
 
-    # Array single-ended signal
-    else:
-        # Sanity checking - shouldn't have gotten this far otherwise
-        assert isinstance(sig["pins"], list)
-        for index, pin in enumerate(sig["pins"]):
-            row = {}
-            row["iostandard"] = sig["iostandard"]
-            row["direction"] = sig["direction"]
-            row["buffer"] = sig["buffer"]
-            row["infer"] = sig["infer"]
-            # When we're not inferring or bypassing the buffer , we use the provided name
-            # and the index to set the name of the component or module to be instantiated
-            if not sig["infer"] and not sig["bypass"]:
-                row["instance"] = f"{sig['instance']}_i{index}"
-            else:
-                row["instance"] = None
-            row["is_bus"] = True
-            row["index"] = index
-            # More sanity check to make sure we're good
-            assert isinstance(pin, str)
-            row["pin"] = pin
-            flat_sig.append(row)
-
-    return flat_sig
-
-
-def _flatten_pinset(sig: dict[str, Any]) -> list[dict]:
-    """Flattens a differential signal into a list of pinset details"""
-    assert "pinset" in sig
-
-    flat_sig = list()
-    if isinstance(sig["pinset"]["p"], str):
-        row = {}
-        row["iostandard"] = sig["iostandard"]
-        row["direction"] = sig["direction"]
-        row["buffer"] = sig["buffer"]
-        row["infer"] = sig["infer"]
-        # When we're not inferring the buffer, we use the provided name and the index to
-        # set the name of the component or module to be instantiated
-        if not sig["infer"] and not sig["bypass"]:
-            row["instance"] = f"{sig['instance']}_i0"
-        # Otherwise its just None
+        if "pins" in sig:
+            row["pin"] = item
         else:
-            row["instance"] = None
-        # These are the nature of the signal
-        row["is_bus"] = False
-        row["index"] = 0
-        row["pinset"] = {"p": sig["pinset"]["p"], "n": sig["pinset"]["n"]}
-        flat_sig.append(row)
-    else:
-        assert isinstance(sig["pinset"]["p"], list)
-        p_pins = sig["pinset"]["p"]
-        n_pins = sig["pinset"]["n"]
-        # Sanity check - already checked in validation
-        assert len(p_pins) == len(n_pins)
-        for index, (p_pin, n_pin) in enumerate(zip(p_pins, n_pins)):
-            row = {}
-            row["iostandard"] = sig["iostandard"]
-            row["direction"] = sig["direction"]
-            row["buffer"] = sig["buffer"]
-            row["infer"] = sig["infer"]
-            # When we're not inferring the buffer, we use the provided name and the index to
-            # set the name of the component or module to be instantiated
-            if not sig["infer"] and not sig["bypass"]:
-                row["instance"] = f"{sig['instance']}_i{index}"
-            else:
-                row["instance"] = None
-            row["is_bus"] = True
-            row["index"] = index
+            p_pin, n_pin = item
             row["pinset"] = {"p": p_pin, "n": n_pin}
-            flat_sig.append(row)
+        flat_sig.append(row)
 
     return flat_sig
 
