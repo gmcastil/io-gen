@@ -28,12 +28,14 @@
 
 - [x] Write tests for XDC generator (`tests/test_xdc.py`)
 - [x] Implement XDC generator (`io_gen/generate/xdc.py`)
-- [ ] Write tests for HDL port declarations generator
-- [ ] Implement HDL port declarations generator
-- [ ] Write tests for HDL signal declarations generator
-- [ ] Implement HDL signal declarations generator
-- [ ] Write tests for IO ring generator
-- [ ] Implement IO ring generator
+- [ ] Write tests for Verilog top-level generator (`tests/test_verilog_top.py`)
+- [ ] Implement Verilog top-level generator (`io_gen/generate/verilog_top.py`)
+- [ ] Write tests for Verilog IO ring generator (`tests/test_verilog_ioring.py`)
+- [ ] Implement Verilog IO ring generator (`io_gen/generate/verilog_ioring.py`)
+- [ ] Write tests for VHDL top-level generator (`tests/test_vhdl_top.py`)
+- [ ] Implement VHDL top-level generator (`io_gen/generate/vhdl_top.py`)
+- [ ] Write tests for VHDL IO ring generator (`tests/test_vhdl_ioring.py`)
+- [ ] Implement VHDL IO ring generator (`io_gen/generate/vhdl_ioring.py`)
 
 ## CLI
 

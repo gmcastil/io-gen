@@ -18,21 +18,17 @@ entity example_io is
         -- 125 MHz system clock input
         sys_clk_pad  : in    std_logic;
         sys_clk      : out   std_logic;
-
         -- User LED outputs
         led_pad      : out   std_logic_vector(3 downto 0);
         led          : in    std_logic_vector(3 downto 0);
-
         -- 200 MHz differential reference clock input
         ref_clk_p    : in    std_logic;
         ref_clk_n    : in    std_logic;
         ref_clk      : out   std_logic;
-
         -- LVDS serial data outputs
         lvds_data_p  : out   std_logic_vector(2 downto 0);
         lvds_data_n  : out   std_logic_vector(2 downto 0);
         lvds_data    : in    std_logic_vector(2 downto 0);
-
         -- General purpose IO
         gpio_pad     : inout std_logic_vector(4 downto 0);
         gpio_i       : out   std_logic_vector(4 downto 0);

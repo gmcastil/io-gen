@@ -1,21 +1,16 @@
 module example (
     // 125 MHz system clock input
     input  wire        sys_clk_pad,
-
     // User LED outputs
     output wire [3:0]  led_pad,
-
     // 200 MHz differential reference clock input
     input  wire        ref_clk_p,
     input  wire        ref_clk_n,
-
     // LVDS serial data outputs
     output wire [2:0]  lvds_data_p,
     output wire [2:0]  lvds_data_n,
-
     // General purpose IO
     inout  wire [4:0]  gpio_pad,
-
     // Spare output, driven directly
     output wire        spare_pad
 );
