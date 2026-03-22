@@ -45,6 +45,11 @@ VALID_STRUCTURAL_CASES = [
         title: Test
         part: xc7k325tffg900-2
         signals:
+          - name: sys_clk
+            pins: G22
+            direction: in
+            buffer: ibuf
+            iostandard: LVCMOS18
           - name: reserved_nc
             pins: H24
             generate: false
@@ -219,6 +224,11 @@ VALID_INTEGRATION_CASES = [
         title: Test
         part: xc7k325tffg900-2
         signals:
+          - name: sys_clk
+            pins: G22
+            direction: in
+            buffer: ibuf
+            iostandard: LVCMOS18
           - name: reserved_nc
             pins: H24
             generate: false
@@ -228,10 +238,17 @@ VALID_INTEGRATION_CASES = [
             "part": "xc7k325tffg900-2",
             "signals": [
                 {
+                    "name": "sys_clk",
+                    "pins": "G22",
+                    "direction": "in",
+                    "buffer": "ibuf",
+                    "iostandard": "LVCMOS18",
+                },
+                {
                     "name": "reserved_nc",
                     "pins": "H24",
                     "generate": False,
-                }
+                },
             ],
         },
     ),

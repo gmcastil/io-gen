@@ -2,7 +2,7 @@ import pytest
 
 from io_gen.tables import SignalTable
 
-from io_gen.generate.verilog_top import _generate_verilog_ports
+from io_gen.generate.verilog_top import _generate_verilog_ports, _generate_verilog_wires
 from io_gen.tables.signal_table import build_signal_table
 
 
@@ -283,3 +283,141 @@ def test_integration_output() -> None:
     """Full signal set produces the expected port list string."""
     st = _make_signal_table(_INTEGRATION_SIGNALS)
     assert _generate_verilog_ports(st) == _EXPECTED_PORTS
+
+
+# ---- _generate_verilog_wires -----------------------------------------------
+
+
+WIRE_DECL_CASES = [
+    (
+        "scalar_se_input",
+        {
+            "name": "sys_clk",
+            "pins": "G22",
+            "direction": "in",
+            "buffer": "ibuf",
+            "iostandard": "LVCMOS18",
+        },
+        ["    wire sys_clk;"],
+    ),
+    (
+        "bus_se_output",
+        {
+            "name": "led",
+            "pins": ["A22", "B22", "C22", "D22"],
+            "width": 4,
+            "direction": "out",
+            "buffer": "obuf",
+            "iostandard": "LVCMOS18",
+        },
+        ["    wire [3:0] led;"],
+    ),
+    (
+        "scalar_diff_input",
+        {
+            "name": "ref_clk",
+            "pinset": {"p": "H22", "n": "H23"},
+            "direction": "in",
+            "buffer": "ibufds",
+            "iostandard": "LVDS",
+        },
+        ["    wire ref_clk;"],
+    ),
+    (
+        "bus_diff_output",
+        {
+            "name": "lvds_data",
+            "pinset": {"p": ["AA1", "AB1", "AC1"], "n": ["AA2", "AB2", "AC2"]},
+            "width": 3,
+            "direction": "out",
+            "buffer": "obufds",
+            "iostandard": "LVDS",
+        },
+        ["    wire [2:0] lvds_data;"],
+    ),
+    (
+        "scalar_iobuf",
+        {
+            "name": "gpio",
+            "pins": "A22",
+            "direction": "inout",
+            "buffer": "iobuf",
+            "iostandard": "LVCMOS18",
+        },
+        ["    wire gpio_i;", "    wire gpio_o;", "    wire gpio_t;"],
+    ),
+    (
+        "bus_iobuf",
+        {
+            "name": "gpio",
+            "pins": ["A22", "B22", "C22"],
+            "width": 3,
+            "direction": "inout",
+            "buffer": "iobuf",
+            "iostandard": "LVCMOS18",
+        },
+        ["    wire [2:0] gpio_i;", "    wire [2:0] gpio_o;", "    wire [2:0] gpio_t;"],
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "sig, expected_lines",
+    [pytest.param(s, e, id=n) for n, s, e in WIRE_DECL_CASES],
+)
+def test_wire_decl_in_output(sig: dict, expected_lines: list[str]) -> None:
+    """The correct wire declaration(s) appear in the output for each signal type."""
+    st = _make_signal_table([sig])
+    output = _generate_verilog_wires(st)
+    for line in expected_lines:
+        assert line in output
+
+
+def test_bypass_excluded_from_wires() -> None:
+    """bypass:true signals produce no wire declaration."""
+    st = _make_signal_table(
+        [
+            {
+                "name": "spare",
+                "pins": "J24",
+                "direction": "out",
+                "iostandard": "LVCMOS18",
+                "bypass": True,
+            },
+        ]
+    )
+    assert "spare" not in _generate_verilog_wires(st)
+
+
+def test_generate_false_excluded_from_wires() -> None:
+    """generate:false signals produce no wire declaration."""
+    st = _make_signal_table(
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            },
+            {"name": "reserved_nc", "pins": "H24", "generate": False},
+        ]
+    )
+    assert "reserved_nc" not in _generate_verilog_wires(st)
+
+
+_EXPECTED_WIRES = (
+    "    wire sys_clk;\n"
+    "    wire [3:0] led;\n"
+    "    wire ref_clk;\n"
+    "    wire [2:0] lvds_data;\n"
+    "    wire [4:0] gpio_i;\n"
+    "    wire [4:0] gpio_o;\n"
+    "    wire [4:0] gpio_t;"
+)
+
+
+def test_wires_integration_output() -> None:
+    """Full signal set produces the expected wire block string."""
+    st = _make_signal_table(_INTEGRATION_SIGNALS)
+    assert _generate_verilog_wires(st) == _EXPECTED_WIRES

@@ -12,6 +12,7 @@ from io_gen.checks import (
     _check_buffer_strategy_match,
     _check_buffer_infer_bypass_mismatch,
     _check_buffer_inferable,
+    _check_minimum_ports_generated,
 )
 
 
@@ -566,3 +567,50 @@ def test_invalid_buffer_inferable(sig: dict) -> None:
     """Confirm that non-inferrable buffers with infer: true raise ValidationError"""
     with pytest.raises(ValidationError):
         _check_buffer_inferable(sig)
+
+
+# ---------------------------------------------------------------------------
+# _check_minimum_ports_generated
+# ---------------------------------------------------------------------------
+
+VALID_MINIMUM_PORTS_GENERATED = [
+    (
+        "one_generated",
+        [{"name": "sys_clk", "pins": "G22", "direction": "in",
+          "buffer": "ibuf", "iostandard": "LVCMOS18"}],
+    ),
+    (
+        "mixed_generated_and_not",
+        [{"name": "sys_clk", "pins": "G22", "direction": "in",
+          "buffer": "ibuf", "iostandard": "LVCMOS18"},
+         {"name": "reserved_nc", "pins": "H24", "generate": False}],
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "signals",
+    [pytest.param(s, id=n) for n, s in VALID_MINIMUM_PORTS_GENERATED],
+)
+def test_valid_minimum_ports_generated(signals: list[dict]) -> None:
+    """Check that at least one generated signal passes"""
+    _check_minimum_ports_generated(signals)
+
+
+INVALID_MINIMUM_PORTS_GENERATED = [
+    (
+        "all_generate_false",
+        [{"name": "reserved_nc", "pins": "H24", "generate": False},
+         {"name": "reserved_nc2", "pins": "H25", "generate": False}],
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "signals",
+    [pytest.param(s, id=n) for n, s in INVALID_MINIMUM_PORTS_GENERATED],
+)
+def test_invalid_minimum_ports_generated(signals: list[dict]) -> None:
+    """Confirm that all signals having generate: false raises ValidationError"""
+    with pytest.raises(ValidationError):
+        _check_minimum_ports_generated(signals)

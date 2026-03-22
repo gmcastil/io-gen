@@ -239,3 +239,16 @@ def _check_buffer_inferable(sig: dict) -> None:
     buffer = sig["buffer"]
     if buffer not in BUFFER_INFERABLE and sig.get("infer", False):
         raise ValidationError(f"signal '{name}': buffer {buffer} not inferable")
+
+
+def _check_minimum_ports_generated(signals: list[dict]) -> None:
+    """Check that at least one signal has generate: true.
+
+    Raises ValidationError if all signals have generate: false, which would
+    produce no usable output.
+    """
+    for sig in signals:
+        status = sig.get("generate", True)
+        if status:
+            return
+    raise ValidationError("no signals with generate: true - nothing to generate")

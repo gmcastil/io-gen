@@ -20,6 +20,7 @@ from io_gen.checks import (
     _check_buffer_strategy_match,
     _check_buffer_infer_bypass_mismatch,
     _check_buffer_inferable,
+    _check_minimum_ports_generated,
 )
 
 # Top level JSON schema file for validating input YAML stored in schema/
@@ -101,6 +102,8 @@ def _validate_semantic(doc: dict) -> None:
     _check_unique_signal_names(signals)
     # Check for unique pins across all signals
     _check_unique_pins(signals)
+    # Check that there are actual signals to generate code for
+    _check_minimum_ports_generated(signals)
 
     # Now validate each signal individually
     for sig in signals:

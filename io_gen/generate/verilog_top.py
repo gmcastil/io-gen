@@ -1,15 +1,28 @@
 from io_gen.tables import SignalTable, signal_is_scalar, signal_is_differential
-from io_gen.tables import PinTable
 
-from .generate.formatting import _apply_indent_and_suffix
+from .formatting import _format_port_block
 
 
 def generate_verilog_top(signal_table: SignalTable) -> str:
+    """Generate the complete Verilog top-level module as a string.
+
+    Assembles the module declaration, port list, internal wire declarations,
+    and IO ring instantiation by calling private helpers in order.
+    Signals with generate: false are excluded from all output.
+    """
     pass
 
 
 def _generate_verilog_ports(signal_table: SignalTable) -> str:
+    """Generate the indented port declaration list for a Verilog module.
 
+    Returns a string of indented, comma-terminated port declarations suitable
+    for inclusion inside a module header. Pad-facing naming convention is used:
+    single-ended signals get _pad, differential signals get _p and _n legs.
+    An optional comment.hdl string is emitted as a // line before each signal's
+    port(s). The last port declaration has no trailing comma.
+    Signals with generate: false are excluded.
+    """
     ports = []
     for sig in signal_table:
 
@@ -24,7 +37,7 @@ def _generate_verilog_ports(signal_table: SignalTable) -> str:
         # HDL comments if present
         comment_str = sig["comment"].get("hdl", None)
         if comment_str:
-            ports.append(f"# {comment_str}")
+            ports.append(f"// {comment_str}")
 
         # Port direction
         if sig["direction"] == "in":
@@ -51,11 +64,33 @@ def _generate_verilog_ports(signal_table: SignalTable) -> str:
             ports.append(f"{direction_str}{width_str}{port_name}")
 
     # Now indent and append commas to every line
+    formatted_ports = _format_port_block(ports, 1, "verilog")
+    return "\n".join(formatted_ports)
 
 
 def _generate_verilog_wires(signal_table: SignalTable) -> str:
+    """Generate the internal wire declarations for a Verilog top-level module.
+
+    Returns a string of indented wire declarations for fabric-facing signals.
+    Signals with bypass: true are excluded - they have no internal counterpart.
+    Tristate signals (iobuf) expand to three wires: <name>_i, <name>_o, <name>_t.
+    All other signals use the bare signal name regardless of buffer type.
+    Signals with generate: false are excluded.
+    """
+    ports = []
+    for sig in signal_table:
+
+        # Skip signals that aren't to be generated
+        if not sig["generate"]:
+            continue
     pass
 
 
 def _generate_verilog_ioring_inst(signal_table: SignalTable) -> str:
+    """Generate the IO ring module instantiation for a Verilog top-level module.
+
+    Returns a string containing the IO ring instance with port connections
+    mapping pad-facing top-level ports and internal wires to the IO ring ports.
+    Signals with generate: false are excluded.
+    """
     pass
