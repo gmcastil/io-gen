@@ -298,7 +298,7 @@ WIRE_DECL_CASES = [
             "buffer": "ibuf",
             "iostandard": "LVCMOS18",
         },
-        ["    wire sys_clk;"],
+        ["    wire            sys_clk;"],
     ),
     (
         "bus_se_output",
@@ -310,7 +310,7 @@ WIRE_DECL_CASES = [
             "buffer": "obuf",
             "iostandard": "LVCMOS18",
         },
-        ["    wire [3:0] led;"],
+        ["    wire    [3:0]   led;"],
     ),
     (
         "scalar_diff_input",
@@ -321,7 +321,7 @@ WIRE_DECL_CASES = [
             "buffer": "ibufds",
             "iostandard": "LVDS",
         },
-        ["    wire ref_clk;"],
+        ["    wire            ref_clk;"],
     ),
     (
         "bus_diff_output",
@@ -333,7 +333,7 @@ WIRE_DECL_CASES = [
             "buffer": "obufds",
             "iostandard": "LVDS",
         },
-        ["    wire [2:0] lvds_data;"],
+        ["    wire    [2:0]   lvds_data;"],
     ),
     (
         "scalar_iobuf",
@@ -344,7 +344,7 @@ WIRE_DECL_CASES = [
             "buffer": "iobuf",
             "iostandard": "LVCMOS18",
         },
-        ["    wire gpio_i;", "    wire gpio_o;", "    wire gpio_t;"],
+        ["    wire            gpio_i;", "    wire            gpio_o;", "    wire            gpio_t;"],
     ),
     (
         "bus_iobuf",
@@ -356,7 +356,31 @@ WIRE_DECL_CASES = [
             "buffer": "iobuf",
             "iostandard": "LVCMOS18",
         },
-        ["    wire [2:0] gpio_i;", "    wire [2:0] gpio_o;", "    wire [2:0] gpio_t;"],
+        ["    wire    [2:0]   gpio_i;", "    wire    [2:0]   gpio_o;", "    wire    [2:0]   gpio_t;"],
+    ),
+    (
+        "bus_length_1_se",
+        {
+            "name": "led",
+            "pins": ["A22"],
+            "width": 1,
+            "direction": "out",
+            "buffer": "obuf",
+            "iostandard": "LVCMOS18",
+        },
+        ["    wire    [0:0]   led;"],
+    ),
+    (
+        "bus_length_1_iobuf",
+        {
+            "name": "gpio",
+            "pins": ["A22"],
+            "width": 1,
+            "direction": "inout",
+            "buffer": "iobuf",
+            "iostandard": "LVCMOS18",
+        },
+        ["    wire    [0:0]   gpio_i;", "    wire    [0:0]   gpio_o;", "    wire    [0:0]   gpio_t;"],
     ),
 ]
 
@@ -407,13 +431,13 @@ def test_generate_false_excluded_from_wires() -> None:
 
 
 _EXPECTED_WIRES = (
-    "    wire sys_clk;\n"
-    "    wire [3:0] led;\n"
-    "    wire ref_clk;\n"
-    "    wire [2:0] lvds_data;\n"
-    "    wire [4:0] gpio_i;\n"
-    "    wire [4:0] gpio_o;\n"
-    "    wire [4:0] gpio_t;"
+    "    wire            sys_clk;\n"
+    "    wire    [3:0]   led;\n"
+    "    wire            ref_clk;\n"
+    "    wire    [2:0]   lvds_data;\n"
+    "    wire    [4:0]   gpio_i;\n"
+    "    wire    [4:0]   gpio_o;\n"
+    "    wire    [4:0]   gpio_t;"
 )
 
 

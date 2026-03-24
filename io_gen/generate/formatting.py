@@ -1,11 +1,8 @@
-from tables.signal_table import signal_is_scalar
-
-
 def _format_port_block(lines: list[str], level: int, lang: str) -> list[str]:
     """Indents a list of port strings and adds the appropriate suffix"""
 
-    # Make sure the list is non-empty
-    assert len(lines) > 0
+    if not lines:
+        return []
     # A list of port definitions in this context should be a comment line (maybe) followed by a
     # port definition. That means that we should never have a comment as the last line in the input list
     assert not lines[-1].startswith("//") and not lines[-1].startswith("--")
@@ -38,10 +35,10 @@ def _format_port_block(lines: list[str], level: int, lang: str) -> list[str]:
 
 
 def _format_signal_block(lines: list[str], level: int) -> list[str]:
-    """Indents a list of signal strings and adds the appropriate suffix"""
+    """Indents a list of signal or wire strings and adds the appropriate suffix"""
 
-    # Make sure the list is non-empty
-    assert len(lines) > 0
+    if not lines:
+        return []
     # A list of signal definitions in this context should never be a comment
     for line in lines:
         assert not line.startswith("//")

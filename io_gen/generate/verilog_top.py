@@ -1,9 +1,11 @@
 from io_gen.tables import SignalTable, signal_is_scalar, signal_is_differential
 
-from .formatting import _format_port_block
+from .formatting import _format_port_block, _format_signal_block
 
-# Set of
+# Set of tristate buffers that will require '_i', '_o', and '_t' in the signal
+# block and IO ring instances
 TRISTATE_BUFFERS = {"iobuf"}
+
 
 def generate_verilog_top(signal_table: SignalTable) -> str:
     """Generate the complete Verilog top-level module as a string.
@@ -27,7 +29,6 @@ def _generate_verilog_ports(signal_table: SignalTable) -> str:
     """
     ports = []
     for sig in signal_table:
-
         # Skip signals that aren't to be generated
         if not sig["generate"]:
             continue
@@ -65,9 +66,8 @@ def _generate_verilog_ports(signal_table: SignalTable) -> str:
             port_name = f"{sig['name']}_pad"
             ports.append(f"{direction_str}{width_str}{port_name}")
 
-    # Now indent and append commas to every line
-    formatted_ports = _format_port_block(ports, 1, "verilog")
-    return "\n".join(formatted_ports)
+    # Now indent and append commas to (almost) every line
+    return "\n".join(_format_port_block(ports, 1, "verilog"))
 
 
 def _generate_verilog_wires(signal_table: SignalTable) -> str:
@@ -81,19 +81,28 @@ def _generate_verilog_wires(signal_table: SignalTable) -> str:
     """
     wires = []
     for sig in signal_table:
-
         # Skip signals that aren't to be generated or don't appear in the IO ring
         if not sig["generate"] or sig["bypass"]:
             continue
 
-        name = sig['name']
-        width = sig['width']
-        wire = "wire"
+        name = sig["name"]
+        width = sig["width"]
 
-        if signal_is_scalar(sig) and sig['buffer'] not in TRISTATE_BUFFERS:
-            line = f"{wire:8}{'':8}{name}"
-        if 
+        # Can get this now and then we'll pad to 8 columns later
+        dim = f"[{width - 1}:0]" if not signal_is_scalar(sig) else ""
 
+        # Formatting here is simple - 4 space indent, 8 columns for port direction,
+        # 8 chacters for 'wire', 8 characters for the port dimensions if it a bus
+        # (or just spaces for scalars), then the port name
+        if sig["buffer"] not in TRISTATE_BUFFERS:
+            wires.append(f"{'wire':<8}{dim:<8}{name}")
+        else:
+            wires.append(f"{'wire':<8}{dim:<8}{name}_i")
+            wires.append(f"{'wire':<8}{dim:<8}{name}_o")
+            wires.append(f"{'wire':<8}{dim:<8}{name}_t")
+
+    # Now indent and append semicolons to every line
+    return "\n".join(_format_signal_block(wires, 1))
 
 
 def _generate_verilog_ioring_inst(signal_table: SignalTable) -> str:
