@@ -1,3 +1,6 @@
+from tables.signal_table import signal_is_scalar
+
+
 def _format_port_block(lines: list[str], level: int, lang: str) -> list[str]:
     """Indents a list of port strings and adds the appropriate suffix"""
 
@@ -32,3 +35,20 @@ def _format_port_block(lines: list[str], level: int, lang: str) -> list[str]:
                 result.append(f"{indent}{line}")
 
     return result
+
+
+def _format_signal_block(lines: list[str], level: int) -> list[str]:
+    """Indents a list of signal strings and adds the appropriate suffix"""
+
+    # Make sure the list is non-empty
+    assert len(lines) > 0
+    # A list of signal definitions in this context should never be a comment
+    for line in lines:
+        assert not line.startswith("//")
+    for line in lines:
+        assert not line.startswith("--")
+
+    # Determine indent level
+    indent = " " * (level * 4)
+
+    return [f"{indent}{line};" for line in lines]

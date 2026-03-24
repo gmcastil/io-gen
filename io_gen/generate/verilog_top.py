@@ -2,6 +2,8 @@ from io_gen.tables import SignalTable, signal_is_scalar, signal_is_differential
 
 from .formatting import _format_port_block
 
+# Set of
+TRISTATE_BUFFERS = {"iobuf"}
 
 def generate_verilog_top(signal_table: SignalTable) -> str:
     """Generate the complete Verilog top-level module as a string.
@@ -77,13 +79,21 @@ def _generate_verilog_wires(signal_table: SignalTable) -> str:
     All other signals use the bare signal name regardless of buffer type.
     Signals with generate: false are excluded.
     """
-    ports = []
+    wires = []
     for sig in signal_table:
 
-        # Skip signals that aren't to be generated
-        if not sig["generate"]:
+        # Skip signals that aren't to be generated or don't appear in the IO ring
+        if not sig["generate"] or sig["bypass"]:
             continue
-    pass
+
+        name = sig['name']
+        width = sig['width']
+        wire = "wire"
+
+        if signal_is_scalar(sig) and sig['buffer'] not in TRISTATE_BUFFERS:
+            line = f"{wire:8}{'':8}{name}"
+        if 
+
 
 
 def _generate_verilog_ioring_inst(signal_table: SignalTable) -> str:

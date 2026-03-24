@@ -146,27 +146,34 @@ Key design decisions:
 - Rows are plain dicts with variable shape (three shapes - see `docs/signal_table.md`)
 - Each factory function lives in the same module as its class
 - Tables are a package: `io_gen/tables/`
-  - `io_gen/tables/signal_table.py` - `SignalTable`, `build_signal_table()`, `signal_is_scalar()`
+  - `io_gen/tables/signal_table.py` - `SignalTable`, `build_signal_table()`, `signal_is_scalar()`, `signal_is_differential()`
   - `io_gen/tables/pin_table.py` - `PinTable`, `build_pin_table()`
   - `io_gen/tables/meta_table.py` - `MetaTable`, `build_meta_table()`
-  - `io_gen/tables/__init__.py` - re-exports all classes, factory functions, and `signal_is_scalar`
-- `signal_is_scalar(sig)` is a utility used by pin table flattening and available to generators
+  - `io_gen/tables/__init__.py` - re-exports all classes, factory functions, `signal_is_scalar`, and `signal_is_differential`
+- `signal_is_scalar(sig)` distinguishes scalar vs. bus (single pin vs. array)
+- `signal_is_differential(sig)` distinguishes SE vs. differential pair (`pins` vs. `pinset`) — orthogonal to scalar/bus
 - `PinTable.__getitem__(name)` is the public retrieval interface for generators — use `pt[sig["name"]]`
 
 ### Generation Stage Status
 
 - [x] XDC generator implemented and tested (`io_gen/generate/xdc.py`, `tests/test_xdc.py`)
-- [ ] HDL port declarations generator
-- [ ] HDL signal declarations generator
-- [ ] IO ring generator
+- [x] Verilog port declarations implemented and tested (`io_gen/generate/verilog_top.py`, `tests/test_verilog_top.py`)
+- [ ] Verilog wire declarations (in progress)
+- [ ] Verilog IO ring instantiation
+- [ ] Verilog top-level assembler (`generate_verilog_top`)
+- [ ] Verilog IO ring generator (`io_gen/generate/verilog_ioring.py`)
+- [ ] VHDL generators (deferred until Verilog is complete)
 
 Key design decisions:
 
-- Generators live in `io_gen/generate/`
-- Each generator is a module-level function: `generate_xdc(st, pt)`, etc.
+- Generators live in `io_gen/generate/`, split by output file and language:
+  - `xdc.py` - `generate_xdc(st, pt)`
+  - `verilog_top.py` - `generate_verilog_top(st)` + private helpers
+  - `verilog_ioring.py` - `generate_verilog_ioring(st, pt)` + private helpers
+  - `vhdl_top.py`, `vhdl_ioring.py` - VHDL counterparts (pending)
+- `formatting.py` provides `_format_port_block(lines, level, lang)` shared across generators
 - Generators iterate the signal table and skip `generate: false` rows
-- Port name formatting: `<name>_pad` (scalar SE), `{<name>_pad[i]}` (bus SE), `<name>_p`/`<name>_n` (scalar diff), `{<name>_p[i]}`/`{<name>_n[i]}` (bus diff)
-- **Next step: HDL port declarations generator**
+- **Next step: Verilog wire declarations**
 
 ## Definitions
 
