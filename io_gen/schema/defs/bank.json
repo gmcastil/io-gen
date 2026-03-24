@@ -1,9 +1,0 @@
-{
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "defs/bank.json",
-    "title": "Bank Number",
-    "description": "A valid IO bank number for a signal.",
-    "type": "integer",
-    "minimum": 0
-}
-
