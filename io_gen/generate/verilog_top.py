@@ -29,9 +29,6 @@ def _generate_verilog_ports(signal_table: SignalTable) -> str:
     """
     ports = []
     for sig in signal_table:
-        # Skip signals that aren't to be generated
-        if not sig["generate"]:
-            continue
 
         # The strategy here is to create the entire list of ports and comments without any indent, then once it's
         # finished, iterate the result, add commas at the end of all but the last one and indent everything along the
@@ -82,7 +79,7 @@ def _generate_verilog_wires(signal_table: SignalTable) -> str:
     wires = []
     for sig in signal_table:
         # Skip signals that aren't to be generated or don't appear in the IO ring
-        if not sig["generate"] or sig["bypass"]:
+        if sig["bypass"]:
             continue
 
         name = sig["name"]

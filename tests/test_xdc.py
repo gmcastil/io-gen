@@ -195,15 +195,6 @@ def test_no_comment_produces_no_hash_line() -> None:
     assert "#" not in generate_xdc(st, pt)
 
 
-def test_generate_false_excluded() -> None:
-    """generate:false signals produce no output in the XDC."""
-    st, pt = _make_tables(
-        [
-            {"name": "reserved_nc", "pins": "H24", "generate": False},
-        ]
-    )
-    assert "reserved_nc" not in generate_xdc(st, pt)
-
 
 def test_bypass_true_included() -> None:
     """bypass:true signals still appear in the XDC."""
@@ -284,11 +275,6 @@ _INTEGRATION_DOC = {
             "iostandard": "LVCMOS18",
             "bypass": True,
             "comment": {"xdc": "Spare output pin"},
-        },
-        {
-            "name": "reserved_nc",
-            "pins": "H24",
-            "generate": False,
         },
     ],
 }

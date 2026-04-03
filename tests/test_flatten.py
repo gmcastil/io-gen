@@ -21,7 +21,6 @@ SINGLE_ENDED_CASES = [
             "direction": "in",
             "buffer": "ibuf",
             "iostandard": "LVCMOS18",
-            "generate": True,
             "infer": False,
             "bypass": False,
             "comment": {},
@@ -40,7 +39,6 @@ SINGLE_ENDED_CASES = [
             "direction": "out",
             "buffer": "obuf",
             "iostandard": "LVCMOS18",
-            "generate": True,
             "infer": False,
             "bypass": False,
             "comment": {},
@@ -79,7 +77,6 @@ DIFFERENTIAL_CASES = [
             "direction": "in",
             "buffer": "ibufds",
             "iostandard": "LVDS",
-            "generate": True,
             "infer": False,
             "bypass": False,
             "comment": {},
@@ -98,7 +95,6 @@ DIFFERENTIAL_CASES = [
             "direction": "out",
             "buffer": "obufds",
             "iostandard": "LVDS",
-            "generate": True,
             "infer": False,
             "bypass": False,
             "comment": {},
@@ -136,7 +132,6 @@ def test_bypass_buffer_is_none() -> None:
         "direction": "out",
         "buffer": None,
         "iostandard": "LVCMOS18",
-        "generate": True,
         "infer": False,
         "bypass": True,
         "comment": {},
@@ -155,7 +150,6 @@ def test_bypass_instance_is_none() -> None:
         "direction": "out",
         "buffer": None,
         "iostandard": "LVCMOS18",
-        "generate": True,
         "infer": False,
         "bypass": True,
         "comment": {},
@@ -179,7 +173,6 @@ def test_infer_buffer_is_preserved() -> None:
         "direction": "in",
         "buffer": "ibuf",
         "iostandard": "LVCMOS18",
-        "generate": True,
         "infer": True,
         "bypass": False,
         "comment": {},
@@ -198,7 +191,6 @@ def test_infer_instance_is_none() -> None:
         "direction": "in",
         "buffer": "ibuf",
         "iostandard": "LVCMOS18",
-        "generate": True,
         "infer": True,
         "bypass": False,
         "comment": {},
@@ -222,7 +214,6 @@ def test_instance_override_gets_suffix() -> None:
         "direction": "in",
         "buffer": "ibuf",
         "iostandard": "LVCMOS18",
-        "generate": True,
         "infer": False,
         "bypass": False,
         "comment": {},
@@ -241,7 +232,6 @@ def test_instance_override_bus_gets_suffix() -> None:
         "direction": "out",
         "buffer": "obuf",
         "iostandard": "LVCMOS18",
-        "generate": True,
         "infer": False,
         "bypass": False,
         "comment": {},
@@ -265,7 +255,6 @@ def test_scalar_pins_is_bus_false() -> None:
         "direction": "in",
         "buffer": "ibuf",
         "iostandard": "LVCMOS18",
-        "generate": True,
         "infer": False,
         "bypass": False,
         "comment": {},
@@ -284,7 +273,6 @@ def test_array_pins_is_bus_true() -> None:
         "direction": "out",
         "buffer": "obuf",
         "iostandard": "LVCMOS18",
-        "generate": True,
         "infer": False,
         "bypass": False,
         "comment": {},
@@ -303,7 +291,6 @@ def test_scalar_pinset_is_bus_false() -> None:
         "direction": "in",
         "buffer": "ibufds",
         "iostandard": "LVDS",
-        "generate": True,
         "infer": False,
         "bypass": False,
         "comment": {},
@@ -322,7 +309,6 @@ def test_array_pinset_is_bus_true() -> None:
         "direction": "out",
         "buffer": "obufds",
         "iostandard": "LVDS",
-        "generate": True,
         "infer": False,
         "bypass": False,
         "comment": {},
@@ -332,18 +318,3 @@ def test_array_pinset_is_bus_true() -> None:
     assert all(r["is_bus"] is True for r in rows)
 
 
-# ---------------------------------------------------------------------------
-# generate: false guard
-# ---------------------------------------------------------------------------
-
-
-def test_flatten_generate_false_raises() -> None:
-    """Calling _flatten_signal on a generate:false row is a pipeline bug and must raise."""
-    sig = {
-        "name": "reserved_nc",
-        "pins": "H24",
-        "width": 1,
-        "generate": False,
-    }
-    with pytest.raises(AssertionError):
-        _flatten_signal(sig)

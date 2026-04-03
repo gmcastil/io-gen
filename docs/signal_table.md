@@ -11,11 +11,10 @@ stages.
 ## Fields
 
 Each entry is a dict. The presence of `pins` or `pinset` distinguishes
-single-ended from differential signals.
+single-ended from differential signals. Signals with `generate: false` in
+the YAML are excluded from the table entirely and never reach generators.
 
-Signals with `generate: false` have a reduced row shape - see below.
-
-### Single-ended (generate: true)
+### Single-ended
 
 | Key          | Type             | Notes                                                                               |
 | ------------ | ---------------- | ----------------------------------------------------------------------------------- |
@@ -25,13 +24,12 @@ Signals with `generate: false` have a reduced row shape - see below.
 | `iostandard` | str              |                                                                                     |
 | `width`      | int              | Always present - 1 for scalar, 1+ for bus                                           |
 | `pins`       | str or list[str] | str = scalar, list = bus                                                            |
-| `generate`   | bool             | Always True for this row shape                                                      |
 | `infer`      | bool             | Normalized to False if absent in YAML                                               |
 | `bypass`     | bool             | Normalized to False if absent in YAML                                               |
 | `comment`    | dict             | optional `xdc` and/or `hdl` string keys - empty dict if absent                      |
 | `instance`   | str or None      | None when `bypass: true`; auto-generated as `<buffer_type>_<signal_name>` otherwise |
 
-### Differential (generate: true)
+### Differential
 
 | Key          | Type        | Notes                                                                               |
 | ------------ | ----------- | ----------------------------------------------------------------------------------- |
@@ -41,24 +39,10 @@ Signals with `generate: false` have a reduced row shape - see below.
 | `iostandard` | str         |                                                                                     |
 | `width`      | int         | Always present - 1 for scalar pair, 1+ for bus                                      |
 | `pinset`     | dict        | `{'p': str or list[str], 'n': str or list[str]}`                                    |
-| `generate`   | bool        | Always True for this row shape                                                      |
 | `infer`      | bool        | Normalized to False if absent in YAML                                               |
 | `bypass`     | bool        | Normalized to False if absent in YAML                                               |
 | `comment`    | dict        | optional `xdc` and/or `hdl` string keys - empty dict if absent                      |
 | `instance`   | str or None | None when `bypass: true`; auto-generated as `<buffer_type>_<signal_name>` otherwise |
-
-### generate: false
-
-| Key        | Type             | Notes                                     |
-| ---------- | ---------------- | ----------------------------------------- |
-| `name`     | str              |                                           |
-| `pins`     | str or list[str] | present for single-ended signals          |
-| `pinset`   | dict             | present for differential signals          |
-| `width`    | int              | Always present - 1 for scalar, 1+ for bus |
-| `generate` | bool             | Always False for this row shape           |
-
-No other keys are present. Generation stages check `generate` first and skip
-these rows entirely.
 
 ---
 
@@ -70,20 +54,14 @@ inject default values - it only validates. Fields absent from the YAML will not
 appear in the signal dict, so every default listed here must be applied
 explicitly in `add()` using `sig.get(field, default)`.
 
-The following defaults apply for `generate: true` signals:
-
 | Field      | Default                                                 |
 | ---------- | ------------------------------------------------------- |
-| `generate` | `True`                                                  |
 | `infer`    | `False`                                                 |
 | `bypass`   | `False`                                                 |
 | `width`    | `1`                                                     |
 | `comment`  | `{}`                                                    |
 | `instance` | `<buffer_type>_<signal_name>` (None for `bypass: true`) |
 | `buffer`   | `None`                                                  |
-
-For `generate: false` signals, only `width` is normalized (to 1 for scalar
-pins or pinset).
 
 ---
 
@@ -101,8 +79,8 @@ build_signal_table(doc)
 
 ## Notes
 
-- Signals with `generate: false` are included but have a reduced row shape.
-  Generation stages check `generate` first and skip these rows entirely.
+- Signals with `generate: false` in the YAML are excluded from the table
+  entirely. Generators never see them and do not need to check for them.
 - `comment` is always a dict. Use `sig["comment"].get("xdc")` to safely
   retrieve optional subfields.
 - `is_bus` is not present in the signal table. It is derived during pin table

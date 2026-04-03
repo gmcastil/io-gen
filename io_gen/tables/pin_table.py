@@ -23,8 +23,6 @@ class PinTable:
 def _flatten_signal(sig: dict[str, Any]) -> list[dict]:
     """Flattens a signal table row into a list of pin or pinset rows."""
 
-    # Before doing anything, make sure we're being passed a signal that belongs in the pin table
-    assert sig["generate"]
     # Operate on scalars and arrays (instead of pins vs pinsets)
     if signal_is_scalar(sig):
         return _flatten_scalar(sig)
@@ -103,6 +101,5 @@ def _flatten_array(sig: dict[str, Any]) -> list[dict]:
 def build_pin_table(signal_table: SignalTable) -> PinTable:
     pin_table = PinTable()
     for sig in signal_table:
-        if sig["generate"]:
-            pin_table.add(sig)
+        pin_table.add(sig)
     return pin_table

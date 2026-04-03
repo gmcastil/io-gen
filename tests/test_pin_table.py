@@ -25,7 +25,6 @@ def test_len_counts_signals_not_pin_rows() -> None:
         "direction": "out",
         "buffer": "obuf",
         "iostandard": "LVCMOS18",
-        "generate": True,
         "infer": False,
         "bypass": False,
         "comment": {},
@@ -44,7 +43,6 @@ def test_add_two_signals_len_two() -> None:
         "direction": "in",
         "buffer": "ibuf",
         "iostandard": "LVCMOS18",
-        "generate": True,
         "infer": False,
         "bypass": False,
         "comment": {},
@@ -57,7 +55,6 @@ def test_add_two_signals_len_two() -> None:
         "direction": "out",
         "buffer": "obuf",
         "iostandard": "LVCMOS18",
-        "generate": True,
         "infer": False,
         "bypass": False,
         "comment": {},
@@ -84,7 +81,6 @@ ADD_ROW_COUNT_CASES = [
             "direction": "in",
             "buffer": "ibuf",
             "iostandard": "LVCMOS18",
-            "generate": True,
             "infer": False,
             "bypass": False,
             "comment": {},
@@ -101,7 +97,6 @@ ADD_ROW_COUNT_CASES = [
             "direction": "out",
             "buffer": "obuf",
             "iostandard": "LVCMOS18",
-            "generate": True,
             "infer": False,
             "bypass": False,
             "comment": {},
@@ -118,7 +113,6 @@ ADD_ROW_COUNT_CASES = [
             "direction": "in",
             "buffer": "ibufds",
             "iostandard": "LVDS",
-            "generate": True,
             "infer": False,
             "bypass": False,
             "comment": {},
@@ -135,7 +129,6 @@ ADD_ROW_COUNT_CASES = [
             "direction": "out",
             "buffer": "obufds",
             "iostandard": "LVDS",
-            "generate": True,
             "infer": False,
             "bypass": False,
             "comment": {},
@@ -183,7 +176,6 @@ def test_infer_true_produces_instance_none() -> None:
         "direction": "in",
         "buffer": "ibuf",
         "iostandard": "LVCMOS18",
-        "generate": True,
         "infer": True,
         "bypass": False,
         "comment": {},
@@ -203,7 +195,6 @@ def test_bypass_true_produces_instance_none() -> None:
         "direction": "out",
         "buffer": None,
         "iostandard": "LVCMOS18",
-        "generate": True,
         "infer": False,
         "bypass": True,
         "comment": {},
@@ -254,24 +245,18 @@ _INTEGRATION_DOC = {
 }
 
 
-def test_build_pin_table_excludes_generate_false() -> None:
-    """build_pin_table does not add generate:false signals to the table."""
-    signal_table = build_signal_table(_INTEGRATION_DOC)
-    pin_table = build_pin_table(signal_table)
-    assert "reserved_nc" not in pin_table.table
-
-
-def test_build_pin_table_includes_generate_true() -> None:
-    """build_pin_table includes all generate:true signals."""
+def test_build_pin_table_signal_membership() -> None:
+    """build_pin_table includes generate:true signals and excludes generate:false signals."""
     signal_table = build_signal_table(_INTEGRATION_DOC)
     pin_table = build_pin_table(signal_table)
     assert "sys_clk" in pin_table.table
     assert "led" in pin_table.table
     assert "ref_clk" in pin_table.table
+    assert "reserved_nc" not in pin_table.table
 
 
-def test_build_pin_table_len_excludes_generate_false() -> None:
-    """len(pin_table) counts only generate:true signals."""
+def test_build_pin_table_len() -> None:
+    """len(pin_table) excludes generate:false signals."""
     signal_table = build_signal_table(_INTEGRATION_DOC)
     pin_table = build_pin_table(signal_table)
     assert len(pin_table) == 3
@@ -306,7 +291,6 @@ def test_getitem_returns_rows_for_scalar_signal() -> None:
         "direction": "in",
         "buffer": "ibuf",
         "iostandard": "LVCMOS18",
-        "generate": True,
         "infer": False,
         "bypass": False,
         "comment": {},
@@ -327,7 +311,6 @@ def test_getitem_returns_rows_for_bus_signal() -> None:
         "direction": "out",
         "buffer": "obuf",
         "iostandard": "LVCMOS18",
-        "generate": True,
         "infer": False,
         "bypass": False,
         "comment": {},
@@ -355,7 +338,6 @@ def test_getitem_scalar_row_contents() -> None:
         "direction": "in",
         "buffer": "ibuf",
         "iostandard": "LVCMOS18",
-        "generate": True,
         "infer": False,
         "bypass": False,
         "comment": {},
@@ -379,7 +361,6 @@ def test_getitem_bus_row_contents() -> None:
         "direction": "out",
         "buffer": "obuf",
         "iostandard": "LVCMOS18",
-        "generate": True,
         "infer": False,
         "bypass": False,
         "comment": {},
@@ -405,7 +386,6 @@ def test_getitem_differential_scalar_row_contents() -> None:
         "direction": "in",
         "buffer": "ibufds",
         "iostandard": "LVDS",
-        "generate": True,
         "infer": False,
         "bypass": False,
         "comment": {},

@@ -36,15 +36,14 @@ Each signal row in the signal table is expanded into one or more pin rows:
 - An array `pinset` signal produces one `PinSetRow` per pair with `is_bus: true`
 
 `is_bus` is derived from the type of the signal table `pins` or `pinset` field
-(str vs list) and is not present in the YAML. Signals with `generate: false`
-are excluded from the pin table.
+(str vs list) and is not present in the YAML.
 
 ---
 
 ## Notes
 
-- Signals with `generate: false` are included in the signal table but flagged
-  so that generation stages can skip them.
+- Signals with `generate: false` in the YAML are excluded from the signal table
+  entirely during construction and never reach the pin table or any generator.
 - The meta table is currently unused after construction.
 - The signal table is the primary data structure. The pin table is a lookup
   structure keyed by signal name, used by generators that need physical pin

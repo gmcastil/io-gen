@@ -16,7 +16,7 @@ class SignalTable:
     def add(self, sig: dict[str, Any]) -> None:
         """Add a signal to the signal table, resolving fields as needed"""
 
-        # Assert that the common fields exist first - name, pins or pinset, generate, and width
+        # Assert that the common fields exist first - name, pins or pinset, and width
         assert "name" in sig
         assert "pins" in sig or "pinset" in sig
         # Assert the shape - doing this here as a way of documenting our expectations here
@@ -30,6 +30,10 @@ class SignalTable:
             assert isinstance(sig["pinset"]["n"], str) or isinstance(
                 sig["pinset"]["n"], list
             )
+
+        # The schema gives this as a default, but can't enforce it
+        if not sig.get("generate", True):
+            return
 
         # Row entries are mixed value dicts
         row: dict[str, Any] = dict()
@@ -54,14 +58,6 @@ class SignalTable:
             else:
                 row["width"] = sig["width"]
                 row["pinset"] = deepcopy(sig["pinset"])
-
-        # The schema gives this as a default, but can't enforce it
-        row["generate"] = sig.get("generate", True)
-        # For rows that aren't going to be generated, we have all of the required keys and none of what isn't allowed,
-        # so we're done if we aren't generating this row
-        if not row["generate"]:
-            self.table.append(row)
-            return
 
         # These are required for everybody
         row["iostandard"] = sig["iostandard"]

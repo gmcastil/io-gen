@@ -6,10 +6,6 @@ def generate_xdc(signal_table: SignalTable, pin_table: PinTable) -> str:
     """Generate XDC constraints from the signal and pin tables"""
     result = []
     for sig in signal_table:
-        # Make sure to filter out signals that we aren't generating (and won't be in the pin table)
-        if not sig["generate"]:
-            continue
-
         name = sig["name"]
         comment = sig["comment"].get("xdc", None)
 

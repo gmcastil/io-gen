@@ -168,15 +168,6 @@ def test_no_hdl_comment_no_slash_line() -> None:
     assert "//" not in _generate_verilog_ports(st)
 
 
-def test_generate_false_excluded() -> None:
-    """generate:false signals produce no output in the port list."""
-    st = _make_signal_table(
-        [
-            {"name": "reserved_nc", "pins": "H24", "generate": False},
-        ]
-    )
-    assert "reserved_nc" not in _generate_verilog_ports(st)
-
 
 def test_no_trailing_comma_on_last_port() -> None:
     """The last port declaration has no trailing comma."""
@@ -258,7 +249,6 @@ _INTEGRATION_SIGNALS = [
         "bypass": True,
         "comment": {"hdl": "Spare output, driven directly"},
     },
-    {"name": "reserved_nc", "pins": "H24", "generate": False},
 ]
 
 _EXPECTED_PORTS = (
@@ -412,22 +402,6 @@ def test_bypass_excluded_from_wires() -> None:
     )
     assert "spare" not in _generate_verilog_wires(st)
 
-
-def test_generate_false_excluded_from_wires() -> None:
-    """generate:false signals produce no wire declaration."""
-    st = _make_signal_table(
-        [
-            {
-                "name": "sys_clk",
-                "pins": "G22",
-                "direction": "in",
-                "buffer": "ibuf",
-                "iostandard": "LVCMOS18",
-            },
-            {"name": "reserved_nc", "pins": "H24", "generate": False},
-        ]
-    )
-    assert "reserved_nc" not in _generate_verilog_wires(st)
 
 
 _EXPECTED_WIRES = (
