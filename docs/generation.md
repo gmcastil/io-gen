@@ -102,8 +102,8 @@ Fabric-facing naming:
 - Unidirectional: `<name>` (bare signal name)
 - Tristate: `<name>_i`, `<name>_o`, `<name>_t`
 
-Signals with `bypass: true` have pad-facing ports only - no fabric-facing
-counterpart. No blank lines between port groups.
+Signals with `bypass: true` are excluded entirely - they do not appear in
+the IO ring at all. No blank lines between port groups.
 
 ### _generate_<lang>_ioring_body
 
