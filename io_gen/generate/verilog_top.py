@@ -1,10 +1,8 @@
-from io_gen.tables import SignalTable, signal_is_scalar, signal_is_differential
+from io_gen.tables import SignalTable
 
-from .formatting import _format_port_block, _format_signal_block
+from .formatting import _format_port_block
 
-# Set of tristate buffers that will require '_i', '_o', and '_t' in the signal
-# block and IO ring instances
-TRISTATE_BUFFERS = {"iobuf"}
+from .common import _get_signal_top_ports, _get_signal_nets
 
 
 def generate_verilog_top(signal_table: SignalTable) -> str:
@@ -39,29 +37,24 @@ def _generate_verilog_ports(signal_table: SignalTable) -> str:
         if comment_str:
             ports.append(f"// {comment_str}")
 
-        # Port direction
-        if sig["direction"] == "in":
-            direction_str = "input".ljust(7)
-        elif sig["direction"] == "out":
-            direction_str = "output".ljust(7)
-        else:
-            direction_str = "inout".ljust(7)
+        # Get the one or two ports for this signal
+        for port in _get_signal_top_ports(sig):
+            # Port direction
+            if port["direction"] == "in":
+                direction_str = "input".ljust(7)
+            elif port["direction"] == "out":
+                direction_str = "output".ljust(7)
+            else:
+                direction_str = "inout".ljust(7)
 
-        # Net type and width block
-        if signal_is_scalar(sig):
-            width_str = f"wire".ljust(12)
-        else:
-            width_str = f"wire [{sig['width'] - 1}:0]".ljust(12)
+            # Net type and width block
+            if port["is_bus"]:
+                width_str = f"wire [{port['width'] - 1}:0]".ljust(12)
+            else:
+                width_str = f"wire".ljust(12)
 
-        # Port names (no commas in the string yet)
-        if signal_is_differential(sig):
-            port_name = f"{sig['name']}_p"
-            ports.append(f"{direction_str}{width_str}{port_name}")
-            port_name = f"{sig['name']}_n"
-            ports.append(f"{direction_str}{width_str}{port_name}")
-        else:
-            port_name = f"{sig['name']}_pad"
-            ports.append(f"{direction_str}{width_str}{port_name}")
+            # Now assemble the string for the entire port
+            ports.append(f"{direction_str}{width_str}{port['name']}")
 
     # Now indent and append commas to (almost) every line
     return "\n".join(_format_port_block(ports, 1, "verilog"))
@@ -79,27 +72,26 @@ def _generate_verilog_wires(signal_table: SignalTable) -> str:
     wires = []
     for sig in signal_table:
         # Skip signals that aren't to be generated or don't appear in the IO ring
-        if sig["bypass"]:
+        sig_nets = _get_signal_nets(sig)
+
+        if not sig_nets:
             continue
 
-        name = sig["name"]
-        width = sig["width"]
+        for net in sig_nets:
+            name = net["name"]
+            width = net["width"]
 
-        # Can get this now and then we'll pad to 8 columns later
-        dim = f"[{width - 1}:0]" if not signal_is_scalar(sig) else ""
+            # Can get this now and then we'll pad to 8 columns later
+            if net["is_bus"]:
+                dim = f"[{width - 1}:0]"
+            else:
+                dim = ""
 
-        # Formatting here is simple - 4 space indent, 8 columns for port direction,
-        # 8 chacters for 'wire', 8 characters for the port dimensions if it a bus
-        # (or just spaces for scalars), then the port name
-        if sig["buffer"] not in TRISTATE_BUFFERS:
-            wires.append(f"{'wire':<8}{dim:<8}{name}")
-        else:
-            wires.append(f"{'wire':<8}{dim:<8}{name}_i")
-            wires.append(f"{'wire':<8}{dim:<8}{name}_o")
-            wires.append(f"{'wire':<8}{dim:<8}{name}_t")
+            # Formatting is simple - 4 space indent, 8 columsn for the net type,
+            # 8 columns for the net dimension, then the port name
+            wires.append(f"{'':<4}{'wire':<8}{dim:<8}{name};")
 
-    # Now indent and append semicolons to every line
-    return "\n".join(_format_signal_block(wires, 1))
+    return "\n".join(wires)
 
 
 def _generate_verilog_ioring_inst(signal_table: SignalTable) -> str:

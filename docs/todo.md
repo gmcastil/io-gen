@@ -58,6 +58,19 @@
 - [ ] Top level HDL module name needs to be valid VHDL or Verilog
 - [ ] Signal and signal + instance should be capped, maybe? Future discussion
 
+## Housekeeping
+
+- [x] Delete `io_gen/generate/verilog.py` - dead leftover from before the split
+      into `verilog_top.py` and `verilog_ioring.py`; syntactically broken, not
+      imported anywhere
+- [x] Remove duplicate `_build_ioring_port_list` stub from `verilog_ioring.py`
+      (lines 21-31) - real implementation lives in `common.py`
+- [ ] Update `generation.md` module layout - add `common.py` and `formatting.py`,
+      remove `vhdl_top.py` and `vhdl_ioring.py` (or mark them pending)
+- [ ] Update "skipped by generators" language in `generation.md` and `verilog_top.py`
+      docstrings - `generate: false` signals are excluded at table construction,
+      not by the generators themselves
+
 ## Deferred
 
 - [ ] Add support for marking inputs as clocks and inserting BUFG into the design

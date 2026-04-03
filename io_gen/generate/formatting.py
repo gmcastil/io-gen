@@ -32,20 +32,3 @@ def _format_port_block(lines: list[str], level: int, lang: str) -> list[str]:
                 result.append(f"{indent}{line}")
 
     return result
-
-
-def _format_signal_block(lines: list[str], level: int) -> list[str]:
-    """Indents a list of signal or wire strings and adds the appropriate suffix"""
-
-    if not lines:
-        return []
-    # A list of signal definitions in this context should never be a comment
-    for line in lines:
-        assert not line.startswith("//")
-    for line in lines:
-        assert not line.startswith("--")
-
-    # Determine indent level
-    indent = " " * (level * 4)
-
-    return [f"{indent}{line};" for line in lines]
