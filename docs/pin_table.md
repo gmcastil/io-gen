@@ -63,8 +63,9 @@ build_pin_table(signal_table: SignalTable) -> PinTable
 
 **Output:** a `PinTable` instance
 
-Iterates the signal table and calls `PinTable.add(sig_row)` for each row,
-skipping rows where `generate` is `False`.
+Iterates the signal table and calls `PinTable.add(sig_row)` for each row.
+All rows in the signal table are included - `generate: false` signals are
+filtered out during signal table construction and never appear here.
 
 ---
 
@@ -102,7 +103,6 @@ Module-level private function. Takes a single normalized signal table row
 and returns a list of dicts, one per pin or differential pair.
 
 Responsibilities:
-- Asserts `sig["generate"]` is `True` - calling with a `generate: false` row is a pipeline bug
 - Derives `is_bus` from whether `pins` or `pinset["p"]` is a `list`
 - Expands scalar or array `pins` into one row per pin
 - Expands scalar or array `pinset` into one row per pair, pairing `pinset["p"][i]`

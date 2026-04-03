@@ -32,7 +32,14 @@ At the start of every session, read all files in the `docs/` folder before
 doing anything else. These files are the source of truth for design decisions,
 schema rules, and pending work. Also read all files in `io_gen/schema/` and
 `examples/`, then run a consistency check across all three and report any
-issues before proceeding.
+issues before proceeding. `docs/devlog.md` is part of this - read it to
+understand recent decisions and history before engaging.
+
+## Session Close
+
+When wrapping up a session, remind the user to add an entry to `docs/devlog.md`
+summarizing what was decided or changed. Entries go at the top, reverse
+chronological. Include the relevant commit hash if a commit was made.
 
 ## Current Project State
 
