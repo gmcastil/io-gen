@@ -109,6 +109,5 @@ the IO ring at all. No blank lines between port groups.
 
 Iterates the signal table. For each signal, looks up the signal's pin rows
 in the pin table and emits one buffer instantiation per row using the fully
-resolved instance name from the pin table. An optional `comment.hdl` string
-is emitted before each signal's instantiation block. Signals with
-`bypass: true` or `infer: true` are excluded.
+resolved instance name from the pin table. Signals with `bypass: true` or
+`infer: true` are excluded. No comments are emitted.

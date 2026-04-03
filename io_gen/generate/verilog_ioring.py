@@ -1,6 +1,8 @@
 from io_gen.tables import SignalTable
 from io_gen.tables import PinTable
 
+from .common import _build_ioring_port_list
+
 
 def generate_verilog_ioring(signal_table: SignalTable, pin_table: PinTable) -> str:
     pass
