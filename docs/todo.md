@@ -75,12 +75,12 @@
 
 - [ ] Add support for marking inputs as clocks and inserting BUFG into the design
 - [ ] Once the tool is working, make a legit YAML for a Basys 3 that can be
-      used along with a basic user core of keepers so that the example can be
-      checked in Vivado. This actually becomes an end to end integration test
-      that can be automated. Do something like store a basic user core with all
-      the different kinds of IO in it, run the tool, capture the output, use sed
-      or something to paste the user core instance into the top level module,
-      and then run synthesis -> bitstream, generate a utilization report and
-      check it to make sure that we have the IO that we think we do.
+      used to validate XDC output using a Vivado I/O Planning project. This
+      project type operates purely at the pin assignment level - no RTL needed -
+      and Vivado validates constraints directly against the device model. This
+      catches pin assignment and IOSTANDARD violations without a synthesis run
+      and without needing a keeper core to prevent logic optimization. This is
+      the preferred integration test for XDC correctness.
+      See Vivado Design Suite User Guide: I/O and Clock Planning (UG899).
 - [ ] IOSTANDARD compatibility with bank VCCO voltage - left to a future
       validation pass or the downstream toolchain

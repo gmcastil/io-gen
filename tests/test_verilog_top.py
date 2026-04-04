@@ -2,7 +2,12 @@ import pytest
 
 from io_gen.tables import SignalTable
 
-from io_gen.generate.verilog_top import _generate_verilog_ports, _generate_verilog_wires
+from io_gen.generate.verilog_top import (
+    _generate_verilog_ports,
+    _generate_verilog_wires,
+    _generate_verilog_ioring_inst,
+    generate_verilog_top,
+)
 from io_gen.tables.signal_table import build_signal_table
 
 
@@ -419,3 +424,246 @@ def test_wires_integration_output() -> None:
     """Full signal set produces the expected wire block string."""
     st = _make_signal_table(_INTEGRATION_SIGNALS)
     assert _generate_verilog_wires(st) == _EXPECTED_WIRES
+
+
+# ---- _generate_verilog_ioring_inst -----------------------------------------
+
+
+def test_ioring_inst_returns_str() -> None:
+    """_generate_verilog_ioring_inst returns a string."""
+    st = _make_signal_table(
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            },
+        ]
+    )
+    assert isinstance(_generate_verilog_ioring_inst(st, "test"), str)
+
+
+def test_ioring_inst_header() -> None:
+    """Module name, commented parameter block, and instance name appear on separate lines."""
+    st = _make_signal_table(
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            },
+        ]
+    )
+    output = _generate_verilog_ioring_inst(st, "test")
+    lines = output.splitlines()
+    assert lines[0] == "    test_io //#("
+    assert lines[1] == "    //)"
+    assert lines[2] == "    test_io_i0 ("
+
+
+def test_ioring_inst_closing() -> None:
+    """The instance closes with a 4-space-indented ');'."""
+    st = _make_signal_table(
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            },
+        ]
+    )
+    output = _generate_verilog_ioring_inst(st, "test")
+    assert output.splitlines()[-1] == "    );"
+
+
+def test_ioring_inst_last_port_no_comma() -> None:
+    """The last port connection has no trailing comma."""
+    st = _make_signal_table(
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            },
+            {
+                "name": "led",
+                "pins": ["A22", "B22"],
+                "width": 2,
+                "direction": "out",
+                "buffer": "obuf",
+                "iostandard": "LVCMOS18",
+            },
+        ]
+    )
+    output = _generate_verilog_ioring_inst(st, "test")
+    port_lines = [ln for ln in output.splitlines() if ln.strip().startswith(".")]
+    assert not port_lines[-1].endswith(",")
+
+
+def test_ioring_inst_bypass_excluded() -> None:
+    """bypass:true signals do not appear in the IO ring instantiation."""
+    st = _make_signal_table(
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            },
+            {
+                "name": "spare",
+                "pins": "J24",
+                "direction": "out",
+                "iostandard": "LVCMOS18",
+                "bypass": True,
+            },
+        ]
+    )
+    output = _generate_verilog_ioring_inst(st, "test")
+    assert "spare" not in output
+
+
+def test_ioring_inst_alignment_tab_stop() -> None:
+    """When the longest port name + dot lands on a multiple of 4, gap is exactly 4 spaces.
+
+    'led_pad' is 7 chars; 7 + 1 (dot) = 8, which is a multiple of 4.
+    The '(' must land at the next tab stop: column 12 within the .name field,
+    meaning name_len = 11 and the gap after 'led_pad' is 4 spaces.
+    """
+    st = _make_signal_table(
+        [
+            {
+                "name": "led",
+                "pins": "A22",
+                "direction": "out",
+                "buffer": "obuf",
+                "iostandard": "LVCMOS18",
+            },
+        ]
+    )
+    output = _generate_verilog_ioring_inst(st, "test")
+    # led_pad is the IO ring pad port; led is the fabric-facing port (last, no comma)
+    assert "        .led_pad    (led_pad)," in output
+    assert "        .led        (led)" in output
+
+
+_EXPECTED_IORING_INST = (
+    "    example_io //#(\n"
+    "    //)\n"
+    "    example_io_i0 (\n"
+    "        .sys_clk_pad    (sys_clk_pad),\n"
+    "        .sys_clk        (sys_clk),\n"
+    "        .led_pad        (led_pad),\n"
+    "        .led            (led),\n"
+    "        .ref_clk_p      (ref_clk_p),\n"
+    "        .ref_clk_n      (ref_clk_n),\n"
+    "        .ref_clk        (ref_clk),\n"
+    "        .lvds_data_p    (lvds_data_p),\n"
+    "        .lvds_data_n    (lvds_data_n),\n"
+    "        .lvds_data      (lvds_data),\n"
+    "        .gpio_pad       (gpio_pad),\n"
+    "        .gpio_i         (gpio_i),\n"
+    "        .gpio_o         (gpio_o),\n"
+    "        .gpio_t         (gpio_t)\n"
+    "    );"
+)
+
+
+def test_ioring_inst_integration() -> None:
+    """Full signal set produces the expected IO ring instantiation.
+
+    spare is bypass:true and must be absent. name_len=15 because the longest
+    port name is 'lvds_data_p'/'lvds_data_n' (11 chars); 11+1 (dot) = 12,
+    a multiple of 4, so the '(' lands at the next tab stop giving a 4-space gap.
+    """
+    st = _make_signal_table(_INTEGRATION_SIGNALS)
+    assert _generate_verilog_ioring_inst(st, "example") == _EXPECTED_IORING_INST
+
+
+# ---- generate_verilog_top --------------------------------------------------
+
+# Composed from the already-verified expected strings for each block.
+_EXPECTED_TOP = (
+    "module example //#(\n"
+    "//)\n"
+    "(\n"
+    + _EXPECTED_PORTS
+    + "\n"
+    + ");\n"
+    + "\n"
+    + _EXPECTED_WIRES
+    + "\n"
+    + "\n"
+    + _EXPECTED_IORING_INST
+    + "\n"
+    + "\n"
+    + "endmodule"
+)
+
+
+def test_generate_verilog_top_returns_str() -> None:
+    """generate_verilog_top returns a string."""
+    st = _make_signal_table(
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            },
+        ]
+    )
+    assert isinstance(generate_verilog_top(st, "test"), str)
+
+
+def test_generate_verilog_top_header() -> None:
+    """Module header uses the top name with commented parameter block on separate lines."""
+    st = _make_signal_table(
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            },
+        ]
+    )
+    output = generate_verilog_top(st, "test")
+    lines = output.splitlines()
+    assert lines[0] == "module test //#("
+    assert lines[1] == "//)"
+    assert lines[2] == "("
+
+
+def test_generate_verilog_top_endmodule() -> None:
+    """endmodule is the last line of the output."""
+    st = _make_signal_table(
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            },
+        ]
+    )
+    output = generate_verilog_top(st, "test")
+    assert output.splitlines()[-1] == "endmodule"
+
+
+def test_generate_verilog_top_integration() -> None:
+    """Full signal set produces output matching example.v."""
+    st = _make_signal_table(_INTEGRATION_SIGNALS)
+    assert generate_verilog_top(st, "example") == _EXPECTED_TOP

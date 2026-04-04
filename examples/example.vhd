@@ -33,25 +33,25 @@ architecture rtl of example is
 begin
 
     u_example_io : entity work.example_io
-        port map (
-            sys_clk_pad  => sys_clk_pad,
-            sys_clk      => sys_clk,
+    port map (
+        sys_clk_pad => sys_clk_pad,
+        sys_clk     => sys_clk,
 
-            led_pad      => led_pad,
-            led          => led,
+        led_pad     => led_pad,
+        led         => led,
 
-            ref_clk_p    => ref_clk_p,
-            ref_clk_n    => ref_clk_n,
-            ref_clk      => ref_clk,
+        ref_clk_p   => ref_clk_p,
+        ref_clk_n   => ref_clk_n,
+        ref_clk     => ref_clk,
 
-            lvds_data_p  => lvds_data_p,
-            lvds_data_n  => lvds_data_n,
-            lvds_data    => lvds_data,
+        lvds_data_p => lvds_data_p,
+        lvds_data_n => lvds_data_n,
+        lvds_data   => lvds_data,
 
-            gpio_pad     => gpio_pad,
-            gpio_i       => gpio_i,
-            gpio_o       => gpio_o,
-            gpio_t       => gpio_t
-        );
+        gpio_pad    => gpio_pad,
+        gpio_i      => gpio_i,
+        gpio_o      => gpio_o,
+        gpio_t      => gpio_t
+    );
 
 end architecture rtl;
