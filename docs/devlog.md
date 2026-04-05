@@ -4,6 +4,35 @@ Entries are in reverse chronological order.
 
 ---
 
+## 2026-04-04 - Verilog generation complete through buffer instantiation
+
+**Commit:** `82672ff` - "Verilog IO buffer generation is working"
+
+Completed the Verilog generation stage through buffer instantiation:
+
+- `generate_verilog_top` and all private helpers implemented and tested
+- `_generate_verilog_ioring_body` implemented using a dispatch table
+  (`_INSTANTIATE_BUFFERS`, `_INFER_BUFFERS`) keyed by buffer type — adding
+  a new buffer type requires one function and one dict entry
+- Per-buffer instantiation functions for all five supported types: `ibuf`,
+  `obuf`, `ibufds`, `obufds`, `iobuf` — scalar and bus cases both covered
+- `infer: true` signals collapse to a single `assign` statement regardless
+  of bus width — no pin table lookup needed
+- `_indent_join` added to `formatting.py` and used throughout ioring generators
+- Buffer instantiations use Xilinx port ordering (O first) and consistent
+  4-char port name field alignment (`.{port:<3}(net)`)
+- All buffer instances use `//#(` and `//)` header lines for future generics
+- 256 tests passing
+
+Remaining for Verilog: `_generate_verilog_ioring_ports` and
+`generate_verilog_ioring` assembler.
+
+Deferred: VHDL generators until Verilog is validated end-to-end in Vivado.
+XDC validation will use Vivado I/O Planning project (UG899) rather than
+full synthesis.
+
+---
+
 ## 2026-04-03 - Drop `generate` from signal table rows
 
 **Commit:** `c4b7964` - "Massive refactor - removing `generate: false` from rows in SignalTable"

@@ -4,7 +4,8 @@
 
 Generation is the third pipeline stage. It consists of two top-level generator
 functions per language, each responsible for one output file. Signals with
-`generate: false` are skipped by all generators.
+`generate: false` are excluded at signal table construction time and never
+reach any generator.
 
 ---
 
@@ -15,8 +16,10 @@ io_gen/generate/
     xdc.py              # generate_xdc
     verilog_top.py      # generate_verilog_top + private helpers
     verilog_ioring.py   # generate_verilog_ioring + private helpers
-    vhdl_top.py         # generate_vhdl_top + private helpers
-    vhdl_ioring.py      # generate_vhdl_ioring + private helpers
+    common.py           # language-agnostic per-signal port/net helpers
+    formatting.py       # _format_port_block, _indent_join
+    vhdl_top.py         # generate_vhdl_top + private helpers (pending)
+    vhdl_ioring.py      # generate_vhdl_ioring + private helpers (pending)
 ```
 
 ---

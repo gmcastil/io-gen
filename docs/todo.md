@@ -28,10 +28,13 @@
 
 - [x] Write tests for XDC generator (`tests/test_xdc.py`)
 - [x] Implement XDC generator (`io_gen/generate/xdc.py`)
-- [ ] Write tests for Verilog top-level generator (`tests/test_verilog_top.py`)
-- [ ] Implement Verilog top-level generator (`io_gen/generate/verilog_top.py`)
-- [ ] Write tests for Verilog IO ring generator (`tests/test_verilog_ioring.py`)
-- [ ] Implement Verilog IO ring generator (`io_gen/generate/verilog_ioring.py`)
+- [x] Write tests for Verilog top-level generator (`tests/test_verilog_top.py`)
+- [x] Implement Verilog top-level generator (`io_gen/generate/verilog_top.py`)
+- [x] Write tests for buffer instantiation helpers (`tests/test_verilog_ioring.py`)
+- [x] Implement buffer instantiation helpers (`io_gen/generate/verilog_ioring.py`)
+- [ ] Write tests for `_generate_verilog_ioring_ports`
+- [ ] Implement `_generate_verilog_ioring_ports`
+- [ ] Implement `generate_verilog_ioring` assembler
 - [ ] Write tests for VHDL top-level generator (`tests/test_vhdl_top.py`)
 - [ ] Implement VHDL top-level generator (`io_gen/generate/vhdl_top.py`)
 - [ ] Write tests for VHDL IO ring generator (`tests/test_vhdl_ioring.py`)
@@ -65,9 +68,9 @@
       imported anywhere
 - [x] Remove duplicate `_build_ioring_port_list` stub from `verilog_ioring.py`
       (lines 21-31) - real implementation lives in `common.py`
-- [ ] Update `generation.md` module layout - add `common.py` and `formatting.py`,
+- [x] Update `generation.md` module layout - add `common.py` and `formatting.py`,
       remove `vhdl_top.py` and `vhdl_ioring.py` (or mark them pending)
-- [ ] Update "skipped by generators" language in `generation.md` and `verilog_top.py`
+- [x] Update "skipped by generators" language in `generation.md` and `verilog_top.py`
       docstrings - `generate: false` signals are excluded at table construction,
       not by the generators themselves
 

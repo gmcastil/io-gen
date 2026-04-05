@@ -10,7 +10,6 @@ def generate_verilog_top(signal_table: SignalTable, top: str) -> str:
 
     Assembles the module declaration, port list, internal wire declarations,
     and IO ring instantiation by calling private helpers in order.
-    Signals with generate: false are excluded from all output.
     """
     rtl = []
     rtl.append(f"module {top} //#(")
@@ -36,7 +35,6 @@ def _generate_verilog_ports(signal_table: SignalTable) -> str:
     single-ended signals get _pad, differential signals get _p and _n legs.
     An optional comment.hdl string is emitted as a // line before each signal's
     port(s). The last port declaration has no trailing comma.
-    Signals with generate: false are excluded.
     """
     ports = []
     for sig in signal_table:
@@ -80,11 +78,10 @@ def _generate_verilog_wires(signal_table: SignalTable) -> str:
     Signals with bypass: true are excluded - they have no internal counterpart.
     Tristate signals (iobuf) expand to three wires: <name>_i, <name>_o, <name>_t.
     All other signals use the bare signal name regardless of buffer type.
-    Signals with generate: false are excluded.
     """
     wires = []
     for sig in signal_table:
-        # Skip signals that aren't to be generated or don't appear in the IO ring
+        # Skip bypass signals - they have no internal wire
         sig_nets = _get_signal_nets(sig)
 
         if not sig_nets:

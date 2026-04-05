@@ -164,23 +164,25 @@ Key design decisions:
 ### Generation Stage Status
 
 - [x] XDC generator implemented and tested (`io_gen/generate/xdc.py`, `tests/test_xdc.py`)
-- [x] Verilog port declarations implemented and tested (`io_gen/generate/verilog_top.py`, `tests/test_verilog_top.py`)
-- [ ] Verilog wire declarations (in progress)
-- [ ] Verilog IO ring instantiation
-- [ ] Verilog top-level assembler (`generate_verilog_top`)
-- [ ] Verilog IO ring generator (`io_gen/generate/verilog_ioring.py`)
-- [ ] VHDL generators (deferred until Verilog is complete)
+- [x] Verilog top-level generator fully implemented and tested (`io_gen/generate/verilog_top.py`, `tests/test_verilog_top.py`)
+- [x] Buffer instantiation helpers implemented and tested (`io_gen/generate/verilog_ioring.py`, `tests/test_verilog_ioring.py`)
+- [ ] `_generate_verilog_ioring_ports` (next)
+- [ ] `generate_verilog_ioring` assembler
+- [ ] VHDL generators (deferred until Verilog is validated end-to-end in Vivado)
 
 Key design decisions:
 
 - Generators live in `io_gen/generate/`, split by output file and language:
   - `xdc.py` - `generate_xdc(st, pt)`
-  - `verilog_top.py` - `generate_verilog_top(st)` + private helpers
+  - `verilog_top.py` - `generate_verilog_top(st, top)` + private helpers
   - `verilog_ioring.py` - `generate_verilog_ioring(st, pt)` + private helpers
+  - `common.py` - `_get_signal_top_ports`, `_get_signal_ioring_ports`, `_get_signal_nets`
+  - `formatting.py` - `_format_port_block`, `_indent_join`
   - `vhdl_top.py`, `vhdl_ioring.py` - VHDL counterparts (pending)
-- `formatting.py` provides `_format_port_block(lines, level, lang)` shared across generators
-- Generators iterate the signal table and skip `generate: false` rows
-- **Next step: Verilog wire declarations**
+- Buffer dispatch uses `_INSTANTIATE_BUFFERS` and `_INFER_BUFFERS` dicts keyed by buffer type
+- `infer: true` signals use a single `assign` statement — no pin table lookup needed
+- Generators never see `generate: false` signals — filtered at signal table construction
+- **Next step: `_generate_verilog_ioring_ports`**
 
 ## Definitions
 
