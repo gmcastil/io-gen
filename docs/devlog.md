@@ -4,6 +4,23 @@ Entries are in reverse chronological order.
 
 ---
 
+## 2026-04-06 - Verilog generation is completed and CLI wired up
+
+**Commit:** `7009b79` - "First time able to run the application"
+
+- First successful run against a real YAML!
+- I have a copy of the Arty Z7-20 YAML I had made and it erupted in errors
+  because it's probably the wrong format
+- Wired up the CLI to the pipeline `run_pipeline` function
+- Updated the `pyproject.toml` file to use the appropriate build backend
+- The examples are a little stale, so the next thing to do is make sure that the
+  code is generating things in the way that I want and then use the generator to
+  create the actual example stuff.
+- Make sure that's all done and that the VHDL has the format we really want (now
+  that I know what that is).
+
+Deferred: Need to validate VHDL and Verilog identifiers
+
 ## 2026-04-04 - Verilog generation complete through buffer instantiation
 
 **Commit:** `82672ff` - "Verilog IO buffer generation is working"

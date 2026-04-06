@@ -131,7 +131,10 @@ def validate(yaml_file: Path) -> dict:
     # Load the YAML from the provided path - this can fail and raise and
     # exception if the file is missing or the user doesn't have read permissions
     with open(yaml_file) as f:
-        doc = yaml.safe_load(f)
+        try:
+            doc = yaml.safe_load(f)
+        except yaml.YAMLError as e:
+            raise ValidationError(str(e))
 
     # Each of these can raise a ValidationError, which we just let fail
     _validate_structural(doc)
