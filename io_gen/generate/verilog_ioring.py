@@ -9,8 +9,28 @@ from .common import _get_signal_ioring_ports
 VLOG_DIRECTIONS = {"in": "input", "out": "output", "inout": "inout"}
 
 
-def generate_verilog_ioring(signal_table: SignalTable, pin_table: PinTable) -> str:
-    pass
+def generate_verilog_ioring(
+    signal_table: SignalTable, pin_table: PinTable, top: str
+) -> str:
+    """Generate the complete Verilog IO ring as a string
+
+    Assembles the module declaration, port list, inferred and instantiated buffers
+    by calling private helpers in order.
+    """
+
+    rtl = []
+    rtl.append(f"module {top}_io //#(")
+    rtl.append(f"//)")
+    rtl.append(f"(")
+    rtl.append(_generate_verilog_ioring_ports(signal_table))
+    rtl.append(f");")
+    rtl.append(f"")
+    rtl.append(_generate_verilog_ioring_body(signal_table, pin_table))
+    rtl.append(f"")
+    # Add a newline here so that the file ends appropriately
+    rtl.append(f"endmodule\n")
+
+    return "\n".join(rtl)
 
 
 def _generate_verilog_ioring_ports(signal_table: SignalTable) -> str:
@@ -37,7 +57,27 @@ def _generate_verilog_ioring_ports(signal_table: SignalTable) -> str:
 def _generate_verilog_ioring_body(
     signal_table: SignalTable, pin_table: PinTable
 ) -> str:
-    return ""
+
+    body = []
+    for sig in signal_table:
+        if sig["bypass"]:
+            continue
+
+        # Already checked during validation that this entire signal will be inferable, so
+        # look up the function to call an call it
+        if sig["infer"]:
+            body.append(_INFER_BUFFERS[sig["buffer"]](sig["name"]))
+        # Otherwise, for direct instantiation, we have to iterate the pins
+        else:
+            for pin_row in pin_table[sig["name"]]:
+                body.append(_INSTANTIATE_BUFFERS[sig["buffer"]](sig["name"], pin_row))
+
+    # There will be an extra newline at the end of this (assuming we actually have some
+    # content), so remove it here
+    # if body:
+    #     body.pop(-1)
+
+    return _indent_join(body, 0, "\n\n")
 
 
 def _infer_ibuf(name: str) -> str:

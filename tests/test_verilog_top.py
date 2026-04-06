@@ -173,7 +173,6 @@ def test_no_hdl_comment_no_slash_line() -> None:
     assert "//" not in _generate_verilog_ports(st)
 
 
-
 def test_no_trailing_comma_on_last_port() -> None:
     """The last port declaration has no trailing comma."""
     st = _make_signal_table(
@@ -339,7 +338,11 @@ WIRE_DECL_CASES = [
             "buffer": "iobuf",
             "iostandard": "LVCMOS18",
         },
-        ["    wire            gpio_i;", "    wire            gpio_o;", "    wire            gpio_t;"],
+        [
+            "    wire            gpio_i;",
+            "    wire            gpio_o;",
+            "    wire            gpio_t;",
+        ],
     ),
     (
         "bus_iobuf",
@@ -351,7 +354,11 @@ WIRE_DECL_CASES = [
             "buffer": "iobuf",
             "iostandard": "LVCMOS18",
         },
-        ["    wire    [2:0]   gpio_i;", "    wire    [2:0]   gpio_o;", "    wire    [2:0]   gpio_t;"],
+        [
+            "    wire    [2:0]   gpio_i;",
+            "    wire    [2:0]   gpio_o;",
+            "    wire    [2:0]   gpio_t;",
+        ],
     ),
     (
         "bus_length_1_se",
@@ -375,7 +382,11 @@ WIRE_DECL_CASES = [
             "buffer": "iobuf",
             "iostandard": "LVCMOS18",
         },
-        ["    wire    [0:0]   gpio_i;", "    wire    [0:0]   gpio_o;", "    wire    [0:0]   gpio_t;"],
+        [
+            "    wire    [0:0]   gpio_i;",
+            "    wire    [0:0]   gpio_o;",
+            "    wire    [0:0]   gpio_t;",
+        ],
     ),
 ]
 
@@ -406,7 +417,6 @@ def test_bypass_excluded_from_wires() -> None:
         ]
     )
     assert "spare" not in _generate_verilog_wires(st)
-
 
 
 _EXPECTED_WIRES = (
@@ -607,6 +617,7 @@ _EXPECTED_TOP = (
     + "\n"
     + "\n"
     + "endmodule"
+    + "\n"
 )
 
 
@@ -661,6 +672,22 @@ def test_generate_verilog_top_endmodule() -> None:
     )
     output = generate_verilog_top(st, "test")
     assert output.splitlines()[-1] == "endmodule"
+
+
+def test_generate_verilog_top_ends_with_newline() -> None:
+    """Output ends with a trailing newline."""
+    st = _make_signal_table(
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            },
+        ]
+    )
+    assert generate_verilog_top(st, "test").endswith("\n")
 
 
 def test_generate_verilog_top_integration() -> None:

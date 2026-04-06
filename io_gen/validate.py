@@ -128,7 +128,8 @@ def _validate_semantic(doc: dict) -> None:
 def validate(yaml_file: Path) -> dict:
     """Validate a YAML file for structural and semantical accuracy"""
 
-    # Load the YAML from the provided path
+    # Load the YAML from the provided path - this can fail and raise and
+    # exception if the file is missing or the user doesn't have read permissions
     with open(yaml_file) as f:
         doc = yaml.safe_load(f)
 

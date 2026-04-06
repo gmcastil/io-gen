@@ -67,6 +67,6 @@ def main() -> None:
             rtl_only=args.rtl_only,
             xdc_only=args.xdc_only,
         )
-    except ValidationError as e:
+    except (ValidationError, OSError, NotImplementedError, ValueError) as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)

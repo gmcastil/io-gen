@@ -35,6 +35,7 @@ help:
 	@$(PRINTF) '%s\n' "Available targets:"
 	@$(PRINTF) '%-16s %s\n' "  help" "This help menu"
 	@$(PRINTF) '%-16s %s\n' "  test" "Run entire test suite"
+	@$(PRINTF) '%-16s %s\n' "  install" "Use pip to perform an editable install"
 	@$(PRINTF) '%-16s %s\n' "  debug" "Run entire test suite, with PDB and output directed to console"
 	@$(PRINTF) '%-16s %s\n' "  coverage" "Run tests with coverage"
 	@$(PRINTF) '%-16s %s\n' "  check-ascii" "Search the source tree for non-ASCII characters"
@@ -44,7 +45,11 @@ $(VENV_INSTALLED_STAMP): requirements.txt
 	python3 -m venv $(VENV)
 	$(PIP) install --upgrade pip
 	$(PIP) install -r requirements.txt
+	$(PIP) install -e .
 	$(TOUCH) $(VENV_INSTALLED_STAMP)
+
+install: $(VENV_INSTALLED_STAMP)
+	$(PIP) install -e .
 
 test: $(VENV_INSTALLED_STAMP)
 	@$(PYTHON) -m pytest -k $(TESTS) $(TEST_ARGS)

@@ -328,3 +328,19 @@ def test_integration_output() -> None:
     st = build_signal_table(_INTEGRATION_DOC)
     pt = build_pin_table(st)
     assert generate_xdc(st, pt) == _EXPECTED_XDC
+
+
+def test_generate_xdc_ends_with_newline() -> None:
+    """Output ends with a trailing newline."""
+    st, pt = _make_tables(
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            },
+        ]
+    )
+    assert generate_xdc(st, pt).endswith("\n")

@@ -22,7 +22,8 @@ def generate_verilog_top(signal_table: SignalTable, top: str) -> str:
     rtl.append(f"")
     rtl.append(_generate_verilog_ioring_inst(signal_table, top))
     rtl.append(f"")
-    rtl.append(f"endmodule")
+    # Add a newline here so that the file ends appropriately
+    rtl.append(f"endmodule\n")
 
     return "\n".join(rtl)
 
