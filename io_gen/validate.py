@@ -87,6 +87,27 @@ def _validate_structural(doc: dict) -> None:
     try:
         validator.validate(doc)
     except jsonschema.ValidationError as e:
+        # This exception gives almost no information as to what the offending
+        # portion of the JSON is, so we're going to extract it and craft a better
+        # message
+
+        # The exception itself has a ton of information in it so grab part of it and convert
+        # the deque to a list (set a breakpoint() here if needed to examine this thing in the
+        # future)
+        path = list(e.absolute_path)
+
+        # If the reason for the exception was a signal (and in this JSON it almost
+        # certainly is, since the signals is where all the stuff is at
+        if path and path[0] == "signals" and len(path) >= 2:
+            # Now we can get the index of the offender
+            idx = path[1]
+            signals = doc.get("signals", [{}])
+            # Now extract the name of the signal entry that is causign the problem
+            # (if there is no name yet, return the index of the offender in the signals list)
+            offender = signals[idx].get("name", f"signals[{idx}]")
+            raise ValidationError(f"{offender}: {e.message}")
+
+        # If it wasn't a signal that caused the validator to fail, just raise and hope for teh best
         raise ValidationError(e.message)
 
 
