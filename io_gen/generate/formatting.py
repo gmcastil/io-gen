@@ -34,8 +34,8 @@ def _format_port_block(lines: list[str], level: int, lang: str) -> list[str]:
     return result
 
 
-def _indent_join(lines: list[str], level: int) -> str:
-    """Indents a list of lines and joins them together with a newline"""
+def _indent_join(lines: list[str], level: int, char: str = "\n") -> str:
+    """Indents a list of lines and joins them together (default to newline)"""
     indent = level * f"{'':<4}"
     result = [indent + line for line in lines]
-    return "\n".join(result)
+    return char.join(result)

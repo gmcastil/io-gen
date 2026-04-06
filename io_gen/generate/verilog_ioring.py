@@ -4,6 +4,9 @@ from io_gen.tables import SignalTable
 from io_gen.tables import PinTable
 
 from .formatting import _indent_join
+from .common import _get_signal_ioring_ports
+
+VLOG_DIRECTIONS = {"in": "input", "out": "output", "inout": "inout"}
 
 
 def generate_verilog_ioring(signal_table: SignalTable, pin_table: PinTable) -> str:
@@ -11,7 +14,24 @@ def generate_verilog_ioring(signal_table: SignalTable, pin_table: PinTable) -> s
 
 
 def _generate_verilog_ioring_ports(signal_table: SignalTable) -> str:
-    pass
+    """Generate the indented port declaration list for the IO ring in Verilog"""
+    ports = []
+    for sig in signal_table:
+        # Skip ports that don't exist in the IO ring
+        if sig["bypass"]:
+            continue
+
+        for port in _get_signal_ioring_ports(sig):
+            direction = VLOG_DIRECTIONS[port["direction"]]
+            if port["is_bus"]:
+                width = f"[{port['width'] - 1}:0]"
+            else:
+                width = f""
+            dim = f"wire {width}".ljust(8)
+            line = f"{direction:<8}{dim:<12}{port['name']}"
+            ports.append(line)
+
+    return _indent_join(ports, 1, ",\n")
 
 
 def _generate_verilog_ioring_body(
@@ -32,7 +52,7 @@ def _infer_obuf(name: str) -> str:
 
 def _instantiate_ibuf(name: str, pin_row: dict[str, Any]) -> str:
     """Instantiate an IBUF"""
-    inst = []
+    inst = list()
     inst.append(f"IBUF //#(")
     inst.append(f"//)")
     inst.append(f"{pin_row['instance']} (")
@@ -48,7 +68,7 @@ def _instantiate_ibuf(name: str, pin_row: dict[str, Any]) -> str:
 
 def _instantiate_obuf(name: str, pin_row: dict[str, Any]) -> str:
     """Instantiate an OBUF"""
-    inst = []
+    inst = list()
     inst.append(f"OBUF //#(")
     inst.append(f"//)")
     inst.append(f"{pin_row['instance']} (")
@@ -64,7 +84,7 @@ def _instantiate_obuf(name: str, pin_row: dict[str, Any]) -> str:
 
 def _instantiate_ibufds(name: str, pin_row: dict[str, Any]) -> str:
     """Instantiate an IBUFDS"""
-    inst = []
+    inst = list()
     inst.append(f"IBUFDS //#(")
     inst.append(f"//)")
     inst.append(f"{pin_row['instance']} (")
@@ -82,7 +102,7 @@ def _instantiate_ibufds(name: str, pin_row: dict[str, Any]) -> str:
 
 def _instantiate_obufds(name: str, pin_row: dict[str, Any]) -> str:
     """Instantiate an OBUFDS"""
-    inst = []
+    inst = list()
     inst.append(f"OBUFDS //#(")
     inst.append(f"//)")
     inst.append(f"{pin_row['instance']} (")
@@ -100,7 +120,7 @@ def _instantiate_obufds(name: str, pin_row: dict[str, Any]) -> str:
 
 def _instantiate_iobuf(name: str, pin_row: dict[str, Any]) -> str:
     """Instantiate an IOBUF"""
-    inst = []
+    inst = list()
     inst.append(f"IOBUF //#(")
     inst.append(f"//)")
     inst.append(f"{pin_row['instance']} (")
