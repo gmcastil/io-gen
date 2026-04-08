@@ -8,3 +8,5 @@ __pycache__/
 
 # Apple, leave me alone
 .DS_Store
+
+io_gen.egg-info/
