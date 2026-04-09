@@ -8,8 +8,8 @@ import re
 _VERILOG_ID = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*$")
 
 # Per Ashenden, a basic identifier
-# - may only contain alphabetic letters (‘A’ to ‘Z’ and ‘a’ to ‘z’), decimal
-#   digits (‘0’ to ‘9’) and the underline character (‘_’);
+# - may only contain alphabetic letters (A-Z, a-z), decimal digits (0-9),
+#   and the underline character (_);
 # - must start with an alphabetic letter;
 # - may not end with an underline character; and
 # - may not include two successive underline characters.
