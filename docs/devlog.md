@@ -14,6 +14,11 @@ Entries are in reverse chronological order.
 - examples/example_io.v identified as stale
 - The run_pipeline function was starting to do low level checks, which i've
   moved into language specific validate functions. Tests for these are needed.
+- Lots more formatting tweaks for Verilog and refactoring
+- Verilog examples are replaced now - need to use them as a basis to create VHDL examples
+- Next step is to do this for the Basys3 (pure FPGA board, not the Arty Z7), then
+  use the Vivado IO planner tool to make sure that it works, then script that as
+  a check.
 
 ## 2026-04-06 - Verilog generation is completed and CLI wired up
 

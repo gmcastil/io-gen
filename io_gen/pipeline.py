@@ -4,7 +4,7 @@ from pathlib import Path
 from io_gen.validate import validate, validate_verilog, validate_vhdl
 from io_gen.tables.signal_table import _build_signal_table
 from io_gen.tables.pin_table import _build_pin_table
-from io_gen.tables.meta_table import build_meta_table
+from io_gen.tables.meta_table import _build_meta_table
 
 from io_gen.generate.xdc import generate_xdc
 from io_gen.generate.verilog_top import generate_verilog_top
@@ -65,7 +65,7 @@ def run_pipeline(
     print(f"Info: Validated YAML at {yaml_path}")
 
     # Create the table of metadata
-    meta_table = build_meta_table(valid_doc)
+    meta_table = _build_meta_table(valid_doc)
 
     # Create the table of signals from the validated doc
     signal_table = _build_signal_table(valid_doc)

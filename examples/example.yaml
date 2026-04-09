@@ -24,6 +24,17 @@ signals:
           xdc: User LEDs
           hdl: User LED outputs
 
+    # Scalar single-ended output - buffer inferred by synthesis
+    - name: user_led
+      pins: K22
+      iostandard: LVCMOS18
+      direction: out
+      buffer: obuf
+      infer: true
+      comment:
+          xdc: User LED (inferred buffer)
+          hdl: User LED output, buffer inferred
+
     # Scalar differential input
     - name: ref_clk
       pinset:
@@ -56,6 +67,7 @@ signals:
       iostandard: LVCMOS18
       direction: inout
       buffer: iobuf
+      generate: true
       comment:
           xdc: GPIO bus
           hdl: General purpose IO

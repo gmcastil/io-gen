@@ -4,5 +4,5 @@ class MetaTable:
         self.part = part
 
 
-def build_meta_table(doc: dict) -> MetaTable:
+def _build_meta_table(doc: dict) -> MetaTable:
     return MetaTable(doc["title"], doc["part"])
