@@ -155,7 +155,7 @@ def _validate_semantic(doc: dict) -> None:
 def validate(yaml_file: Path) -> dict:
     """Validate a YAML file for structural and semantical accuracy"""
 
-    # Before doing anything, we
+    # Before doing anything, we check the YAML for non-ascii encoded unicode
     _check_non_ascii(yaml_file)
 
     # Load the YAML from the provided path - this can fail and raise and
@@ -188,13 +188,22 @@ def validate_verilog(signal_table: SignalTable, top: str) -> None:
     top:
         Top-level module name supplied at runtime.
     """
+    if not _is_valid_verilog_identifier(top):
+        raise ValidationError(
+            f"Top level module name '{top}' is not a valid Verilog identifier"
+        )
+
     for sig in signal_table:
         # Check that the signal names are all valid Verilog identifiers (with some restrictions)
         if not _is_valid_verilog_identifier(sig["name"]):
-            raise ValueError(f"{sig['name']} is not a valid Verilog identifier")
-        # Also, now that instance names are resolved, check that those are valid too
-        if not _is_valid_verilog_identifier(sig["instance"]):
-            raise ValueError(f"{sig['instance']} is not a valid Verilog identifier")
+            raise ValidationError(f"{sig['name']} is not a valid Verilog identifier")
+        # Bypassed signals still generate top level ports, so we filter those out here
+        # before checking the instance names
+        if not sig["bypass"]:
+            if not _is_valid_verilog_identifier(sig["instance"]):
+                raise ValidationError(
+                    f"{sig['instance']} is not a valid Verilog identifier"
+                )
 
 
 def validate_vhdl(signal_table: SignalTable, top: str) -> None:
@@ -211,6 +220,19 @@ def validate_vhdl(signal_table: SignalTable, top: str) -> None:
     top:
         Top-level entity name supplied at runtime.
     """
-    pass
-    # elif lang == "vhdl" and not _is_valid_vhdl_identifier(sig["name"]):
-    #     raise ValueError(f"{sig['name']} is not a valid VHDL identifier")
+    if not _is_valid_vhdl_identifier(top):
+        raise ValidationError(
+            f"Top level entity name '{top}' is not a valid VHDL identifier"
+        )
+
+    for sig in signal_table:
+        # Check that the signal names are all valid VHDL identifiers
+        if not _is_valid_vhdl_identifier(sig["name"]):
+            raise ValidationError(f"{sig['name']} is not a valid VHDL identifier")
+        # Bypassed signals still generate top level ports, so we filter those out here
+        # before checking the instance names
+        if not sig["bypass"]:
+            if not _is_valid_vhdl_identifier(sig["instance"]):
+                raise ValidationError(
+                    f"{sig['instance']} is not a valid VHDL identifier"
+                )
