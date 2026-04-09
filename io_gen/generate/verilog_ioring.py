@@ -4,7 +4,7 @@ from io_gen.tables import SignalTable
 from io_gen.tables import PinTable
 
 from .formatting import _indent_join
-from .common import _get_signal_ioring_ports
+from .common import _get_ioring_header, _get_signal_ioring_ports
 
 VLOG_DIRECTIONS = {"in": "input", "out": "output", "inout": "inout"}
 
@@ -19,6 +19,8 @@ def generate_verilog_ioring(
     """
 
     rtl = []
+    for line in _get_ioring_header():
+        rtl.append(f"// {line}")
     rtl.append(f"module {top}_io //#(")
     rtl.append(f"//)")
     rtl.append(f"(")
@@ -57,7 +59,6 @@ def _generate_verilog_ioring_ports(signal_table: SignalTable) -> str:
 def _generate_verilog_ioring_body(
     signal_table: SignalTable, pin_table: PinTable
 ) -> str:
-
     body = []
     for sig in signal_table:
         if sig["bypass"]:

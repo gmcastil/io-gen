@@ -12,7 +12,6 @@
 - [x] Write exhaustive unit tests for the buffer/direction compatibility checking logic
 - [x] Write exhaustive unit tests for the buffer/pin strategy compatibility checking logic
 - [x] Write the validator
-- [ ] Cache the JSON schema registry as a module global in validate.py
 
 ### Table Construction
 
@@ -53,10 +52,9 @@
 - [x] Signal name format - checked in `run_pipeline` after target language is known (`io_gen/identifiers.py`)
 - [x] Top level HDL module name validated as legal identifier
 - [x] Non-ASCII characters in YAML rejected before parsing (`_check_non_ascii` in `io_gen/checks.py`)
-- [ ] Instance name format - the optional `instance` field becomes an HDL
+- [x] Instance name format - the optional `instance` field becomes an HDL
       identifier in the IO ring. Must be validated as a legal identifier
       before generation. Same language considerations as signal names.
-- [ ] Signal and signal + instance length cap - future discussion
 
 ## Housekeeping
 

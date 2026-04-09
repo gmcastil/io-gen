@@ -39,7 +39,6 @@ def _generate_verilog_ports(signal_table: SignalTable) -> str:
     """
     ports = []
     for sig in signal_table:
-
         # The strategy here is to create the entire list of ports and comments without any indent, then once it's
         # finished, iterate the result, add commas at the end of all but the last one and indent everything along the
         # way (use the fact that comments start with # before indenting, and then add the commas).
