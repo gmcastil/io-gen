@@ -32,9 +32,9 @@
 - [x] Implement Verilog top-level generator (`io_gen/generate/verilog_top.py`)
 - [x] Write tests for buffer instantiation helpers (`tests/test_verilog_ioring.py`)
 - [x] Implement buffer instantiation helpers (`io_gen/generate/verilog_ioring.py`)
-- [ ] Write tests for `_generate_verilog_ioring_ports`
-- [ ] Implement `_generate_verilog_ioring_ports`
-- [ ] Implement `generate_verilog_ioring` assembler
+- [x] Write tests for `_generate_verilog_ioring_ports`
+- [x] Implement `_generate_verilog_ioring_ports`
+- [x] Implement `generate_verilog_ioring` assembler
 - [ ] Write tests for VHDL top-level generator (`tests/test_vhdl_top.py`)
 - [ ] Implement VHDL top-level generator (`io_gen/generate/vhdl_top.py`)
 - [ ] Write tests for VHDL IO ring generator (`tests/test_vhdl_ioring.py`)
@@ -42,24 +42,21 @@
 
 ## CLI
 
-- [ ] Stdout mode
-- [ ] `--validate-only` flag
-- [ ] `--rtl-only` flag
-- [ ] `--xdc-only` flag
-- [ ] Per-stage progress feedback - consider a callback passed from CLI to pipeline
-      so the pipeline stays decoupled from presentation
+- [x] `--validate-only` flag
+- [x] `--rtl-only` flag
+- [x] `--xdc-only` flag
+- [x] Per-stage progress feedback via `print()` in `pipeline.py`
+- [ ] Stdout mode (dropped - ambiguous with multiple output files)
 
 ## Validation - Pending Checks
 
-- [ ] Signal name format - must be a valid HDL identifier. Rules are
-      language-specific (Verilog and VHDL differ), so this check should
-      run after the target language is known or enforce the intersection
-      of both sets of rules.
+- [x] Signal name format - checked in `run_pipeline` after target language is known (`io_gen/identifiers.py`)
+- [x] Top level HDL module name validated as legal identifier
+- [x] Non-ASCII characters in YAML rejected before parsing (`_check_non_ascii` in `io_gen/checks.py`)
 - [ ] Instance name format - the optional `instance` field becomes an HDL
       identifier in the IO ring. Must be validated as a legal identifier
       before generation. Same language considerations as signal names.
-- [ ] Top level HDL module name needs to be valid VHDL or Verilog
-- [ ] Signal and signal + instance should be capped, maybe? Future discussion
+- [ ] Signal and signal + instance length cap - future discussion
 
 ## Housekeeping
 

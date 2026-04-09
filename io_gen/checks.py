@@ -1,4 +1,5 @@
 import re
+from pathlib import Path
 
 from .exceptions import ValidationError
 
@@ -252,3 +253,15 @@ def _check_minimum_ports_generated(signals: list[dict]) -> None:
         if status:
             return
     raise ValidationError("no signals with generate: true - nothing to generate")
+
+
+def _check_non_ascii(path: Path) -> None:
+    """Checks a file to verify there are no none non-ASCII characters present
+
+    Raises ValidationError identifying the location of the first non-ASCII character
+    in the provided path.
+    """
+    with open(path, "r") as lines:
+        for index, line in enumerate(lines, 1):
+            if not line.isascii():
+                raise ValidationError(f"found non-ASCII encoded string at line {index}")

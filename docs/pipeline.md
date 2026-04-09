@@ -11,7 +11,7 @@ test, or otherwise.
 ## Interface
 
 ```
-run_pipeline(yaml_path, top, lang, output_dir, validate_only, rtl_only, xdc_only, stdout)
+run_pipeline(yaml_path, top, lang, output_dir, validate_only, rtl_only, xdc_only)
 ```
 
 **Parameters:**
@@ -25,7 +25,6 @@ run_pipeline(yaml_path, top, lang, output_dir, validate_only, rtl_only, xdc_only
 | `validate_only` | bool | Run validation only, no generation              |
 | `rtl_only`      | bool | Generate HDL files only, skip XDC               |
 | `xdc_only`      | bool | Generate XDC only, skip HDL files               |
-| `stdout`        | bool | Print output to stdout instead of writing files |
 
 **Returns:** nothing
 

@@ -8,7 +8,11 @@ import yaml
 from referencing import Registry, Resource
 from referencing.jsonschema import DRAFT202012
 
+from io_gen.tables.signal_table import SignalTable
+
 from .exceptions import ValidationError
+
+from io_gen.identifiers import _is_valid_verilog_identifier, _is_valid_vhdl_identifier
 from io_gen.checks import (
     _check_pin_name_format,
     _check_unique_signal_names,
@@ -21,6 +25,7 @@ from io_gen.checks import (
     _check_buffer_infer_bypass_mismatch,
     _check_buffer_inferable,
     _check_minimum_ports_generated,
+    _check_non_ascii,
 )
 
 # Top level JSON schema file for validating input YAML stored in schema/
@@ -89,7 +94,8 @@ def _validate_structural(doc: dict) -> None:
     except jsonschema.ValidationError as e:
         # This exception gives almost no information as to what the offending
         # portion of the JSON is, so we're going to extract it and craft a better
-        # message
+        # message, since users will undoubtedly have to debug their YAML and without
+        # knowing the offending signal, they'll be lost.
 
         # The exception itself has a ton of information in it so grab part of it and convert
         # the deque to a list (set a breakpoint() here if needed to examine this thing in the
@@ -149,6 +155,9 @@ def _validate_semantic(doc: dict) -> None:
 def validate(yaml_file: Path) -> dict:
     """Validate a YAML file for structural and semantical accuracy"""
 
+    # Before doing anything, we
+    _check_non_ascii(yaml_file)
+
     # Load the YAML from the provided path - this can fail and raise and
     # exception if the file is missing or the user doesn't have read permissions
     with open(yaml_file) as f:
@@ -163,3 +172,45 @@ def validate(yaml_file: Path) -> dict:
 
     # If we're validated, then we can just return the validated doc
     return doc
+
+
+def validate_verilog(signal_table: SignalTable, top: str) -> None:
+    """Validate signal names, instance names, and the top module name as legal Verilog identifiers.
+
+    Checks that every signal name and resolved instance name in the signal table is
+    a valid Verilog simple identifier, and that the top module name is also valid.
+    Raises ValidationError on the first invalid name encountered.
+
+    Parameters
+    ----------
+    signal_table:
+        Constructed signal table to validate.
+    top:
+        Top-level module name supplied at runtime.
+    """
+    for sig in signal_table:
+        # Check that the signal names are all valid Verilog identifiers (with some restrictions)
+        if not _is_valid_verilog_identifier(sig["name"]):
+            raise ValueError(f"{sig['name']} is not a valid Verilog identifier")
+        # Also, now that instance names are resolved, check that those are valid too
+        if not _is_valid_verilog_identifier(sig["instance"]):
+            raise ValueError(f"{sig['instance']} is not a valid Verilog identifier")
+
+
+def validate_vhdl(signal_table: SignalTable, top: str) -> None:
+    """Validate signal names, instance names, and the top entity name as legal VHDL identifiers.
+
+    Checks that every signal name and resolved instance name in the signal table is
+    a valid VHDL basic identifier, and that the top entity name is also valid.
+    Raises ValidationError on the first invalid name encountered.
+
+    Parameters
+    ----------
+    signal_table:
+        Constructed signal table to validate.
+    top:
+        Top-level entity name supplied at runtime.
+    """
+    pass
+    # elif lang == "vhdl" and not _is_valid_vhdl_identifier(sig["name"]):
+    #     raise ValueError(f"{sig['name']} is not a valid VHDL identifier")

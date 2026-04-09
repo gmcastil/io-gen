@@ -125,15 +125,17 @@ Do not add formatter invocation to the pipeline.
 - [x] Review and finalize the JSON schema / data model
 - [x] Define the data structures that need to be produced
 - [x] Document each pipeline stage interface
-- [ ] Write tests for each interface
-- [ ] Implement one stage at a time
+- [x] Write tests for each interface
+- [x] Implement one stage at a time
 
 ### Validation Stage Status
 
 - [x] Structural validation implemented and tested (`io_gen/validate.py`)
 - [x] Semantic validation fully implemented (`io_gen/checks.py`)
-- [x] All check functions tested in `tests/test_checks.py`
+- [x] All check functions tested in `tests/test_checks.py`)
 - [x] Structural and integration tests in `tests/test_validate.py`
+- [x] Non-ASCII check implemented (`_check_non_ascii` in `io_gen/checks.py`)
+- [x] Enriched jsonschema error messages with signal name (`io_gen/validate.py`)
 - `io_gen/exceptions.py` defines `ValidationError` in isolation (no imports)
 - `io_gen/checks.py` contains all `_check_*` functions and `_get_pin_names_from_signal` helper
 - `io_gen/validate.py` orchestrates structural and semantic validation only
@@ -165,9 +167,8 @@ Key design decisions:
 
 - [x] XDC generator implemented and tested (`io_gen/generate/xdc.py`, `tests/test_xdc.py`)
 - [x] Verilog top-level generator fully implemented and tested (`io_gen/generate/verilog_top.py`, `tests/test_verilog_top.py`)
-- [x] Buffer instantiation helpers implemented and tested (`io_gen/generate/verilog_ioring.py`, `tests/test_verilog_ioring.py`)
-- [ ] `_generate_verilog_ioring_ports` (next)
-- [ ] `generate_verilog_ioring` assembler
+- [x] Verilog IO ring fully implemented and tested (`io_gen/generate/verilog_ioring.py`, `tests/test_verilog_ioring.py`)
+- [x] `generate_verilog_ioring` assembler complete
 - [ ] VHDL generators (deferred until Verilog is validated end-to-end in Vivado)
 
 Key design decisions:
@@ -175,14 +176,22 @@ Key design decisions:
 - Generators live in `io_gen/generate/`, split by output file and language:
   - `xdc.py` - `generate_xdc(st, pt)`
   - `verilog_top.py` - `generate_verilog_top(st, top)` + private helpers
-  - `verilog_ioring.py` - `generate_verilog_ioring(st, pt)` + private helpers
+  - `verilog_ioring.py` - `generate_verilog_ioring(st, pt, top)` + private helpers
   - `common.py` - `_get_signal_top_ports`, `_get_signal_ioring_ports`, `_get_signal_nets`
   - `formatting.py` - `_format_port_block`, `_indent_join`
   - `vhdl_top.py`, `vhdl_ioring.py` - VHDL counterparts (pending)
 - Buffer dispatch uses `_INSTANTIATE_BUFFERS` and `_INFER_BUFFERS` dicts keyed by buffer type
 - `infer: true` signals use a single `assign` statement — no pin table lookup needed
 - Generators never see `generate: false` signals — filtered at signal table construction
-- **Next step: `_generate_verilog_ioring_ports`**
+
+### CLI and Pipeline Status
+
+- [x] `io_gen/cli.py` implemented with argparse — `--top`, `--lang`, `--output`, `--validate-only`, `--rtl-only`, `--xdc-only`
+- [x] `io_gen/pipeline.py` (`run_pipeline`) implemented — dir creation, identifier validation, table construction, file writing with status output
+- [x] `io_gen/identifiers.py` — `_is_valid_verilog_identifier` implemented; `_is_valid_vhdl_identifier` stub
+- [x] Entry point `io-gen` registered in `pyproject.toml`
+- [x] Makefile updated to run `pip install -e .` in venv stamp target
+- [x] First successful end-to-end run against a real board YAML
 
 ## Definitions
 

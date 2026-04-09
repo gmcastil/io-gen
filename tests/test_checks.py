@@ -1,4 +1,5 @@
 import pytest
+from pathlib import Path
 
 from io_gen import ValidationError
 from io_gen.checks import (
@@ -13,6 +14,7 @@ from io_gen.checks import (
     _check_buffer_infer_bypass_mismatch,
     _check_buffer_inferable,
     _check_minimum_ports_generated,
+    _check_non_ascii,
 )
 
 
@@ -614,3 +616,24 @@ def test_invalid_minimum_ports_generated(signals: list[dict]) -> None:
     """Confirm that all signals having generate: false raises ValidationError"""
     with pytest.raises(ValidationError):
         _check_minimum_ports_generated(signals)
+
+
+# ---------------------------------------------------------------------------
+# _check_non_ascii
+# ---------------------------------------------------------------------------
+
+
+def test_check_non_ascii_clean_file(tmp_path: Path) -> None:
+    """ASCII-only file passes without raising."""
+    p = tmp_path / "input.yaml"
+    p.write_text("title: Test\npart: xc7k325tffg900-2\n")
+    _check_non_ascii(p)
+
+
+def test_check_non_ascii_raises(tmp_path: Path) -> None:
+    """File containing a non-ASCII byte raises ValidationError."""
+    p = tmp_path / "input.yaml"
+    # \xc3\xa9 is UTF-8 for e with acute accent - written as bytes to avoid non-ASCII in source
+    p.write_bytes(b"title: Test\nname: caf\xc3\xa9\n")
+    with pytest.raises(ValidationError):
+        _check_non_ascii(p)

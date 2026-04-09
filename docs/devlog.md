@@ -4,6 +4,17 @@ Entries are in reverse chronological order.
 
 ---
 
+## 2026-04-09 - Addressing lingering validation items
+
+- `validate_verilog` and `validate_vhdl` stubs added to validate.py
+- \_check_non_ascii added to checks.py
+- Enriched jsonschema error messages with signal name
+- `_is_valid_verilog`\_identifier implemented in identifiers.py
+- CLI and pipeline complete, first successful end-to-end run
+- examples/example_io.v identified as stale
+- The run_pipeline function was starting to do low level checks, which i've
+  moved into language specific validate functions. Tests for these are needed.
+
 ## 2026-04-06 - Verilog generation is completed and CLI wired up
 
 **Commit:** `7009b79` - "First time able to run the application"

@@ -1,8 +1,7 @@
 import os
 from pathlib import Path
 
-from io_gen.validate import validate
-from io_gen.identifiers import _is_valid_verilog_identifier, _is_valid_vhdl_identifier
+from io_gen.validate import validate, validate_verilog, validate_vhdl
 from io_gen.tables.signal_table import build_signal_table
 from io_gen.tables.pin_table import build_pin_table
 from io_gen.tables.meta_table import build_meta_table
@@ -46,39 +45,36 @@ def run_pipeline(
     """
 
     # Convert to Path objects first
-    output_dir = Path(output_dir)
-    yaml_path = Path(yaml_path)
+    output_dir = Path(output_dir).resolve()
+    yaml_path = Path(yaml_path).resolve()
 
-    # Before spinning anything up, lets make sure that the output direcotry exists and is writable
-    if not os.access(output_dir, os.W_OK):
-        raise OSError(
-            f"Output directory {output_dir} does not exist or is not writable by current user"
-        )
+    # If the output directory doesn't exist already, make it (might raise
+    # OSError which is being caught higher up)
+    if not validate_only:
+        output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Check that the top level module names are valid module or entity names
-    if lang == "verilog" and not _is_valid_verilog_identifier(top):
-        raise ValueError(f"{top} is not a valid Verilog module name")
-    elif lang == "vhdl" and not _is_valid_vhdl_identifier(top):
-        raise ValueError(f"{top} is not a valid VHDL module name")
+        # Before spinning anything up, lets make sure that the output
+        # direcotry exists and is writable
+        if not os.access(output_dir, os.W_OK):
+            raise OSError(
+                f"Output directory {output_dir} does not exist or is not writable by current user"
+            )
 
     # Get the validated data from YAML
     valid_doc = validate(yaml_path)
+    print(f"Info: Validated YAML at {yaml_path}")
 
     # Create the table of metadata
     meta_table = build_meta_table(valid_doc)
 
     # Create the table of signals from the validated doc
     signal_table = build_signal_table(valid_doc)
-    # Now that we know the language, we iterate the signal table and check that the signal names are
-    # valid for the language
-    for sig in signal_table:
-        if lang == "verilog" and not _is_valid_verilog_identifier(sig["name"]):
-            raise ValueError(f"{sig['name']} is not a valid Verilog identifier")
-        elif lang == "vhdl" and not _is_valid_vhdl_identifier(sig["name"]):
-            raise ValueError(f"{sig['name']} is not a valid VHDL identifier")
-
-    # And also set the language extensions for RTL
-    rtl_ext = "v" if lang == "verilog" else "vhd"
+    # Now that we know the language and top level module or component names, we validate
+    # the signal table components
+    if lang == "verilog":
+        validate_verilog(signal_table, top)
+    else:
+        validate_vhdl(signal_table, top)
 
     # Create a mapping between signal names and a list of the pins for that signal
     pin_table = build_pin_table(signal_table)
@@ -90,15 +86,18 @@ def run_pipeline(
     if not rtl_only:
         with open(output_dir / f"{top}.xdc", "w") as xdc:
             xdc.write(generate_xdc(signal_table, pin_table))
+            print(f"Info: Wrote XDC constraints to {output_dir / f'{top}.xdc'}")
 
     if not xdc_only:
         if lang == "verilog":
             # Write the top level RTL to disk
-            with open(output_dir / f"{top}.{rtl_ext}", "w") as top_rtl:
+            with open(output_dir / f"{top}.v", "w") as top_rtl:
                 top_rtl.write(generate_verilog_top(signal_table, top))
+                print(f"Info: Wrote top level module to {output_dir / f'{top}.v'}")
             # Write teh IO ring RTL to disk
-            with open(output_dir / f"{top}_io.{rtl_ext}", "w") as top_rtl:
+            with open(output_dir / f"{top}_io.v", "w") as top_rtl:
                 top_rtl.write(generate_verilog_ioring(signal_table, pin_table, top))
+                print(f"Info: Wrote IO ring module to {output_dir / f'{top}.v'}")
         else:
             raise NotImplementedError(f"VHDL support not supported yet")
 

@@ -263,3 +263,12 @@ def test_valid_integration(tmp_path: Path, yaml_text: str, expected: dict) -> No
     """Check that valid YAML is parsed and returned correctly by validate()"""
     doc = validate(write_yaml(tmp_path, yaml_text))
     assert doc == expected
+
+
+def test_non_ascii_yaml_raises(tmp_path: Path) -> None:
+    """YAML containing non-ASCII characters raises ValidationError."""
+    p = tmp_path / TMP_YAML
+    # Write bytes directly to avoid non-ASCII in source - \xc3\xa9 is UTF-8 for e with acute accent
+    p.write_bytes(b"title: Test\npart: xc7k325tffg900-2\nsignals:\n  - name: caf\xc3\xa9\n")
+    with pytest.raises(ValidationError):
+        validate(p)
