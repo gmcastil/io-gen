@@ -6,6 +6,8 @@ from io_gen.tables import signal_is_differential, signal_is_scalar
 # block and IO ring instances
 TRISTATE_BUFFERS = {"iobuf"}
 
+VLOG_DIRECTIONS = {"in": "input", "out": "output", "inout": "inout"}
+
 
 def _get_ioring_header() -> list[str]:
     """Language-agnostic list of strings to use as the IO ring header"""

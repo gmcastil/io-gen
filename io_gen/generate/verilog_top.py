@@ -1,8 +1,13 @@
 from io_gen.tables import SignalTable
 
-from .formatting import _format_port_block
+from .formatting import _indent_join
 
-from .common import _get_signal_top_ports, _get_signal_nets, _get_signal_ioring_ports
+from .common import (
+    _get_signal_top_ports,
+    _get_signal_nets,
+    _get_signal_ioring_ports,
+    VLOG_DIRECTIONS,
+)
 
 
 def generate_verilog_top(signal_table: SignalTable, top: str) -> str:
@@ -38,7 +43,7 @@ def _generate_verilog_ports(signal_table: SignalTable) -> str:
     port(s). The last port declaration has no trailing comma.
     """
     ports = []
-    for sig in signal_table:
+    for sig_index, sig in enumerate(signal_table):
         # The strategy here is to create the entire list of ports and comments without any indent, then once it's
         # finished, iterate the result, add commas at the end of all but the last one and indent everything along the
         # way (use the fact that comments start with # before indenting, and then add the commas).
@@ -48,27 +53,27 @@ def _generate_verilog_ports(signal_table: SignalTable) -> str:
         if comment_str:
             ports.append(f"// {comment_str}")
 
-        # Get the one or two ports for this signal
-        for port in _get_signal_top_ports(sig):
-            # Port direction
-            if port["direction"] == "in":
-                direction_str = "input".ljust(7)
-            elif port["direction"] == "out":
-                direction_str = "output".ljust(7)
-            else:
-                direction_str = "inout".ljust(7)
-
-            # Net type and width block
+        # Get all the ports for this signal
+        sig_ports = _get_signal_top_ports(sig)
+        # Need to keep track of the last item so that on the last signal in the
+        # table and the last port, we can drop the comma
+        last_index = len(sig_ports) - 1
+        for port_index, port in enumerate(sig_ports):
+            direction = VLOG_DIRECTIONS[port["direction"]]
             if port["is_bus"]:
-                width_str = f"wire [{port['width'] - 1}:0]".ljust(12)
+                width = f"[{port['width'] - 1}:0]"
             else:
-                width_str = f"wire".ljust(12)
+                width = f""
+            dim = f"wire {width}".ljust(8)
+            # Every port but the last port of the last signal gets a comma
+            if last_index == port_index and sig_index == len(signal_table) - 1:
+                suffix = f""
+            else:
+                suffix = f","
+            line = f"{direction:<8}{dim:<12}{port['name']}{suffix}"
+            ports.append(line)
 
-            # Now assemble the string for the entire port
-            ports.append(f"{direction_str}{width_str}{port['name']}")
-
-    # Now indent and append commas to (almost) every line
-    return "\n".join(_format_port_block(ports, 1, "verilog"))
+    return _indent_join(ports, 1, "\n")
 
 
 def _generate_verilog_wires(signal_table: SignalTable) -> str:
