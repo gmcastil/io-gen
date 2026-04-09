@@ -1,6 +1,6 @@
 import pytest
 
-from io_gen.tables.signal_table import SignalTable, build_signal_table
+from io_gen.tables.signal_table import SignalTable, _build_signal_table
 
 
 # ---------------------------------------------------------------------------
@@ -18,16 +18,48 @@ def test_empty_table() -> None:
 def test_add_single() -> None:
     """Adding one signal produces length 1."""
     table = SignalTable()
-    table.add({"name": "sys_clk", "pins": "G22", "direction": "in", "buffer": "ibuf", "iostandard": "LVCMOS18"})
+    table.add(
+        {
+            "name": "sys_clk",
+            "pins": "G22",
+            "direction": "in",
+            "buffer": "ibuf",
+            "iostandard": "LVCMOS18",
+        }
+    )
     assert len(table) == 1
 
 
 def test_add_multiple_preserves_order() -> None:
     """Rows are returned in insertion order."""
     table = SignalTable()
-    table.add({"name": "a", "pins": "G22", "direction": "in", "buffer": "ibuf", "iostandard": "LVCMOS18"})
-    table.add({"name": "b", "pins": "H22", "direction": "out", "buffer": "obuf", "iostandard": "LVCMOS18"})
-    table.add({"name": "c", "pins": "H24", "direction": "out", "buffer": "obuf", "iostandard": "LVCMOS18"})
+    table.add(
+        {
+            "name": "a",
+            "pins": "G22",
+            "direction": "in",
+            "buffer": "ibuf",
+            "iostandard": "LVCMOS18",
+        }
+    )
+    table.add(
+        {
+            "name": "b",
+            "pins": "H22",
+            "direction": "out",
+            "buffer": "obuf",
+            "iostandard": "LVCMOS18",
+        }
+    )
+    table.add(
+        {
+            "name": "c",
+            "pins": "H24",
+            "direction": "out",
+            "buffer": "obuf",
+            "iostandard": "LVCMOS18",
+        }
+    )
     assert len(table) == 3
     assert [row["name"] for row in table] == ["a", "b", "c"]
 
@@ -285,13 +317,15 @@ def test_normalization_defaults(sig: dict, field: str, expected: object) -> None
 def test_bypass_signal() -> None:
     """bypass:true signals have buffer == None and instance == None."""
     table = SignalTable()
-    table.add({
-        "name": "spare",
-        "pins": "J24",
-        "direction": "out",
-        "iostandard": "LVCMOS18",
-        "bypass": True,
-    })
+    table.add(
+        {
+            "name": "spare",
+            "pins": "J24",
+            "direction": "out",
+            "iostandard": "LVCMOS18",
+            "bypass": True,
+        }
+    )
     row = list(table)[0]
     assert row["buffer"] is None
     assert row["instance"] is None
@@ -301,14 +335,16 @@ def test_bypass_signal() -> None:
 def test_infer_true() -> None:
     """infer:true is preserved in the row."""
     table = SignalTable()
-    table.add({
-        "name": "sys_clk",
-        "pins": "G22",
-        "direction": "in",
-        "buffer": "ibuf",
-        "iostandard": "LVCMOS18",
-        "infer": True,
-    })
+    table.add(
+        {
+            "name": "sys_clk",
+            "pins": "G22",
+            "direction": "in",
+            "buffer": "ibuf",
+            "iostandard": "LVCMOS18",
+            "infer": True,
+        }
+    )
     row = list(table)[0]
     assert row["infer"] is True
 
@@ -316,14 +352,16 @@ def test_infer_true() -> None:
 def test_comment_preserved() -> None:
     """Comment dict is copied into the row unchanged."""
     table = SignalTable()
-    table.add({
-        "name": "sys_clk",
-        "pins": "G22",
-        "direction": "in",
-        "buffer": "ibuf",
-        "iostandard": "LVCMOS18",
-        "comment": {"xdc": "125 MHz clock", "hdl": "system clock"},
-    })
+    table.add(
+        {
+            "name": "sys_clk",
+            "pins": "G22",
+            "direction": "in",
+            "buffer": "ibuf",
+            "iostandard": "LVCMOS18",
+            "comment": {"xdc": "125 MHz clock", "hdl": "system clock"},
+        }
+    )
     row = list(table)[0]
     assert row["comment"] == {"xdc": "125 MHz clock", "hdl": "system clock"}
 
@@ -331,14 +369,16 @@ def test_comment_preserved() -> None:
 def test_instance_override() -> None:
     """User-supplied instance is stored as the base name without _iN suffix."""
     table = SignalTable()
-    table.add({
-        "name": "sys_clk",
-        "pins": "G22",
-        "direction": "in",
-        "buffer": "ibuf",
-        "iostandard": "LVCMOS18",
-        "instance": "my_ibuf",
-    })
+    table.add(
+        {
+            "name": "sys_clk",
+            "pins": "G22",
+            "direction": "in",
+            "buffer": "ibuf",
+            "iostandard": "LVCMOS18",
+            "instance": "my_ibuf",
+        }
+    )
     row = list(table)[0]
     assert row["instance"] == "my_ibuf"
 
@@ -376,7 +416,7 @@ def test_build_signal_table_count_and_order() -> None:
             },
         ],
     }
-    table = build_signal_table(doc)
+    table = _build_signal_table(doc)
     rows = list(table)
     assert len(rows) == 2
     assert rows[0]["name"] == "sys_clk"

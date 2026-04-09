@@ -2,8 +2,8 @@
 from .meta_table import MetaTable, build_meta_table
 from .signal_table import (
     SignalTable,
-    build_signal_table,
-    signal_is_scalar,
-    signal_is_differential,
+    _build_signal_table,
+    _signal_is_scalar,
+    _signal_is_differential,
 )
-from .pin_table import PinTable, build_pin_table
+from .pin_table import PinTable, _build_pin_table, _pin_is_differential

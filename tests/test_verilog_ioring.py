@@ -1,8 +1,8 @@
 import pytest
 
 from io_gen.tables import SignalTable, PinTable
-from io_gen.tables.signal_table import build_signal_table
-from io_gen.tables.pin_table import build_pin_table
+from io_gen.tables.signal_table import _build_signal_table
+from io_gen.tables.pin_table import _build_pin_table
 
 from io_gen.generate.verilog_ioring import (
     _infer_ibuf,
@@ -20,12 +20,12 @@ from io_gen.generate.verilog_ioring import (
 
 def _make_signal_table(signals: list) -> SignalTable:
     doc = {"title": "Test", "part": "xc7k325tffg900-2", "signals": signals}
-    return build_signal_table(doc)
+    return _build_signal_table(doc)
 
 
 def _make_tables(signals: list) -> tuple[SignalTable, PinTable]:
     st = _make_signal_table(signals)
-    pt = build_pin_table(st)
+    pt = _build_pin_table(st)
     return st, pt
 
 
@@ -466,82 +466,185 @@ _IORING_INTEGRATION_SIGNALS = [
 PORT_DECL_CASES = [
     (
         "scalar_se_input_pad_port",
-        {"name": "sys_clk", "pins": "G22", "direction": "in", "buffer": "ibuf", "iostandard": "LVCMOS18"},
+        {
+            "name": "sys_clk",
+            "pins": "G22",
+            "direction": "in",
+            "buffer": "ibuf",
+            "iostandard": "LVCMOS18",
+        },
         "input   wire            sys_clk_pad",
     ),
     (
         "scalar_se_input_fabric_port",
-        {"name": "sys_clk", "pins": "G22", "direction": "in", "buffer": "ibuf", "iostandard": "LVCMOS18"},
+        {
+            "name": "sys_clk",
+            "pins": "G22",
+            "direction": "in",
+            "buffer": "ibuf",
+            "iostandard": "LVCMOS18",
+        },
         "output  wire            sys_clk",
     ),
     (
         "bus_se_output_pad_port",
-        {"name": "led", "pins": ["A22", "B22", "C22", "D22"], "width": 4, "direction": "out", "buffer": "obuf", "iostandard": "LVCMOS18"},
+        {
+            "name": "led",
+            "pins": ["A22", "B22", "C22", "D22"],
+            "width": 4,
+            "direction": "out",
+            "buffer": "obuf",
+            "iostandard": "LVCMOS18",
+        },
         "output  wire [3:0]      led_pad",
     ),
     (
         "bus_se_output_fabric_port",
-        {"name": "led", "pins": ["A22", "B22", "C22", "D22"], "width": 4, "direction": "out", "buffer": "obuf", "iostandard": "LVCMOS18"},
+        {
+            "name": "led",
+            "pins": ["A22", "B22", "C22", "D22"],
+            "width": 4,
+            "direction": "out",
+            "buffer": "obuf",
+            "iostandard": "LVCMOS18",
+        },
         "input   wire [3:0]      led",
     ),
     (
         "scalar_se_inout_pad_port",
-        {"name": "gpio", "pins": "A22", "direction": "inout", "buffer": "iobuf", "iostandard": "LVCMOS18"},
+        {
+            "name": "gpio",
+            "pins": "A22",
+            "direction": "inout",
+            "buffer": "iobuf",
+            "iostandard": "LVCMOS18",
+        },
         "inout   wire            gpio_pad",
     ),
     (
         "scalar_se_inout_fabric_i",
-        {"name": "gpio", "pins": "A22", "direction": "inout", "buffer": "iobuf", "iostandard": "LVCMOS18"},
+        {
+            "name": "gpio",
+            "pins": "A22",
+            "direction": "inout",
+            "buffer": "iobuf",
+            "iostandard": "LVCMOS18",
+        },
         "output  wire            gpio_i",
     ),
     (
         "scalar_se_inout_fabric_o",
-        {"name": "gpio", "pins": "A22", "direction": "inout", "buffer": "iobuf", "iostandard": "LVCMOS18"},
+        {
+            "name": "gpio",
+            "pins": "A22",
+            "direction": "inout",
+            "buffer": "iobuf",
+            "iostandard": "LVCMOS18",
+        },
         "input   wire            gpio_o",
     ),
     (
         "scalar_se_inout_fabric_t",
-        {"name": "gpio", "pins": "A22", "direction": "inout", "buffer": "iobuf", "iostandard": "LVCMOS18"},
+        {
+            "name": "gpio",
+            "pins": "A22",
+            "direction": "inout",
+            "buffer": "iobuf",
+            "iostandard": "LVCMOS18",
+        },
         "input   wire            gpio_t",
     ),
     (
         "scalar_diff_input_p",
-        {"name": "ref_clk", "pinset": {"p": "H22", "n": "H23"}, "direction": "in", "buffer": "ibufds", "iostandard": "LVDS"},
+        {
+            "name": "ref_clk",
+            "pinset": {"p": "H22", "n": "H23"},
+            "direction": "in",
+            "buffer": "ibufds",
+            "iostandard": "LVDS",
+        },
         "input   wire            ref_clk_p",
     ),
     (
         "scalar_diff_input_n",
-        {"name": "ref_clk", "pinset": {"p": "H22", "n": "H23"}, "direction": "in", "buffer": "ibufds", "iostandard": "LVDS"},
+        {
+            "name": "ref_clk",
+            "pinset": {"p": "H22", "n": "H23"},
+            "direction": "in",
+            "buffer": "ibufds",
+            "iostandard": "LVDS",
+        },
         "input   wire            ref_clk_n",
     ),
     (
         "scalar_diff_input_fabric",
-        {"name": "ref_clk", "pinset": {"p": "H22", "n": "H23"}, "direction": "in", "buffer": "ibufds", "iostandard": "LVDS"},
+        {
+            "name": "ref_clk",
+            "pinset": {"p": "H22", "n": "H23"},
+            "direction": "in",
+            "buffer": "ibufds",
+            "iostandard": "LVDS",
+        },
         "output  wire            ref_clk",
     ),
     (
         "bus_diff_output_p",
-        {"name": "lvds_data", "pinset": {"p": ["AA1", "AB1", "AC1"], "n": ["AA2", "AB2", "AC2"]}, "width": 3, "direction": "out", "buffer": "obufds", "iostandard": "LVDS"},
+        {
+            "name": "lvds_data",
+            "pinset": {"p": ["AA1", "AB1", "AC1"], "n": ["AA2", "AB2", "AC2"]},
+            "width": 3,
+            "direction": "out",
+            "buffer": "obufds",
+            "iostandard": "LVDS",
+        },
         "output  wire [2:0]      lvds_data_p",
     ),
     (
         "bus_diff_output_n",
-        {"name": "lvds_data", "pinset": {"p": ["AA1", "AB1", "AC1"], "n": ["AA2", "AB2", "AC2"]}, "width": 3, "direction": "out", "buffer": "obufds", "iostandard": "LVDS"},
+        {
+            "name": "lvds_data",
+            "pinset": {"p": ["AA1", "AB1", "AC1"], "n": ["AA2", "AB2", "AC2"]},
+            "width": 3,
+            "direction": "out",
+            "buffer": "obufds",
+            "iostandard": "LVDS",
+        },
         "output  wire [2:0]      lvds_data_n",
     ),
     (
         "bus_diff_output_fabric",
-        {"name": "lvds_data", "pinset": {"p": ["AA1", "AB1", "AC1"], "n": ["AA2", "AB2", "AC2"]}, "width": 3, "direction": "out", "buffer": "obufds", "iostandard": "LVDS"},
+        {
+            "name": "lvds_data",
+            "pinset": {"p": ["AA1", "AB1", "AC1"], "n": ["AA2", "AB2", "AC2"]},
+            "width": 3,
+            "direction": "out",
+            "buffer": "obufds",
+            "iostandard": "LVDS",
+        },
         "input   wire [2:0]      lvds_data",
     ),
     (
         "bus_width_16_pad_port",
-        {"name": "data", "pins": [f"A{i}" for i in range(16)], "width": 16, "direction": "out", "buffer": "obuf", "iostandard": "LVCMOS18"},
+        {
+            "name": "data",
+            "pins": [f"A{i}" for i in range(16)],
+            "width": 16,
+            "direction": "out",
+            "buffer": "obuf",
+            "iostandard": "LVCMOS18",
+        },
         "output  wire [15:0]     data_pad",
     ),
     (
         "bus_width_16_fabric_port",
-        {"name": "data", "pins": [f"A{i}" for i in range(16)], "width": 16, "direction": "out", "buffer": "obuf", "iostandard": "LVCMOS18"},
+        {
+            "name": "data",
+            "pins": [f"A{i}" for i in range(16)],
+            "width": 16,
+            "direction": "out",
+            "buffer": "obuf",
+            "iostandard": "LVCMOS18",
+        },
         "input   wire [15:0]     data",
     ),
 ]
@@ -549,7 +652,15 @@ PORT_DECL_CASES = [
 
 def test_generate_verilog_ioring_ports_returns_str() -> None:
     st = _make_signal_table(
-        [{"name": "sys_clk", "pins": "G22", "direction": "in", "buffer": "ibuf", "iostandard": "LVCMOS18"}]
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            }
+        ]
     )
     assert isinstance(_generate_verilog_ioring_ports(st), str)
 
@@ -568,8 +679,20 @@ def test_ioring_ports_all_bypass() -> None:
     """A signal table where every signal is bypass:true produces an empty string."""
     st = _make_signal_table(
         [
-            {"name": "spare", "pins": "J24", "direction": "out", "iostandard": "LVCMOS18", "bypass": True},
-            {"name": "spare2", "pins": "K24", "direction": "out", "iostandard": "LVCMOS18", "bypass": True},
+            {
+                "name": "spare",
+                "pins": "J24",
+                "direction": "out",
+                "iostandard": "LVCMOS18",
+                "bypass": True,
+            },
+            {
+                "name": "spare2",
+                "pins": "K24",
+                "direction": "out",
+                "iostandard": "LVCMOS18",
+                "bypass": True,
+            },
         ]
     )
     assert _generate_verilog_ioring_ports(st) == ""
@@ -579,8 +702,20 @@ def test_ioring_ports_bypass_excluded() -> None:
     """bypass:true signals produce no port declarations in the IO ring."""
     st = _make_signal_table(
         [
-            {"name": "sys_clk", "pins": "G22", "direction": "in", "buffer": "ibuf", "iostandard": "LVCMOS18"},
-            {"name": "spare", "pins": "J24", "direction": "out", "iostandard": "LVCMOS18", "bypass": True},
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            },
+            {
+                "name": "spare",
+                "pins": "J24",
+                "direction": "out",
+                "iostandard": "LVCMOS18",
+                "bypass": True,
+            },
         ]
     )
     assert "spare" not in _generate_verilog_ioring_ports(st)
@@ -590,8 +725,21 @@ def test_ioring_ports_no_trailing_comma_on_last_port() -> None:
     """The last port declaration has no trailing comma."""
     st = _make_signal_table(
         [
-            {"name": "sys_clk", "pins": "G22", "direction": "in", "buffer": "ibuf", "iostandard": "LVCMOS18"},
-            {"name": "led", "pins": ["A22", "B22"], "width": 2, "direction": "out", "buffer": "obuf", "iostandard": "LVCMOS18"},
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            },
+            {
+                "name": "led",
+                "pins": ["A22", "B22"],
+                "width": 2,
+                "direction": "out",
+                "buffer": "obuf",
+                "iostandard": "LVCMOS18",
+            },
         ]
     )
     output = _generate_verilog_ioring_ports(st)
@@ -628,7 +776,15 @@ def test_ioring_ports_integration() -> None:
 
 def test_ioring_body_returns_str() -> None:
     st, pt = _make_tables(
-        [{"name": "sys_clk", "pins": "G22", "direction": "in", "buffer": "ibuf", "iostandard": "LVCMOS18"}]
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            }
+        ]
     )
     assert isinstance(_generate_verilog_ioring_body(st, pt), str)
 
@@ -636,7 +792,15 @@ def test_ioring_body_returns_str() -> None:
 def test_ioring_body_scalar_ibuf() -> None:
     """Scalar IBUF produces a single instantiation block."""
     st, pt = _make_tables(
-        [{"name": "sys_clk", "pins": "G22", "direction": "in", "buffer": "ibuf", "iostandard": "LVCMOS18"}]
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            }
+        ]
     )
     expected = (
         "    IBUF //#(\n"
@@ -652,7 +816,16 @@ def test_ioring_body_scalar_ibuf() -> None:
 def test_ioring_body_bus_obuf() -> None:
     """Bus OBUF produces one instantiation per bit, separated by blank lines."""
     st, pt = _make_tables(
-        [{"name": "led", "pins": ["A22", "B22"], "width": 2, "direction": "out", "buffer": "obuf", "iostandard": "LVCMOS18"}]
+        [
+            {
+                "name": "led",
+                "pins": ["A22", "B22"],
+                "width": 2,
+                "direction": "out",
+                "buffer": "obuf",
+                "iostandard": "LVCMOS18",
+            }
+        ]
     )
     output = _generate_verilog_ioring_body(st, pt)
     assert "obuf_led_i0" in output
@@ -666,7 +839,15 @@ def test_ioring_body_bus_obuf() -> None:
 def test_ioring_body_bypass_excluded() -> None:
     """bypass:true signals produce no output in the body."""
     st, pt = _make_tables(
-        [{"name": "spare", "pins": "J24", "direction": "out", "iostandard": "LVCMOS18", "bypass": True}]
+        [
+            {
+                "name": "spare",
+                "pins": "J24",
+                "direction": "out",
+                "iostandard": "LVCMOS18",
+                "bypass": True,
+            }
+        ]
     )
     assert _generate_verilog_ioring_body(st, pt) == ""
 
@@ -674,7 +855,16 @@ def test_ioring_body_bypass_excluded() -> None:
 def test_ioring_body_infer_ibuf() -> None:
     """infer:true IBUF produces an assign statement, not an instantiation."""
     st, pt = _make_tables(
-        [{"name": "sys_clk", "pins": "G22", "direction": "in", "buffer": "ibuf", "iostandard": "LVCMOS18", "infer": True}]
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+                "infer": True,
+            }
+        ]
     )
     output = _generate_verilog_ioring_body(st, pt)
     assert "assign sys_clk = sys_clk_pad;" in output
@@ -684,7 +874,16 @@ def test_ioring_body_infer_ibuf() -> None:
 def test_ioring_body_infer_obuf() -> None:
     """infer:true OBUF produces an assign statement, not an instantiation."""
     st, pt = _make_tables(
-        [{"name": "led", "pins": "A22", "direction": "out", "buffer": "obuf", "iostandard": "LVCMOS18", "infer": True}]
+        [
+            {
+                "name": "led",
+                "pins": "A22",
+                "direction": "out",
+                "buffer": "obuf",
+                "iostandard": "LVCMOS18",
+                "infer": True,
+            }
+        ]
     )
     output = _generate_verilog_ioring_body(st, pt)
     assert "assign led_pad = led;" in output
@@ -695,8 +894,20 @@ def test_ioring_body_mixed_bypass_and_normal() -> None:
     """bypass:true signals are excluded while normal signals still appear."""
     st, pt = _make_tables(
         [
-            {"name": "sys_clk", "pins": "G22", "direction": "in", "buffer": "ibuf", "iostandard": "LVCMOS18"},
-            {"name": "spare", "pins": "J24", "direction": "out", "iostandard": "LVCMOS18", "bypass": True},
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            },
+            {
+                "name": "spare",
+                "pins": "J24",
+                "direction": "out",
+                "iostandard": "LVCMOS18",
+                "bypass": True,
+            },
         ]
     )
     output = _generate_verilog_ioring_body(st, pt)
@@ -708,8 +919,20 @@ def test_ioring_body_all_bypass() -> None:
     """A signal table where every signal is bypass:true produces an empty string."""
     st, pt = _make_tables(
         [
-            {"name": "spare", "pins": "J24", "direction": "out", "iostandard": "LVCMOS18", "bypass": True},
-            {"name": "spare2", "pins": "K24", "direction": "out", "iostandard": "LVCMOS18", "bypass": True},
+            {
+                "name": "spare",
+                "pins": "J24",
+                "direction": "out",
+                "iostandard": "LVCMOS18",
+                "bypass": True,
+            },
+            {
+                "name": "spare2",
+                "pins": "K24",
+                "direction": "out",
+                "iostandard": "LVCMOS18",
+                "bypass": True,
+            },
         ]
     )
     assert _generate_verilog_ioring_body(st, pt) == ""
@@ -718,7 +941,15 @@ def test_ioring_body_all_bypass() -> None:
 def test_ioring_body_ibufds_scalar() -> None:
     """Scalar IBUFDS produces a single instantiation block."""
     st, pt = _make_tables(
-        [{"name": "ref_clk", "pinset": {"p": "H22", "n": "H23"}, "direction": "in", "buffer": "ibufds", "iostandard": "LVDS"}]
+        [
+            {
+                "name": "ref_clk",
+                "pinset": {"p": "H22", "n": "H23"},
+                "direction": "in",
+                "buffer": "ibufds",
+                "iostandard": "LVDS",
+            }
+        ]
     )
     output = _generate_verilog_ioring_body(st, pt)
     assert "IBUFDS" in output
@@ -731,7 +962,16 @@ def test_ioring_body_ibufds_scalar() -> None:
 def test_ioring_body_obufds_bus() -> None:
     """Bus OBUFDS produces one instantiation per pair, separated by blank lines."""
     st, pt = _make_tables(
-        [{"name": "lvds_data", "pinset": {"p": ["AA1", "AB1"], "n": ["AA2", "AB2"]}, "width": 2, "direction": "out", "buffer": "obufds", "iostandard": "LVDS"}]
+        [
+            {
+                "name": "lvds_data",
+                "pinset": {"p": ["AA1", "AB1"], "n": ["AA2", "AB2"]},
+                "width": 2,
+                "direction": "out",
+                "buffer": "obufds",
+                "iostandard": "LVDS",
+            }
+        ]
     )
     output = _generate_verilog_ioring_body(st, pt)
     assert "obufds_lvds_data_i0" in output
@@ -742,7 +982,16 @@ def test_ioring_body_obufds_bus() -> None:
 def test_ioring_body_iobuf_bus() -> None:
     """Bus IOBUF produces one instantiation per bit with _i, _o, _t fabric ports."""
     st, pt = _make_tables(
-        [{"name": "gpio", "pins": ["E22", "F22", "G23"], "width": 3, "direction": "inout", "buffer": "iobuf", "iostandard": "LVCMOS18"}]
+        [
+            {
+                "name": "gpio",
+                "pins": ["E22", "F22", "G23"],
+                "width": 3,
+                "direction": "inout",
+                "buffer": "iobuf",
+                "iostandard": "LVCMOS18",
+            }
+        ]
     )
     output = _generate_verilog_ioring_body(st, pt)
     assert "iobuf_gpio_i0" in output
@@ -759,7 +1008,15 @@ def test_ioring_body_iobuf_bus() -> None:
 
 def test_generate_verilog_ioring_returns_str() -> None:
     st, pt = _make_tables(
-        [{"name": "sys_clk", "pins": "G22", "direction": "in", "buffer": "ibuf", "iostandard": "LVCMOS18"}]
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            }
+        ]
     )
     assert isinstance(generate_verilog_ioring(st, pt, "test"), str)
 
@@ -767,7 +1024,15 @@ def test_generate_verilog_ioring_returns_str() -> None:
 def test_generate_verilog_ioring_file_header() -> None:
     """Output begins with commented blank, do-not-edit lines, commented blank."""
     st, pt = _make_tables(
-        [{"name": "sys_clk", "pins": "G22", "direction": "in", "buffer": "ibuf", "iostandard": "LVCMOS18"}]
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            }
+        ]
     )
     output = generate_verilog_ioring(st, pt, "test")
     lines = output.splitlines()
@@ -780,7 +1045,15 @@ def test_generate_verilog_ioring_file_header() -> None:
 def test_generate_verilog_ioring_header() -> None:
     """Module name is <top>_io with commented parameter block on separate lines."""
     st, pt = _make_tables(
-        [{"name": "sys_clk", "pins": "G22", "direction": "in", "buffer": "ibuf", "iostandard": "LVCMOS18"}]
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            }
+        ]
     )
     output = generate_verilog_ioring(st, pt, "test")
     lines = output.splitlines()
@@ -792,7 +1065,15 @@ def test_generate_verilog_ioring_header() -> None:
 def test_generate_verilog_ioring_endmodule() -> None:
     """endmodule is the last line of the output."""
     st, pt = _make_tables(
-        [{"name": "sys_clk", "pins": "G22", "direction": "in", "buffer": "ibuf", "iostandard": "LVCMOS18"}]
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            }
+        ]
     )
     output = generate_verilog_ioring(st, pt, "test")
     assert output.splitlines()[-1] == "endmodule"
@@ -801,7 +1082,15 @@ def test_generate_verilog_ioring_endmodule() -> None:
 def test_generate_verilog_ioring_ports_present() -> None:
     """Port declarations appear between the opening '(' and ');'."""
     st, pt = _make_tables(
-        [{"name": "sys_clk", "pins": "G22", "direction": "in", "buffer": "ibuf", "iostandard": "LVCMOS18"}]
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            }
+        ]
     )
     output = generate_verilog_ioring(st, pt, "test")
     assert "sys_clk_pad" in output
@@ -811,7 +1100,15 @@ def test_generate_verilog_ioring_ports_present() -> None:
 def test_generate_verilog_ioring_body_present() -> None:
     """Buffer instantiation appears in the module body."""
     st, pt = _make_tables(
-        [{"name": "sys_clk", "pins": "G22", "direction": "in", "buffer": "ibuf", "iostandard": "LVCMOS18"}]
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            }
+        ]
     )
     output = generate_verilog_ioring(st, pt, "test")
     assert "ibuf_sys_clk_i0" in output

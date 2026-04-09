@@ -83,7 +83,7 @@ class SignalTable:
         self.table.append(row)
 
 
-def signal_is_scalar(sig: dict[str, Any]) -> bool:
+def _signal_is_scalar(sig: dict[str, Any]) -> bool:
     """Returns True if signal is a scalar, otherwise False"""
 
     # Depending on who calls this, this might not have been validated yet
@@ -101,12 +101,12 @@ def signal_is_scalar(sig: dict[str, Any]) -> bool:
     return result
 
 
-def signal_is_differential(sig: dict[str, Any]) -> bool:
+def _signal_is_differential(sig: dict[str, Any]) -> bool:
     """Returns True if signal is a differential pair, otherse False"""
     return "pinset" in sig
 
 
-def build_signal_table(doc: dict) -> SignalTable:
+def _build_signal_table(doc: dict) -> SignalTable:
     """Add signal information from valiated input data and build the SignalTable"""
 
     table = SignalTable()

@@ -1,18 +1,19 @@
 import pytest
 
 from io_gen import ValidationError
-from io_gen.tables.signal_table import build_signal_table, SignalTable
+from io_gen.tables.signal_table import _build_signal_table, SignalTable
 from io_gen.validate import validate_vhdl
 
 
 def _make_signal_table(signals: list) -> SignalTable:
     doc = {"title": "Test", "part": "xc7k325tffg900-2", "signals": signals}
-    return build_signal_table(doc)
+    return _build_signal_table(doc)
 
 
 # ---------------------------------------------------------------------------
 # Valid - should not raise
 # ---------------------------------------------------------------------------
+
 
 def test_all_valid() -> None:
     """All signal names, auto-generated instance names, and top are valid identifiers."""

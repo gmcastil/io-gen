@@ -1,7 +1,7 @@
 import pytest
 
-from io_gen.tables.pin_table import PinTable, build_pin_table
-from io_gen.tables.signal_table import SignalTable, build_signal_table
+from io_gen.tables.pin_table import PinTable, _build_pin_table
+from io_gen.tables.signal_table import SignalTable, _build_signal_table
 
 
 # ---------------------------------------------------------------------------
@@ -18,48 +18,54 @@ def test_empty_table() -> None:
 def test_len_counts_signals_not_pin_rows() -> None:
     """__len__ counts signal entries, not total pin rows - a 4-pin bus is 1."""
     table = PinTable()
-    table.add({
-        "name": "led",
-        "pins": ["A22", "B22", "C22", "D22"],
-        "width": 4,
-        "direction": "out",
-        "buffer": "obuf",
-        "iostandard": "LVCMOS18",
-        "infer": False,
-        "bypass": False,
-        "comment": {},
-        "instance": "obuf_led",
-    })
+    table.add(
+        {
+            "name": "led",
+            "pins": ["A22", "B22", "C22", "D22"],
+            "width": 4,
+            "direction": "out",
+            "buffer": "obuf",
+            "iostandard": "LVCMOS18",
+            "infer": False,
+            "bypass": False,
+            "comment": {},
+            "instance": "obuf_led",
+        }
+    )
     assert len(table) == 1
 
 
 def test_add_two_signals_len_two() -> None:
     """Adding two signals produces length 2."""
     table = PinTable()
-    table.add({
-        "name": "sys_clk",
-        "pins": "G22",
-        "width": 1,
-        "direction": "in",
-        "buffer": "ibuf",
-        "iostandard": "LVCMOS18",
-        "infer": False,
-        "bypass": False,
-        "comment": {},
-        "instance": "ibuf_sys_clk",
-    })
-    table.add({
-        "name": "led",
-        "pins": ["A22", "B22", "C22", "D22"],
-        "width": 4,
-        "direction": "out",
-        "buffer": "obuf",
-        "iostandard": "LVCMOS18",
-        "infer": False,
-        "bypass": False,
-        "comment": {},
-        "instance": "obuf_led",
-    })
+    table.add(
+        {
+            "name": "sys_clk",
+            "pins": "G22",
+            "width": 1,
+            "direction": "in",
+            "buffer": "ibuf",
+            "iostandard": "LVCMOS18",
+            "infer": False,
+            "bypass": False,
+            "comment": {},
+            "instance": "ibuf_sys_clk",
+        }
+    )
+    table.add(
+        {
+            "name": "led",
+            "pins": ["A22", "B22", "C22", "D22"],
+            "width": 4,
+            "direction": "out",
+            "buffer": "obuf",
+            "iostandard": "LVCMOS18",
+            "infer": False,
+            "bypass": False,
+            "comment": {},
+            "instance": "obuf_led",
+        }
+    )
     assert len(table) == 2
 
 
@@ -169,18 +175,20 @@ def test_add_row_count(sig: dict, expected_count: int) -> None:
 def test_infer_true_produces_instance_none() -> None:
     """A signal with infer:true produces instance=None in every pin row."""
     table = PinTable()
-    table.add({
-        "name": "sys_clk",
-        "pins": "G22",
-        "width": 1,
-        "direction": "in",
-        "buffer": "ibuf",
-        "iostandard": "LVCMOS18",
-        "infer": True,
-        "bypass": False,
-        "comment": {},
-        "instance": "ibuf_sys_clk",
-    })
+    table.add(
+        {
+            "name": "sys_clk",
+            "pins": "G22",
+            "width": 1,
+            "direction": "in",
+            "buffer": "ibuf",
+            "iostandard": "LVCMOS18",
+            "infer": True,
+            "bypass": False,
+            "comment": {},
+            "instance": "ibuf_sys_clk",
+        }
+    )
     rows = table.table["sys_clk"]
     assert all(row["instance"] is None for row in rows)
 
@@ -188,18 +196,20 @@ def test_infer_true_produces_instance_none() -> None:
 def test_bypass_true_produces_instance_none() -> None:
     """A signal with bypass:true produces instance=None in every pin row."""
     table = PinTable()
-    table.add({
-        "name": "spare",
-        "pins": "J24",
-        "width": 1,
-        "direction": "out",
-        "buffer": None,
-        "iostandard": "LVCMOS18",
-        "infer": False,
-        "bypass": True,
-        "comment": {},
-        "instance": None,
-    })
+    table.add(
+        {
+            "name": "spare",
+            "pins": "J24",
+            "width": 1,
+            "direction": "out",
+            "buffer": None,
+            "iostandard": "LVCMOS18",
+            "infer": False,
+            "bypass": True,
+            "comment": {},
+            "instance": None,
+        }
+    )
     rows = table.table["spare"]
     assert all(row["instance"] is None for row in rows)
 
@@ -247,8 +257,8 @@ _INTEGRATION_DOC = {
 
 def test_build_pin_table_signal_membership() -> None:
     """build_pin_table includes generate:true signals and excludes generate:false signals."""
-    signal_table = build_signal_table(_INTEGRATION_DOC)
-    pin_table = build_pin_table(signal_table)
+    signal_table = _build_signal_table(_INTEGRATION_DOC)
+    pin_table = _build_pin_table(signal_table)
     assert "sys_clk" in pin_table.table
     assert "led" in pin_table.table
     assert "ref_clk" in pin_table.table
@@ -257,22 +267,22 @@ def test_build_pin_table_signal_membership() -> None:
 
 def test_build_pin_table_len() -> None:
     """len(pin_table) excludes generate:false signals."""
-    signal_table = build_signal_table(_INTEGRATION_DOC)
-    pin_table = build_pin_table(signal_table)
+    signal_table = _build_signal_table(_INTEGRATION_DOC)
+    pin_table = _build_pin_table(signal_table)
     assert len(pin_table) == 3
 
 
 def test_build_pin_table_bus_row_count() -> None:
     """A bus signal produces one row per pin in the pin table."""
-    signal_table = build_signal_table(_INTEGRATION_DOC)
-    pin_table = build_pin_table(signal_table)
+    signal_table = _build_signal_table(_INTEGRATION_DOC)
+    pin_table = _build_pin_table(signal_table)
     assert len(pin_table.table["led"]) == 4
 
 
 def test_build_pin_table_returns_pin_table_instance() -> None:
     """build_pin_table returns a PinTable instance."""
-    signal_table = build_signal_table(_INTEGRATION_DOC)
-    pin_table = build_pin_table(signal_table)
+    signal_table = _build_signal_table(_INTEGRATION_DOC)
+    pin_table = _build_pin_table(signal_table)
     assert isinstance(pin_table, PinTable)
 
 
@@ -284,18 +294,20 @@ def test_build_pin_table_returns_pin_table_instance() -> None:
 def test_getitem_returns_rows_for_scalar_signal() -> None:
     """pt[name] returns the list of pin rows for a scalar signal."""
     table = PinTable()
-    table.add({
-        "name": "sys_clk",
-        "pins": "G22",
-        "width": 1,
-        "direction": "in",
-        "buffer": "ibuf",
-        "iostandard": "LVCMOS18",
-        "infer": False,
-        "bypass": False,
-        "comment": {},
-        "instance": "ibuf_sys_clk",
-    })
+    table.add(
+        {
+            "name": "sys_clk",
+            "pins": "G22",
+            "width": 1,
+            "direction": "in",
+            "buffer": "ibuf",
+            "iostandard": "LVCMOS18",
+            "infer": False,
+            "bypass": False,
+            "comment": {},
+            "instance": "ibuf_sys_clk",
+        }
+    )
     rows = table["sys_clk"]
     assert isinstance(rows, list)
     assert len(rows) == 1
@@ -304,18 +316,20 @@ def test_getitem_returns_rows_for_scalar_signal() -> None:
 def test_getitem_returns_rows_for_bus_signal() -> None:
     """pt[name] returns one row per pin for a bus signal."""
     table = PinTable()
-    table.add({
-        "name": "led",
-        "pins": ["A22", "B22", "C22", "D22"],
-        "width": 4,
-        "direction": "out",
-        "buffer": "obuf",
-        "iostandard": "LVCMOS18",
-        "infer": False,
-        "bypass": False,
-        "comment": {},
-        "instance": "obuf_led",
-    })
+    table.add(
+        {
+            "name": "led",
+            "pins": ["A22", "B22", "C22", "D22"],
+            "width": 4,
+            "direction": "out",
+            "buffer": "obuf",
+            "iostandard": "LVCMOS18",
+            "infer": False,
+            "bypass": False,
+            "comment": {},
+            "instance": "obuf_led",
+        }
+    )
     rows = table["led"]
     assert isinstance(rows, list)
     assert len(rows) == 4
@@ -331,18 +345,20 @@ def test_getitem_missing_key_raises_key_error() -> None:
 def test_getitem_scalar_row_contents() -> None:
     """pt[name] for a scalar returns a row with correct pin, index, and iostandard."""
     table = PinTable()
-    table.add({
-        "name": "sys_clk",
-        "pins": "G22",
-        "width": 1,
-        "direction": "in",
-        "buffer": "ibuf",
-        "iostandard": "LVCMOS18",
-        "infer": False,
-        "bypass": False,
-        "comment": {},
-        "instance": "ibuf_sys_clk",
-    })
+    table.add(
+        {
+            "name": "sys_clk",
+            "pins": "G22",
+            "width": 1,
+            "direction": "in",
+            "buffer": "ibuf",
+            "iostandard": "LVCMOS18",
+            "infer": False,
+            "bypass": False,
+            "comment": {},
+            "instance": "ibuf_sys_clk",
+        }
+    )
     rows = table["sys_clk"]
     assert rows[0]["pin"] == "G22"
     assert rows[0]["index"] == 0
@@ -354,18 +370,20 @@ def test_getitem_scalar_row_contents() -> None:
 def test_getitem_bus_row_contents() -> None:
     """pt[name] for a bus returns rows with correct pin, index, and iostandard per element."""
     table = PinTable()
-    table.add({
-        "name": "led",
-        "pins": ["A22", "B22", "C22", "D22"],
-        "width": 4,
-        "direction": "out",
-        "buffer": "obuf",
-        "iostandard": "LVCMOS18",
-        "infer": False,
-        "bypass": False,
-        "comment": {},
-        "instance": "obuf_led",
-    })
+    table.add(
+        {
+            "name": "led",
+            "pins": ["A22", "B22", "C22", "D22"],
+            "width": 4,
+            "direction": "out",
+            "buffer": "obuf",
+            "iostandard": "LVCMOS18",
+            "infer": False,
+            "bypass": False,
+            "comment": {},
+            "instance": "obuf_led",
+        }
+    )
     rows = table["led"]
     assert rows[0]["pin"] == "A22"
     assert rows[0]["index"] == 0
@@ -379,18 +397,20 @@ def test_getitem_bus_row_contents() -> None:
 def test_getitem_differential_scalar_row_contents() -> None:
     """pt[name] for a differential scalar returns a row with correct pinset and index."""
     table = PinTable()
-    table.add({
-        "name": "ref_clk",
-        "pinset": {"p": "H22", "n": "H23"},
-        "width": 1,
-        "direction": "in",
-        "buffer": "ibufds",
-        "iostandard": "LVDS",
-        "infer": False,
-        "bypass": False,
-        "comment": {},
-        "instance": "ibufds_ref_clk",
-    })
+    table.add(
+        {
+            "name": "ref_clk",
+            "pinset": {"p": "H22", "n": "H23"},
+            "width": 1,
+            "direction": "in",
+            "buffer": "ibufds",
+            "iostandard": "LVDS",
+            "infer": False,
+            "bypass": False,
+            "comment": {},
+            "instance": "ibufds_ref_clk",
+        }
+    )
     rows = table["ref_clk"]
     assert rows[0]["pinset"] == {"p": "H22", "n": "H23"}
     assert rows[0]["index"] == 0

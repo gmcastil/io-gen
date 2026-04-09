@@ -1,4 +1,4 @@
-from .signal_table import SignalTable, signal_is_scalar
+from .signal_table import SignalTable, _signal_is_scalar
 from typing import Any
 
 
@@ -24,7 +24,7 @@ def _flatten_signal(sig: dict[str, Any]) -> list[dict]:
     """Flattens a signal table row into a list of pin or pinset rows."""
 
     # Operate on scalars and arrays (instead of pins vs pinsets)
-    if signal_is_scalar(sig):
+    if _signal_is_scalar(sig):
         return _flatten_scalar(sig)
     else:
         return _flatten_array(sig)
@@ -98,8 +98,13 @@ def _flatten_array(sig: dict[str, Any]) -> list[dict]:
     return flat_sig
 
 
-def build_pin_table(signal_table: SignalTable) -> PinTable:
+def _build_pin_table(signal_table: SignalTable) -> PinTable:
     pin_table = PinTable()
     for sig in signal_table:
         pin_table.add(sig)
     return pin_table
+
+
+def _pin_is_differential(pin: dict[str, Any]) -> bool:
+    """Returns true if pin is differential else False"""
+    return "pinset" in pin

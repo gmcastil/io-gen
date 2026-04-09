@@ -8,12 +8,12 @@ from io_gen.generate.verilog_top import (
     _generate_verilog_ioring_inst,
     generate_verilog_top,
 )
-from io_gen.tables.signal_table import build_signal_table
+from io_gen.tables.signal_table import _build_signal_table
 
 
 def _make_signal_table(signals: list) -> SignalTable:
     doc = {"title": "Test", "part": "xc7k325tffg900-2", "signals": signals}
-    return build_signal_table(doc)
+    return _build_signal_table(doc)
 
 
 # ---- _generate_verilog_ports ------------------------------------------------
