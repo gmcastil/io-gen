@@ -48,7 +48,7 @@ def _generate_verilog_ioring_ports(signal_table: SignalTable) -> str:
             else:
                 width = f""
             dim = f"wire {width}".ljust(8)
-            line = f"{direction:<8}{dim:<12}{port['name']}"
+            line = f"{direction:<8}{dim:<16}{port['name']}"
             ports.append(line)
 
     return _indent_join(ports, 1, ",\n")

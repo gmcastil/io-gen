@@ -467,72 +467,72 @@ PORT_DECL_CASES = [
     (
         "scalar_se_input_pad_port",
         {"name": "sys_clk", "pins": "G22", "direction": "in", "buffer": "ibuf", "iostandard": "LVCMOS18"},
-        "input   wire        sys_clk_pad",
+        "input   wire            sys_clk_pad",
     ),
     (
         "scalar_se_input_fabric_port",
         {"name": "sys_clk", "pins": "G22", "direction": "in", "buffer": "ibuf", "iostandard": "LVCMOS18"},
-        "output  wire        sys_clk",
+        "output  wire            sys_clk",
     ),
     (
         "bus_se_output_pad_port",
         {"name": "led", "pins": ["A22", "B22", "C22", "D22"], "width": 4, "direction": "out", "buffer": "obuf", "iostandard": "LVCMOS18"},
-        "output  wire [3:0]  led_pad",
+        "output  wire [3:0]      led_pad",
     ),
     (
         "bus_se_output_fabric_port",
         {"name": "led", "pins": ["A22", "B22", "C22", "D22"], "width": 4, "direction": "out", "buffer": "obuf", "iostandard": "LVCMOS18"},
-        "input   wire [3:0]  led",
+        "input   wire [3:0]      led",
     ),
     (
         "scalar_se_inout_pad_port",
         {"name": "gpio", "pins": "A22", "direction": "inout", "buffer": "iobuf", "iostandard": "LVCMOS18"},
-        "inout   wire        gpio_pad",
+        "inout   wire            gpio_pad",
     ),
     (
         "scalar_se_inout_fabric_i",
         {"name": "gpio", "pins": "A22", "direction": "inout", "buffer": "iobuf", "iostandard": "LVCMOS18"},
-        "output  wire        gpio_i",
+        "output  wire            gpio_i",
     ),
     (
         "scalar_se_inout_fabric_o",
         {"name": "gpio", "pins": "A22", "direction": "inout", "buffer": "iobuf", "iostandard": "LVCMOS18"},
-        "input   wire        gpio_o",
+        "input   wire            gpio_o",
     ),
     (
         "scalar_se_inout_fabric_t",
         {"name": "gpio", "pins": "A22", "direction": "inout", "buffer": "iobuf", "iostandard": "LVCMOS18"},
-        "input   wire        gpio_t",
+        "input   wire            gpio_t",
     ),
     (
         "scalar_diff_input_p",
         {"name": "ref_clk", "pinset": {"p": "H22", "n": "H23"}, "direction": "in", "buffer": "ibufds", "iostandard": "LVDS"},
-        "input   wire        ref_clk_p",
+        "input   wire            ref_clk_p",
     ),
     (
         "scalar_diff_input_n",
         {"name": "ref_clk", "pinset": {"p": "H22", "n": "H23"}, "direction": "in", "buffer": "ibufds", "iostandard": "LVDS"},
-        "input   wire        ref_clk_n",
+        "input   wire            ref_clk_n",
     ),
     (
         "scalar_diff_input_fabric",
         {"name": "ref_clk", "pinset": {"p": "H22", "n": "H23"}, "direction": "in", "buffer": "ibufds", "iostandard": "LVDS"},
-        "output  wire        ref_clk",
+        "output  wire            ref_clk",
     ),
     (
         "bus_diff_output_p",
         {"name": "lvds_data", "pinset": {"p": ["AA1", "AB1", "AC1"], "n": ["AA2", "AB2", "AC2"]}, "width": 3, "direction": "out", "buffer": "obufds", "iostandard": "LVDS"},
-        "output  wire [2:0]  lvds_data_p",
+        "output  wire [2:0]      lvds_data_p",
     ),
     (
         "bus_diff_output_n",
         {"name": "lvds_data", "pinset": {"p": ["AA1", "AB1", "AC1"], "n": ["AA2", "AB2", "AC2"]}, "width": 3, "direction": "out", "buffer": "obufds", "iostandard": "LVDS"},
-        "output  wire [2:0]  lvds_data_n",
+        "output  wire [2:0]      lvds_data_n",
     ),
     (
         "bus_diff_output_fabric",
         {"name": "lvds_data", "pinset": {"p": ["AA1", "AB1", "AC1"], "n": ["AA2", "AB2", "AC2"]}, "width": 3, "direction": "out", "buffer": "obufds", "iostandard": "LVDS"},
-        "input   wire [2:0]  lvds_data",
+        "input   wire [2:0]      lvds_data",
     ),
 ]
 
@@ -590,20 +590,20 @@ def test_ioring_ports_no_trailing_comma_on_last_port() -> None:
 
 
 _EXPECTED_IORING_PORTS = (
-    "    input   wire        sys_clk_pad,\n"
-    "    output  wire        sys_clk,\n"
-    "    output  wire [3:0]  led_pad,\n"
-    "    input   wire [3:0]  led,\n"
-    "    input   wire        ref_clk_p,\n"
-    "    input   wire        ref_clk_n,\n"
-    "    output  wire        ref_clk,\n"
-    "    output  wire [2:0]  lvds_data_p,\n"
-    "    output  wire [2:0]  lvds_data_n,\n"
-    "    input   wire [2:0]  lvds_data,\n"
-    "    inout   wire [4:0]  gpio_pad,\n"
-    "    output  wire [4:0]  gpio_i,\n"
-    "    input   wire [4:0]  gpio_o,\n"
-    "    input   wire [4:0]  gpio_t"
+    "    input   wire            sys_clk_pad,\n"
+    "    output  wire            sys_clk,\n"
+    "    output  wire [3:0]      led_pad,\n"
+    "    input   wire [3:0]      led,\n"
+    "    input   wire            ref_clk_p,\n"
+    "    input   wire            ref_clk_n,\n"
+    "    output  wire            ref_clk,\n"
+    "    output  wire [2:0]      lvds_data_p,\n"
+    "    output  wire [2:0]      lvds_data_n,\n"
+    "    input   wire [2:0]      lvds_data,\n"
+    "    inout   wire [4:0]      gpio_pad,\n"
+    "    output  wire [4:0]      gpio_i,\n"
+    "    input   wire [4:0]      gpio_o,\n"
+    "    input   wire [4:0]      gpio_t"
 )
 
 

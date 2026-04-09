@@ -70,7 +70,7 @@ def _generate_verilog_ports(signal_table: SignalTable) -> str:
                 suffix = f""
             else:
                 suffix = f","
-            line = f"{direction:<8}{dim:<12}{port['name']}{suffix}"
+            line = f"{direction:<8}{dim:<16}{port['name']}{suffix}"
             ports.append(line)
 
     return _indent_join(ports, 1, "\n")

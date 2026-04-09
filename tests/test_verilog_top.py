@@ -44,7 +44,7 @@ PORT_DECL_CASES = [
             "buffer": "ibuf",
             "iostandard": "LVCMOS18",
         },
-        "input   wire        sys_clk_pad",
+        "input   wire            sys_clk_pad",
     ),
     (
         "bus_se_output",
@@ -56,7 +56,7 @@ PORT_DECL_CASES = [
             "buffer": "obuf",
             "iostandard": "LVCMOS18",
         },
-        "output  wire [3:0]  led_pad",
+        "output  wire [3:0]      led_pad",
     ),
     (
         "scalar_diff_input_p",
@@ -67,7 +67,7 @@ PORT_DECL_CASES = [
             "buffer": "ibufds",
             "iostandard": "LVDS",
         },
-        "input   wire        ref_clk_p",
+        "input   wire            ref_clk_p",
     ),
     (
         "scalar_diff_input_n",
@@ -78,7 +78,7 @@ PORT_DECL_CASES = [
             "buffer": "ibufds",
             "iostandard": "LVDS",
         },
-        "input   wire        ref_clk_n",
+        "input   wire            ref_clk_n",
     ),
     (
         "bus_diff_output_p",
@@ -90,7 +90,7 @@ PORT_DECL_CASES = [
             "buffer": "obufds",
             "iostandard": "LVDS",
         },
-        "output  wire [2:0]  lvds_data_p",
+        "output  wire [2:0]      lvds_data_p",
     ),
     (
         "bus_diff_output_n",
@@ -102,7 +102,7 @@ PORT_DECL_CASES = [
             "buffer": "obufds",
             "iostandard": "LVDS",
         },
-        "output  wire [2:0]  lvds_data_n",
+        "output  wire [2:0]      lvds_data_n",
     ),
     (
         "bus_se_inout",
@@ -114,7 +114,7 @@ PORT_DECL_CASES = [
             "buffer": "iobuf",
             "iostandard": "LVCMOS18",
         },
-        "inout   wire [4:0]  gpio_pad",
+        "inout   wire [4:0]      gpio_pad",
     ),
     (
         "scalar_se_bypass",
@@ -125,7 +125,7 @@ PORT_DECL_CASES = [
             "iostandard": "LVCMOS18",
             "bypass": True,
         },
-        "output  wire        spare_pad",
+        "output  wire            spare_pad",
     ),
 ]
 
@@ -257,19 +257,19 @@ _INTEGRATION_SIGNALS = [
 
 _EXPECTED_PORTS = (
     "    // 125 MHz system clock input\n"
-    "    input   wire        sys_clk_pad,\n"
+    "    input   wire            sys_clk_pad,\n"
     "    // User LED outputs\n"
-    "    output  wire [3:0]  led_pad,\n"
+    "    output  wire [3:0]      led_pad,\n"
     "    // 200 MHz differential reference clock input\n"
-    "    input   wire        ref_clk_p,\n"
-    "    input   wire        ref_clk_n,\n"
+    "    input   wire            ref_clk_p,\n"
+    "    input   wire            ref_clk_n,\n"
     "    // LVDS serial data outputs\n"
-    "    output  wire [2:0]  lvds_data_p,\n"
-    "    output  wire [2:0]  lvds_data_n,\n"
+    "    output  wire [2:0]      lvds_data_p,\n"
+    "    output  wire [2:0]      lvds_data_n,\n"
     "    // General purpose IO\n"
-    "    inout   wire [4:0]  gpio_pad,\n"
+    "    inout   wire [4:0]      gpio_pad,\n"
     "    // Spare output, driven directly\n"
-    "    output  wire        spare_pad"
+    "    output  wire            spare_pad"
 )
 
 
