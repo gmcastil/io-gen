@@ -155,12 +155,13 @@ Key design decisions:
 - Rows are plain dicts with variable shape (three shapes - see `docs/signal_table.md`)
 - Each factory function lives in the same module as its class
 - Tables are a package: `io_gen/tables/`
-  - `io_gen/tables/signal_table.py` - `SignalTable`, `build_signal_table()`, `signal_is_scalar()`, `signal_is_differential()`
-  - `io_gen/tables/pin_table.py` - `PinTable`, `build_pin_table()`
-  - `io_gen/tables/meta_table.py` - `MetaTable`, `build_meta_table()`
-  - `io_gen/tables/__init__.py` - re-exports all classes, factory functions, `signal_is_scalar`, and `signal_is_differential`
-- `signal_is_scalar(sig)` distinguishes scalar vs. bus (single pin vs. array)
-- `signal_is_differential(sig)` distinguishes SE vs. differential pair (`pins` vs. `pinset`) — orthogonal to scalar/bus
+  - `io_gen/tables/signal_table.py` - `SignalTable`, `_build_signal_table()`, `_signal_is_scalar()`, `_signal_is_differential()`
+  - `io_gen/tables/pin_table.py` - `PinTable`, `_build_pin_table()`, `_pin_is_differential()`
+  - `io_gen/tables/meta_table.py` - `MetaTable`, `_build_meta_table()`
+  - `io_gen/tables/__init__.py` - re-exports all classes and private helpers
+- `_signal_is_scalar(sig)` distinguishes scalar vs. bus (single pin vs. array)
+- `_signal_is_differential(sig)` distinguishes SE vs. differential pair (`pins` vs. `pinset`) — orthogonal to scalar/bus
+- `_pin_is_differential(pin)` distinguishes SE vs. differential at the pin row level (used in XDC generator)
 - `PinTable.__getitem__(name)` is the public retrieval interface for generators — use `pt[sig["name"]]`
 
 ### Generation Stage Status
@@ -177,8 +178,8 @@ Key design decisions:
   - `xdc.py` - `generate_xdc(st, pt)`
   - `verilog_top.py` - `generate_verilog_top(st, top)` + private helpers
   - `verilog_ioring.py` - `generate_verilog_ioring(st, pt, top)` + private helpers
-  - `common.py` - `_get_signal_top_ports`, `_get_signal_ioring_ports`, `_get_signal_nets`
-  - `formatting.py` - `_format_port_block`, `_indent_join`
+  - `common.py` - `_get_signal_top_ports`, `_get_signal_ioring_ports`, `_get_signal_nets`, `_get_ioring_header`
+  - `formatting.py` - `_indent_join`
   - `vhdl_top.py`, `vhdl_ioring.py` - VHDL counterparts (pending)
 - Buffer dispatch uses `_INSTANTIATE_BUFFERS` and `_INFER_BUFFERS` dicts keyed by buffer type
 - `infer: true` signals use a single `assign` statement — no pin table lookup needed
@@ -188,7 +189,7 @@ Key design decisions:
 
 - [x] `io_gen/cli.py` implemented with argparse — `--top`, `--lang`, `--output`, `--validate-only`, `--rtl-only`, `--xdc-only`
 - [x] `io_gen/pipeline.py` (`run_pipeline`) implemented — dir creation, identifier validation, table construction, file writing with status output
-- [x] `io_gen/identifiers.py` — `_is_valid_verilog_identifier` implemented; `_is_valid_vhdl_identifier` stub
+- [x] `io_gen/identifiers.py` — `_is_valid_verilog_identifier` and `_is_valid_vhdl_identifier` both implemented
 - [x] Entry point `io-gen` registered in `pyproject.toml`
 - [x] Makefile updated to run `pip install -e .` in venv stamp target
 - [x] First successful end-to-end run against a real board YAML
