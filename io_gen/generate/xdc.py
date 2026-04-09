@@ -4,14 +4,15 @@ from io_gen.tables import SignalTable
 
 def generate_xdc(signal_table: SignalTable, pin_table: PinTable) -> str:
     """Generate XDC constraints from the signal and pin tables"""
-    result = []
+    sig_pins = []
     for sig in signal_table:
         name = sig["name"]
         comment = sig["comment"].get("xdc", None)
 
+        lines = []
         # Constraints start with the XDC comment if present
         if comment:
-            result.append(f"# {comment}")
+            lines.append(f"# {comment}")
 
         # Get the list of pins from the pin table by name
         pins = pin_table[name]
@@ -29,13 +30,13 @@ def generate_xdc(signal_table: SignalTable, pin_table: PinTable) -> str:
                     # The p side
                     pin_xdc = f"set_property PACKAGE_PIN {pkg_pin_p} [get_ports {{{name}_p[{index}]}}]"
                     iostandard_xdc = f"set_property IOSTANDARD {iostandard} [get_ports {{{name}_p[{index}]}}]"
-                    result.append(pin_xdc)
-                    result.append(iostandard_xdc)
+                    lines.append(pin_xdc)
+                    lines.append(iostandard_xdc)
                     # The n side
                     pin_xdc = f"set_property PACKAGE_PIN {pkg_pin_n} [get_ports {{{name}_n[{index}]}}]"
                     iostandard_xdc = f"set_property IOSTANDARD {iostandard} [get_ports {{{name}_n[{index}]}}]"
-                    result.append(pin_xdc)
-                    result.append(iostandard_xdc)
+                    lines.append(pin_xdc)
+                    lines.append(iostandard_xdc)
                 else:
                     # The p side
                     pin_xdc = (
@@ -44,8 +45,8 @@ def generate_xdc(signal_table: SignalTable, pin_table: PinTable) -> str:
                     iostandard_xdc = (
                         f"set_property IOSTANDARD {iostandard} [get_ports {name}_p]"
                     )
-                    result.append(pin_xdc)
-                    result.append(iostandard_xdc)
+                    lines.append(pin_xdc)
+                    lines.append(iostandard_xdc)
                     # The n side
                     pin_xdc = (
                         f"set_property PACKAGE_PIN {pkg_pin_n} [get_ports {name}_n]"
@@ -53,8 +54,8 @@ def generate_xdc(signal_table: SignalTable, pin_table: PinTable) -> str:
                     iostandard_xdc = (
                         f"set_property IOSTANDARD {iostandard} [get_ports {name}_n]"
                     )
-                    result.append(pin_xdc)
-                    result.append(iostandard_xdc)
+                    lines.append(pin_xdc)
+                    lines.append(iostandard_xdc)
 
             # Single-ended here
             else:
@@ -65,8 +66,8 @@ def generate_xdc(signal_table: SignalTable, pin_table: PinTable) -> str:
                 if pin["is_bus"]:
                     pin_xdc = f"set_property PACKAGE_PIN {pkg_pin} [get_ports {{{name}_pad[{index}]}}]"
                     iostandard_xdc = f"set_property IOSTANDARD {iostandard} [get_ports {{{name}_pad[{index}]}}]"
-                    result.append(pin_xdc)
-                    result.append(iostandard_xdc)
+                    lines.append(pin_xdc)
+                    lines.append(iostandard_xdc)
                 else:
                     pin_xdc = (
                         f"set_property PACKAGE_PIN {pkg_pin} [get_ports {name}_pad]"
@@ -74,10 +75,11 @@ def generate_xdc(signal_table: SignalTable, pin_table: PinTable) -> str:
                     iostandard_xdc = (
                         f"set_property IOSTANDARD {iostandard} [get_ports {name}_pad]"
                     )
-                    result.append(pin_xdc)
-                    result.append(iostandard_xdc)
+                    lines.append(pin_xdc)
+                    lines.append(iostandard_xdc)
 
-        # End of a signal's pins so we add a separator
-        result.append("")
+        # This gives a block of pin constraints, with the comment at the top and no intervening
+        # blank lines.
+        sig_pins.append("\n".join(lines))
 
-    return "\n".join(result) + "\n"
+    return "\n\n".join(sig_pins) + "\n"

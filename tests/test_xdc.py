@@ -195,7 +195,6 @@ def test_no_comment_produces_no_hash_line() -> None:
     assert "#" not in generate_xdc(st, pt)
 
 
-
 def test_bypass_true_included() -> None:
     """bypass:true signals still appear in the XDC."""
     st, pt = _make_tables(
@@ -319,7 +318,6 @@ set_property IOSTANDARD LVDS [get_ports {sync_clk_n[0]}]
 # Spare output pin
 set_property PACKAGE_PIN J24 [get_ports spare_pad]
 set_property IOSTANDARD LVCMOS18 [get_ports spare_pad]
-
 """
 
 

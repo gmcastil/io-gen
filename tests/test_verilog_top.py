@@ -127,6 +127,18 @@ PORT_DECL_CASES = [
         },
         "output  wire            spare_pad",
     ),
+    (
+        "bus_width_16",
+        {
+            "name": "data",
+            "pins": [f"A{i}" for i in range(16)],
+            "width": 16,
+            "direction": "out",
+            "buffer": "obuf",
+            "iostandard": "LVCMOS18",
+        },
+        "output  wire [15:0]     data_pad",
+    ),
 ]
 
 
@@ -304,7 +316,7 @@ WIRE_DECL_CASES = [
             "buffer": "obuf",
             "iostandard": "LVCMOS18",
         },
-        ["    wire    [3:0]   led;"],
+        ["    wire [3:0]      led;"],
     ),
     (
         "scalar_diff_input",
@@ -327,7 +339,7 @@ WIRE_DECL_CASES = [
             "buffer": "obufds",
             "iostandard": "LVDS",
         },
-        ["    wire    [2:0]   lvds_data;"],
+        ["    wire [2:0]      lvds_data;"],
     ),
     (
         "scalar_iobuf",
@@ -355,9 +367,9 @@ WIRE_DECL_CASES = [
             "iostandard": "LVCMOS18",
         },
         [
-            "    wire    [2:0]   gpio_i;",
-            "    wire    [2:0]   gpio_o;",
-            "    wire    [2:0]   gpio_t;",
+            "    wire [2:0]      gpio_i;",
+            "    wire [2:0]      gpio_o;",
+            "    wire [2:0]      gpio_t;",
         ],
     ),
     (
@@ -370,7 +382,7 @@ WIRE_DECL_CASES = [
             "buffer": "obuf",
             "iostandard": "LVCMOS18",
         },
-        ["    wire    [0:0]   led;"],
+        ["    wire [0:0]      led;"],
     ),
     (
         "bus_length_1_iobuf",
@@ -383,9 +395,37 @@ WIRE_DECL_CASES = [
             "iostandard": "LVCMOS18",
         },
         [
-            "    wire    [0:0]   gpio_i;",
-            "    wire    [0:0]   gpio_o;",
-            "    wire    [0:0]   gpio_t;",
+            "    wire [0:0]      gpio_i;",
+            "    wire [0:0]      gpio_o;",
+            "    wire [0:0]      gpio_t;",
+        ],
+    ),
+    (
+        "bus_width_16_se",
+        {
+            "name": "data",
+            "pins": [f"A{i}" for i in range(16)],
+            "width": 16,
+            "direction": "out",
+            "buffer": "obuf",
+            "iostandard": "LVCMOS18",
+        },
+        ["    wire [15:0]     data;"],
+    ),
+    (
+        "bus_width_16_iobuf",
+        {
+            "name": "data",
+            "pins": [f"A{i}" for i in range(16)],
+            "width": 16,
+            "direction": "inout",
+            "buffer": "iobuf",
+            "iostandard": "LVCMOS18",
+        },
+        [
+            "    wire [15:0]     data_i;",
+            "    wire [15:0]     data_o;",
+            "    wire [15:0]     data_t;",
         ],
     ),
 ]
@@ -421,12 +461,12 @@ def test_bypass_excluded_from_wires() -> None:
 
 _EXPECTED_WIRES = (
     "    wire            sys_clk;\n"
-    "    wire    [3:0]   led;\n"
+    "    wire [3:0]      led;\n"
     "    wire            ref_clk;\n"
-    "    wire    [2:0]   lvds_data;\n"
-    "    wire    [4:0]   gpio_i;\n"
-    "    wire    [4:0]   gpio_o;\n"
-    "    wire    [4:0]   gpio_t;"
+    "    wire [2:0]      lvds_data;\n"
+    "    wire [4:0]      gpio_i;\n"
+    "    wire [4:0]      gpio_o;\n"
+    "    wire [4:0]      gpio_t;"
 )
 
 

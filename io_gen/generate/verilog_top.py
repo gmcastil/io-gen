@@ -64,7 +64,7 @@ def _generate_verilog_ports(signal_table: SignalTable) -> str:
                 width = f"[{port['width'] - 1}:0]"
             else:
                 width = f""
-            dim = f"wire {width}".ljust(8)
+            dim = f"wire {width}"
             # Every port but the last port of the last signal gets a comma
             if last_index == port_index and sig_index == len(signal_table) - 1:
                 suffix = f""
@@ -98,15 +98,15 @@ def _generate_verilog_wires(signal_table: SignalTable) -> str:
 
             # Can get this now and then we'll pad to 8 columns later
             if net["is_bus"]:
-                dim = f"[{width - 1}:0]"
+                width = f"[{width - 1}:0]"
             else:
-                dim = ""
-
+                width = ""
+            dim = f"wire {width}"
             # Formatting is simple - 4 space indent, 8 columsn for the net type,
             # 8 columns for the net dimension, then the port name
-            wires.append(f"{'':<4}{'wire':<8}{dim:<8}{name};")
+            wires.append(f"{dim:<16}{name};")
 
-    return "\n".join(wires)
+    return _indent_join(wires, 1, "\n")
 
 
 def _generate_verilog_ioring_inst(signal_table: SignalTable, top: str) -> str:

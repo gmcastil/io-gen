@@ -18,7 +18,10 @@ def generate_verilog_ioring(
 
     rtl = []
     for line in _get_ioring_header():
-        rtl.append(f"// {line}")
+        if line:
+            rtl.append(f"// {line}")
+        else:
+            rtl.append(f"//")
     rtl.append(f"module {top}_io //#(")
     rtl.append(f"//)")
     rtl.append(f"(")
@@ -47,7 +50,7 @@ def _generate_verilog_ioring_ports(signal_table: SignalTable) -> str:
                 width = f"[{port['width'] - 1}:0]"
             else:
                 width = f""
-            dim = f"wire {width}".ljust(8)
+            dim = f"wire {width}"
             line = f"{direction:<8}{dim:<16}{port['name']}"
             ports.append(line)
 
