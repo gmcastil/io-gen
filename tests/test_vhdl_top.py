@@ -35,7 +35,7 @@ def test_generate_vhdl_ports_returns_str() -> None:
 
 
 # Port declarations are checked as substrings. name_len is driven by the longest
-# port name in the table — single-signal tables produce their own alignment.
+# port name in the table - single-signal tables produce their own alignment.
 
 PORT_DECL_CASES = [
     (

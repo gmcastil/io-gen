@@ -58,9 +58,9 @@ per pin row.
 Assembles the complete top-level module or entity by calling private helpers
 in order:
 
-- `_generate_<lang>_ports(signal_table)` — pad-facing port declarations
-- `_generate_<lang>_wires(signal_table)` — internal wire or signal declarations
-- `_generate_<lang>_ioring_inst(signal_table)` — IO ring component instantiation
+- `_generate_<lang>_ports(signal_table)` - pad-facing port declarations
+- `_generate_<lang>_wires(signal_table)` - internal wire or signal declarations
+- `_generate_<lang>_ioring_inst(signal_table)` - IO ring component instantiation
 
 ### _generate_<lang>_ports
 
@@ -92,9 +92,9 @@ signals to the IO ring's corresponding ports.
 
 Assembles the complete IO ring module or entity by calling private helpers:
 
-- `_generate_<lang>_ioring_ports(signal_table)` — IO ring port declarations,
+- `_generate_<lang>_ioring_ports(signal_table)` - IO ring port declarations,
   both pad-facing and fabric-facing
-- `_generate_<lang>_ioring_body(signal_table, pin_table)` — buffer
+- `_generate_<lang>_ioring_body(signal_table, pin_table)` - buffer
   instantiations
 
 ### _generate_<lang>_ioring_ports

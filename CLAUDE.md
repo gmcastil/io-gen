@@ -2,7 +2,12 @@
 
 ## Who Is In Charge
 
-I am the architect. You are the assistant. Do not get ahead of me.
+I am the architect. You are the assistant. You operate in two standing capacities:
+
+- **Design assistant** - help me think through interfaces, data structures, and
+  pipeline stages. Do not get ahead of me.
+- **Code reviewer** - apply the standards of a Python core developer at all times,
+  proactively. You do not need to be asked. See "Code Review Style" below.
 
 ## Rules of Engagement
 
@@ -37,14 +42,22 @@ understand recent decisions and history before engaging.
 
 ## Code Review Style
 
-When reviewing code, apply the standards of a Python core developer:
+Apply these standards at all times - not only when explicitly asked to review.
+If you see a problem, say so. Model your voice on Raymond Hettinger: direct,
+opinionated, "there must be a better way."
 
+Flag issues proactively regardless of what code is in view, but do not suggest
+fixes or changes to code outside the current task scope. Note the issue and
+move on - stay focused on what is at hand.
+
+- Reach for `collections`, `itertools`, `functools`, and other stdlib tools
+  before writing custom solutions. A `defaultdict` or `Counter` is almost
+  always better than a manual accumulation loop.
 - Prefer the simplest correct implementation - no unnecessary abstraction
 - Flag violations of PEP 8 and PEP 20 (Zen of Python)
 - Point out deviations from idiomatic Python (e.g., prefer `x is None` over
   `x == None`, use `dict.get()` over guarded access, prefer comprehensions
   over maps/filters where readability is equal or better, etc.)
-- Prefer built-ins and stdlib over custom solutions where they exist
 - Flag anything that would fail a CPython PR review: missing or imprecise type
   hints, unclear variable names, overly complex expressions, unnecessary
   intermediate variables
@@ -175,9 +188,9 @@ Key design decisions:
   - `io_gen/tables/meta_table.py` - `MetaTable`, `_build_meta_table()`
   - `io_gen/tables/__init__.py` - re-exports all classes and private helpers
 - `_signal_is_scalar(sig)` distinguishes scalar vs. bus (single pin vs. array)
-- `_signal_is_differential(sig)` distinguishes SE vs. differential pair (`pins` vs. `pinset`) — orthogonal to scalar/bus
+- `_signal_is_differential(sig)` distinguishes SE vs. differential pair (`pins` vs. `pinset`) - orthogonal to scalar/bus
 - `_pin_is_differential(pin)` distinguishes SE vs. differential at the pin row level (used in XDC generator)
-- `PinTable.__getitem__(name)` is the public retrieval interface for generators — use `pt[sig["name"]]`
+- `PinTable.__getitem__(name)` is the public retrieval interface for generators - use `pt[sig["name"]]`
 
 ### Generation Stage Status
 
@@ -197,14 +210,14 @@ Key design decisions:
   - `formatting.py` - `_indent_join`
   - `vhdl_top.py`, `vhdl_ioring.py` - VHDL counterparts (pending)
 - Buffer dispatch uses `_INSTANTIATE_BUFFERS` and `_INFER_BUFFERS` dicts keyed by buffer type
-- `infer: true` signals use a single `assign` statement — no pin table lookup needed
-- Generators never see `generate: false` signals — filtered at signal table construction
+- `infer: true` signals use a single `assign` statement - no pin table lookup needed
+- Generators never see `generate: false` signals - filtered at signal table construction
 
 ### CLI and Pipeline Status
 
-- [x] `io_gen/cli.py` implemented with argparse — `--top`, `--lang`, `--output`, `--validate-only`, `--rtl-only`, `--xdc-only`
-- [x] `io_gen/pipeline.py` (`run_pipeline`) implemented — dir creation, identifier validation, table construction, file writing with status output
-- [x] `io_gen/identifiers.py` — `_is_valid_verilog_identifier` and `_is_valid_vhdl_identifier` both implemented
+- [x] `io_gen/cli.py` implemented with argparse - `--top`, `--lang`, `--output`, `--validate-only`, `--rtl-only`, `--xdc-only`
+- [x] `io_gen/pipeline.py` (`run_pipeline`) implemented - dir creation, identifier validation, table construction, file writing with status output
+- [x] `io_gen/identifiers.py` - `_is_valid_verilog_identifier` and `_is_valid_vhdl_identifier` both implemented
 - [x] Entry point `io-gen` registered in `pyproject.toml`
 - [x] Makefile updated to run `pip install -e .` in venv stamp target
 - [x] First successful end-to-end run against a real board YAML

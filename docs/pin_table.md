@@ -76,7 +76,7 @@ __getitem__(name: str) -> list[dict]
 ```
 
 Returns the list of pin rows for the given signal name. Raises `KeyError` if
-the signal is not present. This is the primary retrieval interface —
+the signal is not present. This is the primary retrieval interface -
 generators use `pt[sig["name"]]` to look up rows. Internal access via
 `pt.table[name]` is not part of the public interface.
 

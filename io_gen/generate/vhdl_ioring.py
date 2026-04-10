@@ -31,12 +31,12 @@ def _generate_vhdl_ioring_body(
 
 
 def _infer_ibuf(name: str) -> str:
-    """Infer an IBUF primitive — connect fabric signal from pad port via assignment."""
+    """Infer an IBUF primitive - connect fabric signal from pad port via assignment."""
     pass
 
 
 def _infer_obuf(name: str) -> str:
-    """Infer an OBUF primitive — connect pad port from fabric signal via assignment."""
+    """Infer an OBUF primitive - connect pad port from fabric signal via assignment."""
     pass
 
 

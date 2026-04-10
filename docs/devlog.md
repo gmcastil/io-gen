@@ -45,12 +45,12 @@ Completed the Verilog generation stage through buffer instantiation:
 
 - `generate_verilog_top` and all private helpers implemented and tested
 - `_generate_verilog_ioring_body` implemented using a dispatch table
-  (`_INSTANTIATE_BUFFERS`, `_INFER_BUFFERS`) keyed by buffer type — adding
+  (`_INSTANTIATE_BUFFERS`, `_INFER_BUFFERS`) keyed by buffer type - adding
   a new buffer type requires one function and one dict entry
 - Per-buffer instantiation functions for all five supported types: `ibuf`,
-  `obuf`, `ibufds`, `obufds`, `iobuf` — scalar and bus cases both covered
+  `obuf`, `ibufds`, `obufds`, `iobuf` - scalar and bus cases both covered
 - `infer: true` signals collapse to a single `assign` statement regardless
-  of bus width — no pin table lookup needed
+  of bus width - no pin table lookup needed
 - `_indent_join` added to `formatting.py` and used throughout ioring generators
 - Buffer instantiations use Xilinx port ordering (O first) and consistent
   4-char port name field alignment (`.{port:<3}(net)`)
