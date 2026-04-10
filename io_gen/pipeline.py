@@ -9,6 +9,8 @@ from io_gen.tables.meta_table import _build_meta_table
 from io_gen.generate.xdc import generate_xdc
 from io_gen.generate.verilog_top import generate_verilog_top
 from io_gen.generate.verilog_ioring import generate_verilog_ioring
+from io_gen.generate.vhdl_top import generate_vhdl_top
+from io_gen.generate.vhdl_ioring import generate_vhdl_ioring
 
 
 def run_pipeline(
@@ -94,7 +96,7 @@ def run_pipeline(
             with open(output_dir / f"{top}.v", "w") as top_rtl:
                 top_rtl.write(generate_verilog_top(signal_table, top))
                 print(f"Info: Wrote top level module to {output_dir / f'{top}.v'}")
-            # Write teh IO ring RTL to disk
+            # Write the IO ring RTL to disk
             with open(output_dir / f"{top}_io.v", "w") as top_rtl:
                 top_rtl.write(generate_verilog_ioring(signal_table, pin_table, top))
                 print(f"Info: Wrote IO ring module to {output_dir / f'{top}_io.v'}")

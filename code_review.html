@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>io-gen Code Review</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      line-height: 1.7;
+      padding: 2rem;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #f0f6fc;
+      border-bottom: 2px solid #30363d;
+      padding-bottom: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .meta {
+      color: #8b949e;
+      font-size: 0.9rem;
+      margin-bottom: 2.5rem;
+    }
+
+    h2 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: #79c0ff;
+      margin: 2.5rem 0 1rem 0;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid #21262d;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #d2a8ff;
+      margin: 1.75rem 0 0.5rem 0;
+    }
+
+    p {
+      margin-bottom: 0.9rem;
+      color: #c9d1d9;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #161b22;
+      color: #ff7b72;
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      border: 1px solid #30363d;
+    }
+
+    pre {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      margin: 0.75rem 0 1.25rem 0;
+    }
+
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: #e6edf3;
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+
+    .comment  { color: #8b949e; }
+    .keyword  { color: #ff7b72; }
+    .string   { color: #a5d6ff; }
+    .fn       { color: #d2a8ff; }
+    .num      { color: #79c0ff; }
+    .bug-note { color: #f85149; }
+
+    ul, ol {
+      margin: 0.5rem 0 1rem 1.5rem;
+      color: #c9d1d9;
+    }
+
+    li {
+      margin-bottom: 0.4rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2em 0.6em;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-high    { background: #f85149; color: #fff; }
+    .badge-medium  { background: #d29922; color: #000; }
+    .badge-low     { background: #388bfd; color: #fff; }
+    .badge-trivial { background: #30363d; color: #8b949e; }
+    .badge-good    { background: #238636; color: #fff; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0 1.5rem 0;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: #161b22;
+      color: #8b949e;
+      font-weight: 600;
+      text-align: left;
+      padding: 0.6rem 1rem;
+      border: 1px solid #30363d;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      letter-spacing: 0.05em;
+    }
+
+    td {
+      padding: 0.6rem 1rem;
+      border: 1px solid #21262d;
+      color: #c9d1d9;
+      vertical-align: top;
+    }
+
+    tr:nth-child(even) td {
+      background: #0d1117;
+    }
+
+    tr:nth-child(odd) td {
+      background: #161b22;
+    }
+
+    .verdict-box {
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin: 1rem 0;
+      background: #161b22;
+    }
+
+    .verdict-yes  { border-left: 4px solid #238636; }
+    .verdict-no   { border-left: 4px solid #f85149; }
+
+    .verdict-box strong {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .section-divider {
+      border: none;
+      border-top: 1px solid #21262d;
+      margin: 2.5rem 0;
+    }
+
+    .summary-verdict {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin: 1.5rem 0;
+      font-size: 1rem;
+      color: #c9d1d9;
+    }
+
+    .summary-verdict strong {
+      color: #f0f6fc;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <h1>io-gen — Code Review</h1>
+  <div class="meta">Reviewed 2026-04-09 &nbsp;·&nbsp; Reviewer: Claude Sonnet 4.6 &nbsp;·&nbsp; Branch: main &nbsp;·&nbsp; Commit: 579cd35</div>
+
+  <!-- ============================================================ -->
+  <h2>Overall Judgment</h2>
+
+  <p>The codebase is solid. The pipeline decomposition is sensible, the module boundaries are clean, and the design decisions are consistently applied. Someone with good taste wrote this. That said, there are several recurring patterns worth addressing and at least one real bug.</p>
+
+  <!-- ============================================================ -->
+  <h2>Developer Experience Assessment</h2>
+
+  <div class="summary-verdict">
+    <strong>Rating: Intermediate to Mid-Senior</strong> — and the profile is a competent engineer whose primary domain is hardware/FPGA, not software engineering.
+  </div>
+
+  <p><strong>The architecture reads senior.</strong> The pipeline decomposition, dispatch tables, <code>importlib.resources</code> for package-safe schema loading, the <code>referencing.Registry</code> immutability handled correctly with <code>@</code>, the clean error boundary in <code>cli.py</code> — these aren't things a junior developer reaches for. The design decisions are deliberate and defensible.</p>
+
+  <p><strong>The micro-level Python reads intermediate.</strong> The <code>{'':<4}</code> indentation pattern, <code>list()</code> vs <code>[]</code> inconsistency, <code>assert</code> for runtime validation, leaky <code>_</code> convention, mixed import styles, empty f-strings — these are tells of someone who learned Python in a domain context rather than through Python community exposure. A developer who has spent significant time in code review culture or contributing to Python projects doesn't write <code>level * f"{'':<4}"</code> when <code>"    " * level</code> is sitting right there.</p>
+
+  <p><strong>The bugs are also telling.</strong> A wrong filename in a status print and dead <code>meta_table</code> code suggest the code isn't being read critically after it's written. Senior developers tend to re-read their work with a reviewer's eye; that habit catches these.</p>
+
+  <p><strong>Overall read:</strong> someone who is genuinely strong in systems thinking, domain knowledge, and software design — but who is primarily an <em>engineer who codes</em> rather than a <em>software developer</em>. The architectural instincts are well above average. The Python idiom fluency has some gaps that would close quickly with code review exposure or more time in the Python ecosystem.</p>
+
+  <!-- ============================================================ -->
+  <hr class="section-divider">
+  <h2>Bugs</h2>
+
+  <h3><span class="badge badge-high">High</span> &nbsp; <code>pipeline.py:100</code> — Wrong filename in status message</h3>
+  <pre><code><span class="comment"># Line 98: the file is correctly written to {top}_io.v</span>
+<span class="keyword">with</span> open(output_dir / <span class="string">f"<span class="fn">{top}</span>_io.v"</span>, <span class="string">"w"</span>) <span class="keyword">as</span> top_rtl:
+    top_rtl.write(generate_verilog_ioring(signal_table, pin_table, top))
+    <span class="bug-note">print(f"Info: Wrote IO ring module to {output_dir / f'{top}.v'}")  # BUG: says .v not _io.v</span></code></pre>
+  <p>The file is correctly written to <code>{top}_io.v</code> but the print statement reports <code>{top}.v</code>. A user trying to locate their generated files would be confused.</p>
+
+  <h3><span class="badge badge-high">High</span> &nbsp; <code>pipeline.py:68</code> — <code>meta_table</code> is dead code</h3>
+  <pre><code>meta_table = _build_meta_table(valid_doc)  <span class="comment"># built but never passed to any generator</span></code></pre>
+  <p><code>_build_meta_table(valid_doc)</code> is called and assigned, but <code>meta_table</code> is never used anywhere in the pipeline. Either the generators haven't been wired up to consume it yet, or this was left over from an earlier design. It also means <code>_build_meta_table</code> is imported and executed for no effect.</p>
+
+  <!-- ============================================================ -->
+  <hr class="section-divider">
+  <h2>Code Quality Issues</h2>
+
+  <h3><span class="badge badge-medium">Medium</span> &nbsp; <code>checks.py:241</code> — Redundant condition in <code>_check_buffer_inferable</code></h3>
+  <pre><code><span class="keyword">def</span> <span class="fn">_check_buffer_inferable</span>(sig: dict) -> None:
+    <span class="keyword">if not</span> sig.get(<span class="string">"infer"</span>, False):   <span class="comment"># early return — if we reach line 241, infer is True</span>
+        <span class="keyword">return</span>
+    ...
+    <span class="keyword">if</span> buffer <span class="keyword">not in</span> BUFFER_INFERABLE <span class="keyword">and</span> sig.get(<span class="string">"infer"</span>, False):  <span class="comment"># always True here</span></code></pre>
+  <p>The <code>and sig.get("infer", False)</code> guard on line 241 is dead. The early return at line 236 already guarantees <code>infer</code> is <code>True</code> at that point.</p>
+
+  <h3><span class="badge badge-medium">Medium</span> &nbsp; <code>checks.py:67</code> — Compiled pattern used incorrectly</h3>
+  <pre><code>pattern = re.compile(<span class="string">r"^[A-Z]+[0-9]+$"</span>)
+<span class="keyword">for</span> sig <span class="keyword">in</span> signals:
+    ...
+    <span class="keyword">if not</span> re.match(pattern, pin):   <span class="comment"># should be: pattern.match(pin)</span></code></pre>
+  <p><code>re.compile()</code> returns a <code>Pattern</code> object specifically so you call <code>.match()</code> on it directly. Passing a compiled pattern back to <code>re.match()</code> works but defeats the purpose — you compiled it to avoid re-compiling per call, then route it through the module function anyway.</p>
+
+  <h3><span class="badge badge-medium">Medium</span> &nbsp; <code>checks.py:38</code> — Pointless list comprehension</h3>
+  <pre><code>pins = [pin <span class="keyword">for</span> pin <span class="keyword">in</span> sig[<span class="string">"pins"</span>]]  <span class="comment"># no transformation — use list(sig["pins"])</span></code></pre>
+  <p>No transformation is happening. <code>list(sig["pins"])</code> or <code>sig["pins"][:]</code> is idiomatic for a shallow copy; if a copy isn't needed, just <code>sig["pins"]</code> directly.</p>
+
+  <h3><span class="badge badge-medium">Medium</span> &nbsp; <code>signal_table.py</code> — <code>assert</code> for runtime validation</h3>
+  <pre><code><span class="keyword">assert</span> <span class="string">"name"</span> <span class="keyword">in</span> sig
+<span class="keyword">assert</span> <span class="string">"pins"</span> <span class="keyword">in</span> sig <span class="keyword">or</span> <span class="string">"pinset"</span> <span class="keyword">in</span> sig</code></pre>
+  <p><code>assert</code> is disabled under <code>python -O</code>. For structural guarantees that should hold in production, raise <code>ValueError</code> or <code>RuntimeError</code> explicitly. The same concern applies to <code>_signal_is_scalar()</code> and <code>_flatten_array()</code>.</p>
+
+  <h3><span class="badge badge-medium">Medium</span> &nbsp; <code>signal_table.py:91</code> — <code>type()</code> equality comparison</h3>
+  <pre><code><span class="keyword">assert</span> type(sig[<span class="string">"pinset"</span>][<span class="string">"p"</span>]) == type(sig[<span class="string">"pinset"</span>][<span class="string">"n"</span>])  <span class="comment"># use isinstance()</span></code></pre>
+  <p><code>type() == type()</code> is not idiomatic Python. Use <code>isinstance()</code>. Additionally this is inside an <code>assert</code>, so it shares the same <code>-O</code> concern.</p>
+
+  <h3><span class="badge badge-medium">Medium</span> &nbsp; <code>validate.py</code> — Mixed absolute and relative imports</h3>
+  <pre><code><span class="keyword">from</span> io_gen.tables.signal_table <span class="keyword">import</span> SignalTable   <span class="comment"># absolute</span>
+<span class="keyword">from</span> .exceptions <span class="keyword">import</span> ValidationError              <span class="comment"># relative</span>
+<span class="keyword">from</span> io_gen.identifiers <span class="keyword">import</span> ...                   <span class="comment"># absolute</span>
+<span class="keyword">from</span> io_gen.checks <span class="keyword">import</span> ...                        <span class="comment"># absolute</span></code></pre>
+  <p>Inside a package, pick one style. PEP 328 and most Python style guides favor relative imports (<code>from .module import ...</code>) for intra-package imports. Mixing both is inconsistent.</p>
+
+  <h3><span class="badge badge-medium">Medium</span> &nbsp; <code>validate.py</code> — Duplicated <code>validate_verilog</code> / <code>validate_vhdl</code></h3>
+  <p>The two functions are structurally identical. The only differences are the validator function called and the language name in the error string. A private helper parameterized on <code>validator_fn</code> and <code>lang_name</code> would eliminate the duplication.</p>
+
+  <h3><span class="badge badge-low">Low</span> &nbsp; <code>pipeline.py:53-61</code> — TOCTOU on directory write check</h3>
+  <pre><code>output_dir.mkdir(parents=<span class="keyword">True</span>, exist_ok=<span class="keyword">True</span>)
+<span class="keyword">if not</span> os.access(output_dir, os.W_OK):   <span class="comment"># race window between mkdir and access check</span>
+    <span class="keyword">raise</span> OSError(...)</code></pre>
+  <p><code>mkdir</code> followed by <code>os.access</code> is a time-of-check-time-of-use gap. <code>os.access</code> is also unreliable under certain conditions (root, ACLs, Linux capabilities). The idiomatic pattern is to attempt the write and catch <code>PermissionError</code>.</p>
+
+  <h3><span class="badge badge-low">Low</span> &nbsp; <code>pipeline.py:84</code> — Redundant explicit <code>return None</code></h3>
+  <pre><code>    <span class="keyword">if</span> validate_only:
+        <span class="keyword">return None</span>   <span class="comment"># implicit — inconsistent with other -> None functions</span></code></pre>
+
+  <!-- ============================================================ -->
+  <hr class="section-divider">
+  <h2>Style and Consistency</h2>
+
+  <h3><span class="badge badge-low">Low</span> &nbsp; <code>list()</code> / <code>dict()</code> vs <code>[]</code> / <code>{}</code></h3>
+  <p>No consistent choice throughout the codebase. The literals <code>[]</code> and <code>{}</code> are idiomatic, marginally faster (skip the name lookup), and what most Python style guides recommend.</p>
+  <table>
+    <tr><th>Found (less idiomatic)</th><th>Location</th></tr>
+    <tr><td><code>self.table = list()</code></td><td>signal_table.py:8</td></tr>
+    <tr><td><code>self.table = dict()</code></td><td>pin_table.py:7</td></tr>
+    <tr><td><code>inst = list()</code></td><td>verilog_ioring.py:97</td></tr>
+    <tr><td><code>flat_sig = list()</code></td><td>pin_table.py:72</td></tr>
+    <tr><td><code>pins = list()</code></td><td>checks.py:93</td></tr>
+  </table>
+
+  <h3><span class="badge badge-low">Low</span> &nbsp; Empty f-strings used as plain strings</h3>
+  <pre><code>rtl.append(<span class="string">f""</span>)   <span class="comment"># verilog_top.py:22, 26 — no interpolation, use ""</span>
+suffix = <span class="string">f""</span>      <span class="comment"># verilog_top.py:70</span>
+width = <span class="string">f""</span>       <span class="comment"># verilog_top.py:67</span></code></pre>
+  <p>String literals with no interpolation. The <code>f</code> prefix adds runtime overhead and signals intent that doesn't exist.</p>
+
+  <h3><span class="badge badge-low">Low</span> &nbsp; Indentation via <code>{'':<4}</code> pattern</h3>
+  <pre><code><span class="string">f"{<span class="string">''</span>:<span class="num">4</span>}assign {name} = {name}_pad;"</span>   <span class="comment"># verilog_ioring.py:87</span>
+indent = level * <span class="string">f"{<span class="string">''</span>:<span class="num">4</span>}"</span>              <span class="comment"># formatting.py:3</span>
+
+<span class="comment"># More readable alternatives:</span>
+<span class="string">"    "</span> * level
+<span class="string">" "</span> * (<span class="num">4</span> * level)</code></pre>
+
+  <h3><span class="badge badge-low">Low</span> &nbsp; Commented-out dead code in <code>verilog_ioring.py:79</code></h3>
+  <pre><code><span class="comment"># if body:</span>
+<span class="comment">#     body.pop(-1)</span></code></pre>
+  <p>Should be deleted. Dead commented code is noise. If there is a reason to keep it, it needs a note explaining why.</p>
+
+  <h3><span class="badge badge-low">Low</span> &nbsp; Private underscore convention is leaky</h3>
+  <p>Functions with leading <code>_</code> (e.g., <code>_check_pin_name_format</code>, <code>_build_signal_table</code>, <code>_signal_is_scalar</code>) are imported across module boundaries throughout the codebase. In Python, <code>_</code> means "not part of the public API" — but if sibling modules routinely import them, the convention does nothing. This is most visible in <code>tables/__init__.py</code>:</p>
+  <pre><code><span class="keyword">from</span> .signal_table <span class="keyword">import</span> (
+    SignalTable,
+    _build_signal_table,     <span class="comment"># exported private</span>
+    _signal_is_scalar,       <span class="comment"># exported private</span>
+    _signal_is_differential,
+)</code></pre>
+  <p>Either these should be public (drop the <code>_</code>) with documented contracts, or the module boundaries should be redesigned so callers only see exported names through <code>__init__.py</code>.</p>
+
+  <h3><span class="badge badge-trivial">Trivial</span> &nbsp; Typos in comments</h3>
+  <table>
+    <tr><th>Typo</th><th>Location</th></tr>
+    <tr><td><code>"teh best"</code></td><td>validate.py:117</td></tr>
+    <tr><td><code>"causign"</code></td><td>validate.py:112</td></tr>
+    <tr><td><code>"csat"</code></td><td>signal_table.py:54</td></tr>
+    <tr><td><code>"consruct"</code></td><td>signal_table.py:77</td></tr>
+    <tr><td><code>"requied"</code></td><td>signal_table.py:45</td></tr>
+    <tr><td><code>"philospohy"</code></td><td>signal_table.py:41</td></tr>
+    <tr><td><code>"valiated"</code></td><td>signal_table.py:110</td></tr>
+    <tr><td><code>"otherse"</code></td><td>signal_table.py:105</td></tr>
+  </table>
+
+  <!-- ============================================================ -->
+  <hr class="section-divider">
+  <h2>What Is Done Well</h2>
+
+  <ul>
+    <li><strong>Dispatch tables</strong> in <code>verilog_ioring.py</code> (<code>_INFER_BUFFERS</code>, <code>_INSTANTIATE_BUFFERS</code>) are exactly the right pattern for buffer-type dispatch. Clean and extensible.</li>
+    <li><strong>Module decomposition:</strong> <code>checks.py</code> contains checks, <code>validate.py</code> orchestrates them, <code>tables/</code> handles data construction, <code>generate/</code> handles output — the layering is logical and consistently respected.</li>
+    <li><strong><code>common.py</code></strong> correctly factors out the language-agnostic port/net/ioring-port logic shared between Verilog top and ioring generators.</li>
+    <li><strong><code>identifiers.py</code>:</strong> Compiled regexes at module scope, proper use of <code>re.compile</code>, accurate LRM-based pattern definitions.</li>
+    <li><strong><code>_get_pin_names_from_signal</code></strong> is a clean helper that correctly handles all four cases (scalar/array × SE/differential).</li>
+    <li><strong><code>importlib.resources</code></strong> for schema loading is the correct, distribution-safe approach.</li>
+    <li><strong>CLI error boundary:</strong> catching <code>ValidationError</code>, <code>OSError</code>, <code>NotImplementedError</code>, <code>ValueError</code> at the outermost layer and printing to stderr is a clean pattern.</li>
+    <li><strong>Type hints</strong> are present on every function, consistent with the stated convention.</li>
+    <li><strong>Validation error messages</strong> are enriched with signal name context — exactly what a user debugging their YAML needs.</li>
+    <li><strong><code>yaml.safe_load</code></strong> is used correctly rather than the unsafe <code>yaml.load</code>.</li>
+  </ul>
+
+  <!-- ============================================================ -->
+  <hr class="section-divider">
+  <h2>Summary Table</h2>
+
+  <table>
+    <tr>
+      <th>Category</th>
+      <th>Severity</th>
+      <th>Count</th>
+    </tr>
+    <tr>
+      <td>Bugs (wrong filename, dead code)</td>
+      <td><span class="badge badge-high">High</span></td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>Logic errors (redundant conditions, dead code)</td>
+      <td><span class="badge badge-medium">Medium</span></td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>Assert-as-validation</td>
+      <td><span class="badge badge-medium">Medium</span></td>
+      <td>~5 instances</td>
+    </tr>
+    <tr>
+      <td>Import style inconsistency</td>
+      <td><span class="badge badge-low">Low</span></td>
+      <td>1 module</td>
+    </tr>
+    <tr>
+      <td><code>list()</code>/<code>dict()</code> vs <code>[]</code>/<code>{}</code></td>
+      <td><span class="badge badge-low">Low</span></td>
+      <td>~8 instances</td>
+    </tr>
+    <tr>
+      <td>Empty f-strings</td>
+      <td><span class="badge badge-low">Low</span></td>
+      <td>~5 instances</td>
+    </tr>
+    <tr>
+      <td>Commented dead code</td>
+      <td><span class="badge badge-low">Low</span></td>
+      <td>1 block</td>
+    </tr>
+    <tr>
+      <td>Comment typos</td>
+      <td><span class="badge badge-trivial">Trivial</span></td>
+      <td>~8</td>
+    </tr>
+  </table>
+
+  <!-- ============================================================ -->
+  <hr class="section-divider">
+  <h2>Release Readiness</h2>
+
+  <h3>What Makes It Release-Capable</h3>
+  <ul>
+    <li><strong>Installation story is correct.</strong> <code>pyproject.toml</code>, <code>importlib.resources</code> for schema files, <code>io-gen</code> entry point, pip-installable from GitHub — the distribution mechanics are done properly.</li>
+    <li><strong>CLI is clean.</strong> Argument structure is sensible, mutually exclusive modes are handled correctly, errors surface to stderr with a clean message rather than a traceback.</li>
+    <li><strong>Validation gives useful messages.</strong> The enriched jsonschema errors with signal name context are exactly what a user debugging their YAML needs.</li>
+    <li><strong>The core Verilog pipeline works end-to-end</strong> and has been run against a real board YAML.</li>
+  </ul>
+
+  <h3>What Blocks External Release</h3>
+
+  <div class="verdict-box verdict-no">
+    <strong>The <code>NotImplementedError</code> for VHDL is a user-facing landmine.</strong>
+    A user who specifies <code>--lang vhdl</code> gets a crash. The CLI should either not offer <code>vhdl</code> as a choice yet, or the help text must clearly state it is unimplemented. Advertising a feature in the interface that raises an exception is a bad first impression.
+  </div>
+
+  <div class="verdict-box verdict-no">
+    <strong>The wrong-filename bug in <code>pipeline.py:100</code> is user-visible.</strong>
+    The status line tells the user a file was written to one path when the actual path is different.
+  </div>
+
+  <div class="verdict-box verdict-no">
+    <strong>There is no user-facing documentation.</strong>
+    <code>CLAUDE.md</code> is internal developer notes. An external hardware developer needs a README explaining what the tool does, what a valid YAML looks like, and what outputs it produces.
+  </div>
+
+  <h3>Verdict by Audience</h3>
+
+  <table>
+    <tr><th>Audience</th><th>Ready?</th></tr>
+    <tr>
+      <td>Internal hardware developers (with context)</td>
+      <td><span class="badge badge-good">Yes</span> — with a note about VHDL</td>
+    </tr>
+    <tr>
+      <td>External developers via GitHub</td>
+      <td><span class="badge badge-high">Not yet</span> — fix two bugs, gate VHDL CLI option, write a README</td>
+    </tr>
+  </table>
+
+  <p>The gap between current state and releasable-externally is probably a day's worth of work. The hard parts — architecture, distribution, validation, Verilog generation — are done.</p>
+
+</div>
+</body>
+</html>

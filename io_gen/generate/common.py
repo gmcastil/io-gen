@@ -7,6 +7,7 @@ from io_gen.tables import _signal_is_differential, _signal_is_scalar
 TRISTATE_BUFFERS = {"iobuf"}
 
 VLOG_DIRECTIONS = {"in": "input", "out": "output", "inout": "inout"}
+VHDL_DIRECTIONS = {"in": "in", "out": "out", "inout": "inout"}
 
 
 def _get_ioring_header() -> list[str]:
