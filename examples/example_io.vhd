@@ -10,7 +10,7 @@ use unisim.vcomponents.all;
 
 entity example_io is
     -- generic (
-    --    )
+    -- )
     port (
         sys_clk_pad     : in    std_logic;
         sys_clk         : out   std_logic;
@@ -36,7 +36,7 @@ begin
 
     ibuf_sys_clk_i0 : IBUF
     -- generic map (
-    --    )
+    -- )
     port map (
         O   => sys_clk,
         I   => sys_clk_pad
@@ -44,7 +44,7 @@ begin
 
     obuf_led_i0 : OBUF
     -- generic map (
-    --    )
+    -- )
     port map (
         O   => led_pad(0),
         I   => led(0)
@@ -52,7 +52,7 @@ begin
 
     obuf_led_i1 : OBUF
     -- generic map (
-    --    )
+    -- )
     port map (
         O   => led_pad(1),
         I   => led(1)
@@ -60,7 +60,7 @@ begin
 
     obuf_led_i2 : OBUF
     -- generic map (
-    --    )
+    -- )
     port map (
         O   => led_pad(2),
         I   => led(2)
@@ -68,7 +68,7 @@ begin
 
     obuf_led_i3 : OBUF
     -- generic map (
-    --    )
+    -- )
     port map (
         O   => led_pad(3),
         I   => led(3)
@@ -78,7 +78,7 @@ begin
 
     ibufds_ref_clk_i0 : IBUFDS
     -- generic map (
-    --    )
+    -- )
     port map (
         O   => ref_clk,
         I   => ref_clk_p,
@@ -87,7 +87,7 @@ begin
 
     obufds_lvds_data_i0 : OBUFDS
     -- generic map (
-    --    )
+    -- )
     port map (
         O   => lvds_data_p(0),
         OB  => lvds_data_n(0),
@@ -96,7 +96,7 @@ begin
 
     obufds_lvds_data_i1 : OBUFDS
     -- generic map (
-    --    )
+    -- )
     port map (
         O   => lvds_data_p(1),
         OB  => lvds_data_n(1),
@@ -105,7 +105,7 @@ begin
 
     obufds_lvds_data_i2 : OBUFDS
     -- generic map (
-    --    )
+    -- )
     port map (
         O   => lvds_data_p(2),
         OB  => lvds_data_n(2),
@@ -114,7 +114,7 @@ begin
 
     iobuf_gpio_i0 : IOBUF
     -- generic map (
-    --    )
+    -- )
     port map (
         O   => gpio_i(0),
         I   => gpio_o(0),
@@ -124,7 +124,7 @@ begin
 
     iobuf_gpio_i1 : IOBUF
     -- generic map (
-    --    )
+    -- )
     port map (
         O   => gpio_i(1),
         I   => gpio_o(1),
@@ -134,7 +134,7 @@ begin
 
     iobuf_gpio_i2 : IOBUF
     -- generic map (
-    --    )
+    -- )
     port map (
         O   => gpio_i(2),
         I   => gpio_o(2),
@@ -144,7 +144,7 @@ begin
 
     iobuf_gpio_i3 : IOBUF
     -- generic map (
-    --    )
+    -- )
     port map (
         O   => gpio_i(3),
         I   => gpio_o(3),
@@ -154,7 +154,7 @@ begin
 
     iobuf_gpio_i4 : IOBUF
     -- generic map (
-    --    )
+    -- )
     port map (
         O   => gpio_i(4),
         I   => gpio_o(4),

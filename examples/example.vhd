@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 
 entity example is
     -- generic (
-    --    )
+    -- )
     port (
         -- 125 MHz system clock input
         sys_clk_pad     : in    std_logic;
@@ -39,7 +39,7 @@ begin
 
     example_io_i0 : entity work.example_io
     -- generic map (
-    --    )
+    -- )
     port map (
         sys_clk_pad     => sys_clk_pad,
         sys_clk         => sys_clk,

@@ -121,7 +121,7 @@ def _generate_verilog_ioring_inst(signal_table: SignalTable, top: str) -> str:
     inst.append(f"{'':<4}//)")
     inst.append(f"{'':<4}{top}_io_i0 (")
 
-    ioring_ports = list()
+    ioring_ports = []
 
     # Get all of the names for every signal in the IO ring
     for sig in signal_table:

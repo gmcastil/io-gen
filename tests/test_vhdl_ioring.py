@@ -132,7 +132,7 @@ def test_instantiate_ibuf_scalar() -> None:
     expected = (
         "    ibuf_sys_clk_i0 : IBUF\n"
         "    -- generic map (\n"
-        "    --    )\n"
+        "    -- )\n"
         "    port map (\n"
         "        O   => sys_clk,\n"
         "        I   => sys_clk_pad\n"
@@ -147,7 +147,7 @@ def test_instantiate_ibuf_bus_first_element() -> None:
     expected = (
         "    ibuf_data_i0 : IBUF\n"
         "    -- generic map (\n"
-        "    --    )\n"
+        "    -- )\n"
         "    port map (\n"
         "        O   => data(0),\n"
         "        I   => data_pad(0)\n"
@@ -162,7 +162,7 @@ def test_instantiate_ibuf_bus_mid_element() -> None:
     expected = (
         "    ibuf_data_i2 : IBUF\n"
         "    -- generic map (\n"
-        "    --    )\n"
+        "    -- )\n"
         "    port map (\n"
         "        O   => data(2),\n"
         "        I   => data_pad(2)\n"
@@ -185,7 +185,7 @@ def test_instantiate_obuf_scalar() -> None:
     expected = (
         "    obuf_led_i0 : OBUF\n"
         "    -- generic map (\n"
-        "    --    )\n"
+        "    -- )\n"
         "    port map (\n"
         "        O   => led_pad,\n"
         "        I   => led\n"
@@ -200,7 +200,7 @@ def test_instantiate_obuf_bus_first_element() -> None:
     expected = (
         "    obuf_led_i0 : OBUF\n"
         "    -- generic map (\n"
-        "    --    )\n"
+        "    -- )\n"
         "    port map (\n"
         "        O   => led_pad(0),\n"
         "        I   => led(0)\n"
@@ -215,7 +215,7 @@ def test_instantiate_obuf_bus_last_element() -> None:
     expected = (
         "    obuf_led_i3 : OBUF\n"
         "    -- generic map (\n"
-        "    --    )\n"
+        "    -- )\n"
         "    port map (\n"
         "        O   => led_pad(3),\n"
         "        I   => led(3)\n"
@@ -264,7 +264,7 @@ def test_instantiate_ibufds_scalar() -> None:
     expected = (
         "    ibufds_ref_clk_i0 : IBUFDS\n"
         "    -- generic map (\n"
-        "    --    )\n"
+        "    -- )\n"
         "    port map (\n"
         "        O   => ref_clk,\n"
         "        I   => ref_clk_p,\n"
@@ -280,7 +280,7 @@ def test_instantiate_ibufds_bus() -> None:
     expected = (
         "    ibufds_ref_clk_i1 : IBUFDS\n"
         "    -- generic map (\n"
-        "    --    )\n"
+        "    -- )\n"
         "    port map (\n"
         "        O   => ref_clk(1),\n"
         "        I   => ref_clk_p(1),\n"
@@ -330,7 +330,7 @@ def test_instantiate_obufds_scalar() -> None:
     expected = (
         "    obufds_lvds_data_i0 : OBUFDS\n"
         "    -- generic map (\n"
-        "    --    )\n"
+        "    -- )\n"
         "    port map (\n"
         "        O   => lvds_data_p,\n"
         "        OB  => lvds_data_n,\n"
@@ -346,7 +346,7 @@ def test_instantiate_obufds_bus() -> None:
     expected = (
         "    obufds_lvds_data_i2 : OBUFDS\n"
         "    -- generic map (\n"
-        "    --    )\n"
+        "    -- )\n"
         "    port map (\n"
         "        O   => lvds_data_p(2),\n"
         "        OB  => lvds_data_n(2),\n"
@@ -396,7 +396,7 @@ def test_instantiate_iobuf_scalar() -> None:
     expected = (
         "    iobuf_gpio_i0 : IOBUF\n"
         "    -- generic map (\n"
-        "    --    )\n"
+        "    -- )\n"
         "    port map (\n"
         "        O   => gpio_i,\n"
         "        I   => gpio_o,\n"
@@ -413,7 +413,7 @@ def test_instantiate_iobuf_bus() -> None:
     expected = (
         "    iobuf_gpio_i3 : IOBUF\n"
         "    -- generic map (\n"
-        "    --    )\n"
+        "    -- )\n"
         "    port map (\n"
         "        O   => gpio_i(3),\n"
         "        I   => gpio_o(3),\n"
@@ -845,7 +845,7 @@ def test_ioring_body_scalar_ibuf() -> None:
     expected = (
         "    ibuf_sys_clk_i0 : IBUF\n"
         "    -- generic map (\n"
-        "    --    )\n"
+        "    -- )\n"
         "    port map (\n"
         "        O   => sys_clk,\n"
         "        I   => sys_clk_pad\n"
@@ -1119,7 +1119,7 @@ def test_generate_vhdl_ioring_entity_header() -> None:
     output = generate_vhdl_ioring(st, pt, "test", "rtl")
     assert "entity test_io is" in output
     assert "    -- generic (" in output
-    assert "    --    )" in output
+    assert "    -- )" in output
     assert "    port (" in output
 
 

@@ -544,7 +544,7 @@ def test_ioring_inst_header() -> None:
     lines = output.splitlines()
     assert lines[0] == "    test_io_i0 : entity work.test_io"
     assert lines[1] == "    -- generic map ("
-    assert lines[2] == "    --    )"
+    assert lines[2] == "    -- )"
     assert lines[3] == "    port map ("
 
 
@@ -633,15 +633,15 @@ def test_ioring_inst_alignment_tab_stop() -> None:
         ]
     )
     output = _generate_vhdl_ioring_inst(st, "test")
-    assert "        led_pad  => led_pad," in output
-    assert "        led      => led" in output
+    assert "        led_pad => led_pad," in output
+    assert "        led     => led" in output
 
 
 # longest ioring port name = user_led_pad (12), name_len = 16
 _EXPECTED_IORING_INST = (
     "    example_io_i0 : entity work.example_io\n"
     "    -- generic map (\n"
-    "    --    )\n"
+    "    -- )\n"
     "    port map (\n"
     "        sys_clk_pad     => sys_clk_pad,\n"
     "        sys_clk         => sys_clk,\n"
@@ -682,7 +682,7 @@ _EXPECTED_TOP = (
     "\n"
     "entity example is\n"
     "    -- generic (\n"
-    "    --    )\n"
+    "    -- )\n"
     "    port (\n"
     + _EXPECTED_PORTS
     + "\n"
@@ -735,7 +735,7 @@ def test_generate_vhdl_top_entity_header() -> None:
     output = generate_vhdl_top(st, "test", "rtl")
     assert "entity test is" in output
     assert "    -- generic (" in output
-    assert "    --    )" in output
+    assert "    -- )" in output
     assert "    port (" in output
 
 
