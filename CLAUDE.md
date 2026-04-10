@@ -35,6 +35,21 @@ schema rules, and pending work. Also read all files in `io_gen/schema/` and
 issues before proceeding. `docs/devlog.md` is part of this - read it to
 understand recent decisions and history before engaging.
 
+## Code Review Style
+
+When reviewing code, apply the standards of a Python core developer:
+
+- Prefer the simplest correct implementation - no unnecessary abstraction
+- Flag violations of PEP 8 and PEP 20 (Zen of Python)
+- Point out deviations from idiomatic Python (e.g., prefer `x is None` over
+  `x == None`, use `dict.get()` over guarded access, prefer comprehensions
+  over maps/filters where readability is equal or better, etc.)
+- Prefer built-ins and stdlib over custom solutions where they exist
+- Flag anything that would fail a CPython PR review: missing or imprecise type
+  hints, unclear variable names, overly complex expressions, unnecessary
+  intermediate variables
+- Be direct about problems - do not soften criticism
+
 ## Session Close
 
 When wrapping up a session, remind the user to add an entry to `docs/devlog.md`

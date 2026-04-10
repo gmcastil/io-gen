@@ -97,7 +97,7 @@ def run_pipeline(
             # Write teh IO ring RTL to disk
             with open(output_dir / f"{top}_io.v", "w") as top_rtl:
                 top_rtl.write(generate_verilog_ioring(signal_table, pin_table, top))
-                print(f"Info: Wrote IO ring module to {output_dir / f'{top}.v'}")
+                print(f"Info: Wrote IO ring module to {output_dir / f'{top}_io.v'}")
         else:
             raise NotImplementedError(f"VHDL support not supported yet")
 

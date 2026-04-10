@@ -2,11 +2,14 @@
 
 ## Top-Level Fields
 
-The root of the YAML has three required fields:
+The root of the YAML has three required fields and one optional field:
 
 - `title` - a human-readable description of the design
 - `part` - the FPGA part number
 - `signals` - the list of signal descriptors
+- `architecture` *(optional)* - the VHDL architecture name (e.g., `rtl`). Required
+  when generating VHDL output; ignored for Verilog. Not enforced by the schema but
+  validated at generation time by `validate_vhdl`.
 
 ## Signals
 

@@ -1,5 +1,6 @@
 title: Example Design
 part: xc7k325tffg900-2
+architecture: rtl
 
 signals:
 

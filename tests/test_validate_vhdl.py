@@ -2,12 +2,20 @@ import pytest
 
 from io_gen import ValidationError
 from io_gen.tables.signal_table import _build_signal_table, SignalTable
+from io_gen.tables.meta_table import _build_meta_table, MetaTable
 from io_gen.validate import validate_vhdl
 
 
 def _make_signal_table(signals: list) -> SignalTable:
     doc = {"title": "Test", "part": "xc7k325tffg900-2", "signals": signals}
     return _build_signal_table(doc)
+
+
+def _make_meta_table(architecture: str | None = "rtl") -> MetaTable:
+    doc = {"title": "Test", "part": "xc7k325tffg900-2", "signals": []}
+    if architecture is not None:
+        doc["architecture"] = architecture
+    return _build_meta_table(doc)
 
 
 # ---------------------------------------------------------------------------
@@ -28,7 +36,7 @@ def test_all_valid() -> None:
             }
         ]
     )
-    validate_vhdl(st, "my_top")
+    validate_vhdl(st, _make_meta_table(), "my_top")
 
 
 def test_bypass_skips_instance_check() -> None:
@@ -44,7 +52,7 @@ def test_bypass_skips_instance_check() -> None:
             }
         ]
     )
-    validate_vhdl(st, "my_top")
+    validate_vhdl(st, _make_meta_table(), "my_top")
 
 
 def test_valid_instance_override() -> None:
@@ -61,7 +69,7 @@ def test_valid_instance_override() -> None:
             }
         ]
     )
-    validate_vhdl(st, "my_top")
+    validate_vhdl(st, _make_meta_table(), "my_top")
 
 
 def test_bypass_and_normal_signal_both_valid() -> None:
@@ -84,7 +92,7 @@ def test_bypass_and_normal_signal_both_valid() -> None:
             },
         ]
     )
-    validate_vhdl(st, "my_top")
+    validate_vhdl(st, _make_meta_table(), "my_top")
 
 
 # ---------------------------------------------------------------------------
@@ -119,7 +127,7 @@ def test_invalid_top_raises(top: str) -> None:
         ]
     )
     with pytest.raises(ValidationError):
-        validate_vhdl(st, top)
+        validate_vhdl(st, _make_meta_table(), top)
 
 
 # ---------------------------------------------------------------------------
@@ -153,7 +161,7 @@ def test_invalid_signal_name_raises(name: str) -> None:
         ]
     )
     with pytest.raises(ValidationError):
-        validate_vhdl(st, "my_top")
+        validate_vhdl(st, _make_meta_table(), "my_top")
 
 
 def test_bypass_signal_invalid_name_raises() -> None:
@@ -174,7 +182,7 @@ def test_bypass_signal_invalid_name_raises() -> None:
         ]
     )
     with pytest.raises(ValidationError):
-        validate_vhdl(st, "my_top")
+        validate_vhdl(st, _make_meta_table(), "my_top")
 
 
 # ---------------------------------------------------------------------------
@@ -209,4 +217,55 @@ def test_invalid_instance_override_raises(instance: str) -> None:
         ]
     )
     with pytest.raises(ValidationError):
-        validate_vhdl(st, "my_top")
+        validate_vhdl(st, _make_meta_table(), "my_top")
+
+
+# ---------------------------------------------------------------------------
+# Invalid architecture name
+# ---------------------------------------------------------------------------
+
+def test_missing_architecture_raises() -> None:
+    """A doc with no architecture field raises ValidationError for VHDL."""
+    st = _make_signal_table(
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            }
+        ]
+    )
+    with pytest.raises(ValidationError):
+        validate_vhdl(st, _make_meta_table(architecture=None), "my_top")
+
+
+INVALID_ARCHITECTURE_CASES = [
+    ("arch_starts_with_digit", "0rtl"),
+    ("arch_leading_underscore", "_rtl"),
+    ("arch_trailing_underscore", "rtl_"),
+    ("arch_consecutive_underscores", "rt__l"),
+    ("arch_has_hyphen", "rt-l"),
+]
+
+
+@pytest.mark.parametrize(
+    "architecture",
+    [pytest.param(a, id=label) for label, a in INVALID_ARCHITECTURE_CASES],
+)
+def test_invalid_architecture_raises(architecture: str) -> None:
+    """An architecture name that is not a valid VHDL identifier raises ValidationError."""
+    st = _make_signal_table(
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            }
+        ]
+    )
+    with pytest.raises(ValidationError):
+        validate_vhdl(st, _make_meta_table(architecture=architecture), "my_top")

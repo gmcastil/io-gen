@@ -8,12 +8,11 @@ import yaml
 from referencing import Registry, Resource
 from referencing.jsonschema import DRAFT202012
 
-from io_gen.tables.signal_table import SignalTable
-
+from .tables.meta_table import MetaTable
+from .tables.signal_table import SignalTable
 from .exceptions import ValidationError
-
-from io_gen.identifiers import _is_valid_verilog_identifier, _is_valid_vhdl_identifier
-from io_gen.checks import (
+from .identifiers import _is_valid_verilog_identifier, _is_valid_vhdl_identifier
+from .checks import (
     _check_pin_name_format,
     _check_unique_signal_names,
     _check_unique_pins,
@@ -41,12 +40,6 @@ SCHEMA_REFS = [
 ]
 
 
-# Resolving references in the top level JSON schema requires pairing each discrete JSON object (including
-# the top level schema) with its draft specification to create a referencing.Resource object. The complete set of these
-# Resource objects is then associated together as a referencing.Registry object.  That Registry object is then passed
-# to the jsonschema validator object.
-
-
 def _build_resource(schema_path: Path) -> Resource:
     """Create a Resource object from a resolved path to a JSON file"""
     with open(schema_path) as f:
@@ -55,8 +48,13 @@ def _build_resource(schema_path: Path) -> Resource:
 
 
 def _build_registry() -> Registry:
-    """Create a Registry object containing all JSON schema resources"""
+    """Create a Registry object containing all JSON schema resources
 
+    Resolving references in the top level JSON schema requires pairing each discrete JSON object (including the top
+    level schema) with its draft specification to create a referencing.Resource object. The complete set of these
+    Resource objects is then associated together as a referencing.Registry object.  That Registry object is then passed
+    to the jsonschema validator object.
+    """
     # Empty registry
     registry = Registry()
     # Add each file indicated by $ref in the top-level schema to the registry as a resource
@@ -88,7 +86,7 @@ def _validate_structural(doc: dict) -> None:
     registry = _build_registry()
 
     validator = jsonschema.Draft202012Validator(schema, registry=registry)
-    # This returns None if successful and raises an exceptions if not
+    # This returns None if successful and raises an exception if not
     try:
         validator.validate(doc)
     except jsonschema.ValidationError as e:
@@ -107,13 +105,13 @@ def _validate_structural(doc: dict) -> None:
         if path and path[0] == "signals" and len(path) >= 2:
             # Now we can get the index of the offender
             idx = path[1]
-            signals = doc.get("signals", [{}])
-            # Now extract the name of the signal entry that is causign the problem
+            signals = doc["signals"]
+            # Now extract the name of the signal entry that is causing the problem
             # (if there is no name yet, return the index of the offender in the signals list)
             offender = signals[idx].get("name", f"signals[{idx}]")
             raise ValidationError(f"{offender}: {e.message}")
 
-        # If it wasn't a signal that caused the validator to fail, just raise and hope for teh best
+        # If it wasn't a signal that caused the validator to fail, just raise
         raise ValidationError(e.message)
 
 
@@ -123,33 +121,20 @@ def _validate_semantic(doc: dict) -> None:
     # Explicitly assuming that structural validation was successful
     signals = doc["signals"]
 
-    # Check that all pin names are valid before any other pin-related checks
     _check_pin_name_format(signals)
-    # Check for unique signal names across all signals
     _check_unique_signal_names(signals)
-    # Check for unique pins across all signals
     _check_unique_pins(signals)
-    # Check that there are actual signals to generate code for
     _check_minimum_ports_generated(signals)
 
     # Now validate each signal individually
     for sig in signals:
-        # Check pinset array mismatch
         _check_pinset_array_mismatch(sig)
-        # Check that all pins arrays match their declared width
         _check_pins_array_width_match(sig)
-        # Check that all pinset arrays match their declared width
         _check_pinset_array_width_match(sig)
-        # Check that the buffer direction matches the buffer type
         _check_buffer_direction(sig)
-        # Check that the type is compatible with the pin strategy
         _check_buffer_strategy_match(sig)
-        # Check that buffer inference is not requested for bypass
         _check_buffer_infer_bypass_mismatch(sig)
-        # Check that buffer inference is allowed
         _check_buffer_inferable(sig)
-
-    return None
 
 
 def validate(yaml_file: Path) -> dict:
@@ -166,11 +151,10 @@ def validate(yaml_file: Path) -> dict:
         except yaml.YAMLError as e:
             raise ValidationError(str(e))
 
-    # Each of these can raise a ValidationError, which we just let fail
+    # Each of these can raise a ValidationError
     _validate_structural(doc)
     _validate_semantic(doc)
 
-    # If we're validated, then we can just return the validated doc
     return doc
 
 
@@ -188,25 +172,22 @@ def validate_verilog(signal_table: SignalTable, top: str) -> None:
     top:
         Top-level module name supplied at runtime.
     """
+    # Check the top level name
     if not _is_valid_verilog_identifier(top):
         raise ValidationError(
             f"Top level module name '{top}' is not a valid Verilog identifier"
         )
-
+    # Check all the signal names
     for sig in signal_table:
-        # Check that the signal names are all valid Verilog identifiers (with some restrictions)
         if not _is_valid_verilog_identifier(sig["name"]):
             raise ValidationError(f"{sig['name']} is not a valid Verilog identifier")
-        # Bypassed signals still generate top level ports, so we filter those out here
-        # before checking the instance names
-        if not sig["bypass"]:
-            if not _is_valid_verilog_identifier(sig["instance"]):
-                raise ValidationError(
-                    f"{sig['instance']} is not a valid Verilog identifier"
-                )
+        if not sig["bypass"] and not _is_valid_verilog_identifier(sig["instance"]):
+            raise ValidationError(
+                f"{sig['instance']} is not a valid Verilog identifier"
+            )
 
 
-def validate_vhdl(signal_table: SignalTable, top: str) -> None:
+def validate_vhdl(signal_table: SignalTable, meta_table: MetaTable, top: str) -> None:
     """Validate signal names, instance names, and the top entity name as legal VHDL identifiers.
 
     Checks that every signal name and resolved instance name in the signal table is
@@ -217,22 +198,26 @@ def validate_vhdl(signal_table: SignalTable, top: str) -> None:
     ----------
     signal_table:
         Constructed signal table to validate.
+    meta_table:
+        Constructed meta table to validate.
     top:
         Top-level entity name supplied at runtime.
     """
+    # Check the architecture value
+    if meta_table.architecture is None:
+        raise ValidationError("No architecture was specified")
+    if not _is_valid_vhdl_identifier(meta_table.architecture):
+        raise ValidationError(
+            f"Specified architecture '{meta_table.architecture}' is not a valid VHDL identifier"
+        )
+    # Check the top level name
     if not _is_valid_vhdl_identifier(top):
         raise ValidationError(
             f"Top level entity name '{top}' is not a valid VHDL identifier"
         )
-
+    # Check all the signal names
     for sig in signal_table:
-        # Check that the signal names are all valid VHDL identifiers
         if not _is_valid_vhdl_identifier(sig["name"]):
             raise ValidationError(f"{sig['name']} is not a valid VHDL identifier")
-        # Bypassed signals still generate top level ports, so we filter those out here
-        # before checking the instance names
-        if not sig["bypass"]:
-            if not _is_valid_vhdl_identifier(sig["instance"]):
-                raise ValidationError(
-                    f"{sig['instance']} is not a valid VHDL identifier"
-                )
+        if not sig["bypass"] and not _is_valid_vhdl_identifier(sig["instance"]):
+            raise ValidationError(f"{sig['instance']} is not a valid VHDL identifier")

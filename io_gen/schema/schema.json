@@ -11,6 +11,9 @@
         "part": {
             "type": "string"
         },
+        "architecture": {
+            "type": "string"
+        },
         "signals": {
             "type": "array",
             "items": {

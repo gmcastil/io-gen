@@ -1,8 +1,14 @@
+from dataclasses import dataclass
+
+
+@dataclass
 class MetaTable:
-    def __init__(self, title: str, part: str) -> None:
-        self.title = title
-        self.part = part
+    title: str
+    part: str
+    architecture: str | None
 
 
 def _build_meta_table(doc: dict) -> MetaTable:
-    return MetaTable(doc["title"], doc["part"])
+    # The architecture is optional and can't be enforced by the schema
+    arch = doc.get("architecture", None)
+    return MetaTable(doc["title"], doc["part"], arch)
