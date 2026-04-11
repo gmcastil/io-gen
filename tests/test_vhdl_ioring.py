@@ -3,6 +3,7 @@ import pytest
 from io_gen.tables import SignalTable, PinTable
 from io_gen.tables.signal_table import _build_signal_table
 from io_gen.tables.pin_table import _build_pin_table
+from io_gen.tables.meta_table import MetaTable
 
 from io_gen.generate.vhdl_ioring import (
     _infer_ibuf,
@@ -16,6 +17,9 @@ from io_gen.generate.vhdl_ioring import (
     _generate_vhdl_ioring_body,
     generate_vhdl_ioring,
 )
+
+
+_TEST_META = MetaTable(title="Test", part="xc7k325tffg900-2", architecture="rtl")
 
 
 def _make_signal_table(signals: list) -> SignalTable:
@@ -426,8 +430,8 @@ def test_instantiate_iobuf_bus() -> None:
 
 # ---- _generate_vhdl_ioring_ports -------------------------------------------
 
-# Reuse the integration signal set, same as the Verilog ioring test.
-# No comments anywhere in the IO ring port list.
+# Signal set matching examples/example.yaml exactly (generate:false and bypass signals
+# handled by the table layer; no comments needed in ioring port list).
 _IORING_INTEGRATION_SIGNALS = [
     {
         "name": "sys_clk",
@@ -442,6 +446,14 @@ _IORING_INTEGRATION_SIGNALS = [
         "width": 4,
         "direction": "out",
         "buffer": "obuf",
+        "iostandard": "LVCMOS18",
+    },
+    {
+        "name": "user_led",
+        "pins": "K22",
+        "direction": "out",
+        "buffer": "obuf",
+        "infer": True,
         "iostandard": "LVCMOS18",
     },
     {
@@ -489,7 +501,7 @@ IORING_PORT_DECL_CASES = [
             "iostandard": "LVCMOS18",
         },
         # longest = sys_clk_pad (11), name_len = 12
-        "sys_clk_pad  : in    std_logic",
+        "sys_clk_pad : in    std_logic",
     ),
     (
         "scalar_se_input_fabric_port",
@@ -500,7 +512,7 @@ IORING_PORT_DECL_CASES = [
             "buffer": "ibuf",
             "iostandard": "LVCMOS18",
         },
-        "sys_clk      : out   std_logic",
+        "sys_clk     : out   std_logic",
     ),
     (
         "bus_se_output_pad_port",
@@ -513,7 +525,7 @@ IORING_PORT_DECL_CASES = [
             "iostandard": "LVCMOS18",
         },
         # longest = led_pad (7), name_len = 8
-        "led_pad  : out   std_logic_vector(3 downto 0)",
+        "led_pad : out   std_logic_vector(3 downto 0)",
     ),
     (
         "bus_se_output_fabric_port",
@@ -525,7 +537,7 @@ IORING_PORT_DECL_CASES = [
             "buffer": "obuf",
             "iostandard": "LVCMOS18",
         },
-        "led      : in    std_logic_vector(3 downto 0)",
+        "led     : in    std_logic_vector(3 downto 0)",
     ),
     (
         "scalar_diff_input_p",
@@ -559,7 +571,7 @@ IORING_PORT_DECL_CASES = [
             "buffer": "ibufds",
             "iostandard": "LVDS",
         },
-        "ref_clk      : out   std_logic",
+        "ref_clk     : out   std_logic",
     ),
     (
         "bus_diff_output_p",
@@ -572,7 +584,7 @@ IORING_PORT_DECL_CASES = [
             "iostandard": "LVDS",
         },
         # longest = lvds_data_p or lvds_data_n (11), name_len = 12
-        "lvds_data_p  : out   std_logic_vector(2 downto 0)",
+        "lvds_data_p : out   std_logic_vector(2 downto 0)",
     ),
     (
         "bus_diff_output_n",
@@ -584,7 +596,7 @@ IORING_PORT_DECL_CASES = [
             "buffer": "obufds",
             "iostandard": "LVDS",
         },
-        "lvds_data_n  : out   std_logic_vector(2 downto 0)",
+        "lvds_data_n : out   std_logic_vector(2 downto 0)",
     ),
     (
         "bus_diff_output_fabric",
@@ -596,7 +608,7 @@ IORING_PORT_DECL_CASES = [
             "buffer": "obufds",
             "iostandard": "LVDS",
         },
-        "lvds_data    : in    std_logic_vector(2 downto 0)",
+        "lvds_data   : in    std_logic_vector(2 downto 0)",
     ),
     (
         "bus_se_inout_pad_port",
@@ -609,7 +621,7 @@ IORING_PORT_DECL_CASES = [
             "iostandard": "LVCMOS18",
         },
         # longest = gpio_pad (8), name_len = 12
-        "gpio_pad     : inout std_logic_vector(4 downto 0)",
+        "gpio_pad    : inout std_logic_vector(4 downto 0)",
     ),
     (
         "bus_se_inout_fabric_i",
@@ -621,7 +633,7 @@ IORING_PORT_DECL_CASES = [
             "buffer": "iobuf",
             "iostandard": "LVCMOS18",
         },
-        "gpio_i       : out   std_logic_vector(4 downto 0)",
+        "gpio_i      : out   std_logic_vector(4 downto 0)",
     ),
     (
         "bus_se_inout_fabric_o",
@@ -633,7 +645,7 @@ IORING_PORT_DECL_CASES = [
             "buffer": "iobuf",
             "iostandard": "LVCMOS18",
         },
-        "gpio_o       : in    std_logic_vector(4 downto 0)",
+        "gpio_o      : in    std_logic_vector(4 downto 0)",
     ),
     (
         "bus_se_inout_fabric_t",
@@ -645,7 +657,7 @@ IORING_PORT_DECL_CASES = [
             "buffer": "iobuf",
             "iostandard": "LVCMOS18",
         },
-        "gpio_t       : in    std_logic_vector(4 downto 0)",
+        "gpio_t      : in    std_logic_vector(4 downto 0)",
     ),
 ]
 
@@ -747,6 +759,31 @@ def test_ioring_ports_no_trailing_semicolon_on_last_port() -> None:
     assert not last_line.endswith(";")
 
 
+def test_ioring_ports_no_trailing_semicolon_when_last_signal_is_bypass() -> None:
+    """The last non-bypass port has no trailing semicolon when the last table entry is bypass:true."""
+    st = _make_signal_table(
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            },
+            {
+                "name": "spare",
+                "pins": "J24",
+                "direction": "out",
+                "iostandard": "LVCMOS18",
+                "bypass": True,
+            },
+        ]
+    )
+    output = _generate_vhdl_ioring_ports(st)
+    last_line = [ln for ln in output.splitlines() if ln.strip()][-1]
+    assert not last_line.endswith(";")
+
+
 def test_ioring_ports_no_comments() -> None:
     """comment.hdl on a signal produces no -- line in the ioring port list."""
     st = _make_signal_table(
@@ -782,26 +819,28 @@ def test_ioring_ports_alignment_tab_stop() -> None:
         ]
     )
     output = _generate_vhdl_ioring_ports(st)
-    assert "        led_pad  : out   std_logic;" in output
-    assert "        led      : in    std_logic" in output
+    assert "        led_pad : out   std_logic;" in output
+    assert "        led     : in    std_logic" in output
 
 
-# longest port name = sys_clk_pad (11), name_len = 12
+# longest port name = user_led_pad (12), name_len = 16
 _EXPECTED_IORING_PORTS = (
-    "        sys_clk_pad  : in    std_logic;\n"
-    "        sys_clk      : out   std_logic;\n"
-    "        led_pad      : out   std_logic_vector(3 downto 0);\n"
-    "        led          : in    std_logic_vector(3 downto 0);\n"
-    "        ref_clk_p    : in    std_logic;\n"
-    "        ref_clk_n    : in    std_logic;\n"
-    "        ref_clk      : out   std_logic;\n"
-    "        lvds_data_p  : out   std_logic_vector(2 downto 0);\n"
-    "        lvds_data_n  : out   std_logic_vector(2 downto 0);\n"
-    "        lvds_data    : in    std_logic_vector(2 downto 0);\n"
-    "        gpio_pad     : inout std_logic_vector(4 downto 0);\n"
-    "        gpio_i       : out   std_logic_vector(4 downto 0);\n"
-    "        gpio_o       : in    std_logic_vector(4 downto 0);\n"
-    "        gpio_t       : in    std_logic_vector(4 downto 0)"
+    "        sys_clk_pad     : in    std_logic;\n"
+    "        sys_clk         : out   std_logic;\n"
+    "        led_pad         : out   std_logic_vector(3 downto 0);\n"
+    "        led             : in    std_logic_vector(3 downto 0);\n"
+    "        user_led_pad    : out   std_logic;\n"
+    "        user_led        : in    std_logic;\n"
+    "        ref_clk_p       : in    std_logic;\n"
+    "        ref_clk_n       : in    std_logic;\n"
+    "        ref_clk         : out   std_logic;\n"
+    "        lvds_data_p     : out   std_logic_vector(2 downto 0);\n"
+    "        lvds_data_n     : out   std_logic_vector(2 downto 0);\n"
+    "        lvds_data       : in    std_logic_vector(2 downto 0);\n"
+    "        gpio_pad        : inout std_logic_vector(4 downto 0);\n"
+    "        gpio_i          : out   std_logic_vector(4 downto 0);\n"
+    "        gpio_o          : in    std_logic_vector(4 downto 0);\n"
+    "        gpio_t          : in    std_logic_vector(4 downto 0)"
 )
 
 
@@ -1059,7 +1098,7 @@ def test_generate_vhdl_ioring_returns_str() -> None:
             }
         ]
     )
-    assert isinstance(generate_vhdl_ioring(st, pt, "test", "rtl"), str)
+    assert isinstance(generate_vhdl_ioring(st, pt, _TEST_META, "test"), str)
 
 
 def test_generate_vhdl_ioring_file_header() -> None:
@@ -1075,7 +1114,7 @@ def test_generate_vhdl_ioring_file_header() -> None:
             }
         ]
     )
-    output = generate_vhdl_ioring(st, pt, "test", "rtl")
+    output = generate_vhdl_ioring(st, pt, _TEST_META, "test")
     lines = output.splitlines()
     assert lines[0] == "--"
     assert lines[1] == "-- Generated by io-gen - do not edit"
@@ -1096,7 +1135,7 @@ def test_generate_vhdl_ioring_library_clauses() -> None:
             }
         ]
     )
-    output = generate_vhdl_ioring(st, pt, "test", "rtl")
+    output = generate_vhdl_ioring(st, pt, _TEST_META, "test")
     assert "library ieee;" in output
     assert "use ieee.std_logic_1164.all;" in output
     assert "library unisim;" in output
@@ -1116,7 +1155,7 @@ def test_generate_vhdl_ioring_entity_header() -> None:
             }
         ]
     )
-    output = generate_vhdl_ioring(st, pt, "test", "rtl")
+    output = generate_vhdl_ioring(st, pt, _TEST_META, "test")
     assert "entity test_io is" in output
     assert "    -- generic (" in output
     assert "    -- )" in output
@@ -1136,7 +1175,7 @@ def test_generate_vhdl_ioring_end_entity() -> None:
             }
         ]
     )
-    output = generate_vhdl_ioring(st, pt, "test", "rtl")
+    output = generate_vhdl_ioring(st, pt, _TEST_META, "test")
     assert "end entity test_io;" in output
 
 
@@ -1153,7 +1192,7 @@ def test_generate_vhdl_ioring_architecture_header() -> None:
             }
         ]
     )
-    output = generate_vhdl_ioring(st, pt, "test", "rtl")
+    output = generate_vhdl_ioring(st, pt, _TEST_META, "test")
     assert "architecture rtl of test_io is" in output
     assert "end architecture rtl;" in output
 
@@ -1171,7 +1210,7 @@ def test_generate_vhdl_ioring_ports_present() -> None:
             }
         ]
     )
-    output = generate_vhdl_ioring(st, pt, "test", "rtl")
+    output = generate_vhdl_ioring(st, pt, _TEST_META, "test")
     assert "sys_clk_pad" in output
     assert "sys_clk" in output
 
@@ -1189,7 +1228,7 @@ def test_generate_vhdl_ioring_body_present() -> None:
             }
         ]
     )
-    output = generate_vhdl_ioring(st, pt, "test", "rtl")
+    output = generate_vhdl_ioring(st, pt, _TEST_META, "test")
     assert "ibuf_sys_clk_i0" in output
 
 
@@ -1206,20 +1245,39 @@ def test_generate_vhdl_ioring_ends_with_newline() -> None:
             }
         ]
     )
-    assert generate_vhdl_ioring(st, pt, "test", "rtl").endswith("\n")
+    assert generate_vhdl_ioring(st, pt, _TEST_META, "test").endswith("\n")
 
 
 def test_generate_vhdl_ioring_integration() -> None:
     """Full signal set matches example_io.vhd structure. spare is bypass:true and excluded."""
     st, pt = _make_tables(_IORING_INTEGRATION_SIGNALS)
-    output = generate_vhdl_ioring(st, pt, "example", "rtl")
+    output = generate_vhdl_ioring(st, pt, _TEST_META, "example")
     lines = output.splitlines()
+    # Header lines (example_io.vhd lines 1-4)
     assert lines[0] == "--"
     assert lines[1] == "-- Generated by io-gen - do not edit"
+    assert lines[2] == "-- Regenerate from source YAML using io-gen"
+    assert lines[3] == "--"
+    # Library clauses immediately follow header (example_io.vhd lines 5-9)
+    assert lines[4] == "library ieee;"
+    assert lines[5] == "use ieee.std_logic_1164.all;"
+    assert lines[6] == ""
+    assert lines[7] == "library unisim;"
+    assert lines[8] == "use unisim.vcomponents.all;"
+    # Entity and architecture names
     assert "entity example_io is" in output
     assert "end entity example_io;" in output
     assert "architecture rtl of example_io is" in output
     assert "end architecture rtl;" in output
+    # architecture ... is followed by blank line then begin (example_io.vhd)
+    arch_idx = lines.index("architecture rtl of example_io is")
+    assert lines[arch_idx + 1] == ""
+    assert lines[arch_idx + 2] == "begin"
+    # begin immediately followed by a blank line before the body
+    assert lines[arch_idx + 3] == ""
+    # Last non-empty line is end architecture (file ends with single trailing newline)
+    assert lines[-1] == "end architecture rtl;"
+    assert output.endswith("\n")
     assert "spare" not in output
     # All buffer types present
     assert "IBUF" in output
@@ -1233,4 +1291,3 @@ def test_generate_vhdl_ioring_integration() -> None:
     assert "ibufds_ref_clk_i0" in output
     assert "obufds_lvds_data_i2" in output
     assert "iobuf_gpio_i4" in output
-    assert output.endswith("\n")

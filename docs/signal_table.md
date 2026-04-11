@@ -77,6 +77,24 @@ build_signal_table(doc)
 
 ---
 
+## Interface
+
+### `active() -> list[dict[str, Any]]`
+
+Returns a filtered list containing only signals where `bypass` is `False`.
+Use this in generators that produce IO ring output — bypass signals have no
+buffer, no instance, and no IO ring ports. Iterating the table directly
+includes bypass signals; `active()` excludes them.
+
+```python
+for sig in signal_table.active():
+    ...
+
+last = len(signal_table.active()) - 1
+```
+
+---
+
 ## Notes
 
 - Signals with `generate: false` in the YAML are excluded from the table

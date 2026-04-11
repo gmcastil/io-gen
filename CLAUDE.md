@@ -261,6 +261,11 @@ Keep the following in mind throughout development:
 - For table construction tests, `generate:false` row shapes are asserted both
   positively (required keys present with correct values) and negatively (keys
   that belong only to `generate:true` rows are explicitly absent)
+- Integration test expected strings for generator output must be derived from
+  the canonical example files in `examples/`, not hand-authored against stubs
+  or the current implementation. Signal inputs remain inline dicts; only the
+  expected output strings are sourced from the examples. If the examples change,
+  update the tests to match.
 
 ## Coding
 

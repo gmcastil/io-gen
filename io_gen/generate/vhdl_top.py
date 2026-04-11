@@ -1,4 +1,6 @@
+from pytest import Metafunc
 from io_gen.tables import SignalTable
+from io_gen.tables.meta_table import MetaTable
 
 from .formatting import _indent_join, _indent_strings
 
@@ -10,12 +12,15 @@ from .common import (
 )
 
 
-def generate_vhdl_top(signal_table: SignalTable, top: str, arch: str) -> str:
+def generate_vhdl_top(
+    signal_table: SignalTable, meta_table: MetaTable, top: str
+) -> str:
     """Generate the complete VHDL top-level entity and architecture as a string.
 
     Assembles the library clauses, entity declaration, port list, internal signal
     declarations, and IO ring instantiation by calling private helpers in order.
     """
+    arch = meta_table.architecture
     rtl = []
     rtl.append("library ieee;")
     rtl.append("use ieee.std_logic_1164.all;")

@@ -82,6 +82,10 @@ class SignalTable:
 
         self.table.append(row)
 
+    def active(self) -> list[dict[str, Any]]:
+        """Returns the signal table with only active signals (i.e., bypass == False)"""
+        return [sig for sig in self.table if not sig["bypass"]]
+
 
 def _signal_is_scalar(sig: dict[str, Any]) -> bool:
     """Returns True if signal is a scalar, otherwise False"""

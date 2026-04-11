@@ -19,17 +19,19 @@ PYTHON 			:= $(VENV)/bin/python3
 PIP			:= $(VENV)/bin/pip
 PYTEST			:= $(VENV)/bin/pytest
 
+EXAMPLES_DIR		:= $(PWD)/examples
+
 PKG_NAME		:= io_gen
+PROG			:= io-gen
 
 PROJ_FILES		:= $(shell git ls-files)
 
 # Keywords to filter tests on with `-k $(TESTS)` (default is all of them)
 TESTS			?= ""
-
 COVERAGE_ARGS		:= --cov=$(PKG_NAME) --cov-report=term-missing
 TEST_ARGS		:= ""
 
-.PHONY: install test clean
+.PHONY: install test clean examples
 
 help:
 	@$(PRINTF) '%s\n' "Available targets:"
@@ -55,10 +57,15 @@ test: $(VENV_INSTALLED_STAMP)
 	@$(PYTHON) -m pytest -k $(TESTS) $(TEST_ARGS)
 
 debug: $(VENV_INSTALLED_STAMP)
-	$(PYTHON) -m pytest -k $(TESTS) -vv -s --pdb
+	@$(PYTHON) -m pytest -k $(TESTS) -vv -s --pdb
 
 coverage: $(VENV_INSTALLED_STAMP)
 	@$(PYTHON) -m pytest $(COVERAGE_ARGS)
+
+examples: $(VENV_INSTALLED_STAMP)
+	@source .venv/bin/activate; \
+	$(PROG) --lang vhdl --output $(EXAMPLES_DIR) --top example $(EXAMPLES_DIR)/example.yaml; \
+	$(PROG) --lang verilog --output $(EXAMPLES_DIR) --top example $(EXAMPLES_DIR)/example.yaml
 
 check-venv: $(VENV_INSTALLED_STAMP)
 	@$(PYTHON) -m site

@@ -747,6 +747,31 @@ def test_ioring_ports_no_trailing_comma_on_last_port() -> None:
     assert not last_line.endswith(",")
 
 
+def test_ioring_ports_no_trailing_comma_when_last_signal_is_bypass() -> None:
+    """The last non-bypass port has no trailing comma when the last table entry is bypass:true."""
+    st = _make_signal_table(
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            },
+            {
+                "name": "spare",
+                "pins": "J24",
+                "direction": "out",
+                "iostandard": "LVCMOS18",
+                "bypass": True,
+            },
+        ]
+    )
+    output = _generate_verilog_ioring_ports(st)
+    last_line = [ln for ln in output.splitlines() if ln.strip()][-1]
+    assert not last_line.endswith(",")
+
+
 _EXPECTED_IORING_PORTS = (
     "    input   wire            sys_clk_pad,\n"
     "    output  wire            sys_clk,\n"

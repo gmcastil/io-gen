@@ -56,6 +56,15 @@
       identifier in the IO ring. Must be validated as a legal identifier
       before generation. Same language considerations as signal names.
 
+## Refactoring
+
+- [ ] Flatten nested signal/port loops in `_generate_vhdl_ports` (`vhdl_top.py`) -
+      build a flat port list first, then a single `enumerate` loop; same pattern
+      already applied in `_generate_vhdl_ioring_ports`
+- [ ] Push indentation out of `_instantiate_*` buffer functions and into the body
+      assembler (`_generate_vhdl_ioring_body`) - primitives should return unindented
+      strings; formatting belongs at join time. Apply same fix to Verilog ioring.
+
 ## Housekeeping
 
 - [x] Delete `io_gen/generate/verilog.py` - dead leftover from before the split

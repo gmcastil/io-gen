@@ -76,7 +76,7 @@ def run_pipeline(
     if lang == "verilog":
         validate_verilog(signal_table, top)
     else:
-        validate_vhdl(signal_table, top)
+        validate_vhdl(signal_table, meta_table, top)
 
     # Create a mapping between signal names and a list of the pins for that signal
     pin_table = _build_pin_table(signal_table)
@@ -101,6 +101,15 @@ def run_pipeline(
                 top_rtl.write(generate_verilog_ioring(signal_table, pin_table, top))
                 print(f"Info: Wrote IO ring module to {output_dir / f'{top}_io.v'}")
         else:
-            raise NotImplementedError(f"VHDL support not supported yet")
+            # Write the top level RTL to disk
+            with open(output_dir / f"{top}.vhd", "w") as top_rtl:
+                top_rtl.write(generate_vhdl_top(signal_table, meta_table, top))
+                print(f"Info: Wrote top level module to {output_dir / f'{top}.vhd'}")
+            # Write the IO ring RTL to disk
+            with open(output_dir / f"{top}_io.vhd", "w") as top_rtl:
+                top_rtl.write(
+                    generate_vhdl_ioring(signal_table, pin_table, meta_table, top)
+                )
+                print(f"Info: Wrote IO ring module to {output_dir / f'{top}_io.vhd'}")
 
     return

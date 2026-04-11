@@ -2,6 +2,7 @@ import pytest
 
 from io_gen.tables import SignalTable
 from io_gen.tables.signal_table import _build_signal_table
+from io_gen.tables.meta_table import MetaTable
 
 from io_gen.generate.vhdl_top import (
     _generate_vhdl_ports,
@@ -9,6 +10,8 @@ from io_gen.generate.vhdl_top import (
     _generate_vhdl_ioring_inst,
     generate_vhdl_top,
 )
+
+_TEST_META = MetaTable(title="Test", part="xc7k325tffg900-2", architecture="rtl")
 
 
 def _make_signal_table(signals: list) -> SignalTable:
@@ -717,7 +720,7 @@ def test_generate_vhdl_top_returns_str() -> None:
             },
         ]
     )
-    assert isinstance(generate_vhdl_top(st, "test", "rtl"), str)
+    assert isinstance(generate_vhdl_top(st, _TEST_META, "test"), str)
 
 
 def test_generate_vhdl_top_entity_header() -> None:
@@ -733,7 +736,7 @@ def test_generate_vhdl_top_entity_header() -> None:
             },
         ]
     )
-    output = generate_vhdl_top(st, "test", "rtl")
+    output = generate_vhdl_top(st, _TEST_META, "test")
     assert "entity test is" in output
     assert "    -- generic (" in output
     assert "    -- )" in output
@@ -753,7 +756,7 @@ def test_generate_vhdl_top_end_entity() -> None:
             },
         ]
     )
-    output = generate_vhdl_top(st, "test", "rtl")
+    output = generate_vhdl_top(st, _TEST_META, "test")
     assert "end entity test;" in output
 
 
@@ -770,7 +773,7 @@ def test_generate_vhdl_top_architecture_header() -> None:
             },
         ]
     )
-    output = generate_vhdl_top(st, "test", "rtl")
+    output = generate_vhdl_top(st, _TEST_META, "test")
     assert "architecture rtl of test is" in output
     assert "end architecture rtl;" in output
 
@@ -788,7 +791,7 @@ def test_generate_vhdl_top_ends_with_newline() -> None:
             },
         ]
     )
-    assert generate_vhdl_top(st, "test", "rtl").endswith("\n")
+    assert generate_vhdl_top(st, _TEST_META, "test").endswith("\n")
 
 
 def test_generate_vhdl_top_library_clauses() -> None:
@@ -804,7 +807,7 @@ def test_generate_vhdl_top_library_clauses() -> None:
             },
         ]
     )
-    output = generate_vhdl_top(st, "test", "rtl")
+    output = generate_vhdl_top(st, _TEST_META, "test")
     lines = output.splitlines()
     assert lines[0] == "library ieee;"
     assert lines[1] == "use ieee.std_logic_1164.all;"
@@ -813,4 +816,4 @@ def test_generate_vhdl_top_library_clauses() -> None:
 def test_generate_vhdl_top_integration() -> None:
     """Full signal set produces the expected complete output."""
     st = _make_signal_table(_INTEGRATION_SIGNALS)
-    assert generate_vhdl_top(st, "example", "rtl") == _EXPECTED_TOP
+    assert generate_vhdl_top(st, _TEST_META, "example") == _EXPECTED_TOP
