@@ -1,6 +1,6 @@
 from typing import Any
 
-from io_gen.tables import _signal_is_differential, _signal_is_scalar
+from io_gen.tables import signal_is_differential, signal_is_scalar
 
 # Set of tristate buffers that will require '_i', '_o', and '_t' in the signal
 # block and IO ring instances
@@ -10,7 +10,7 @@ VLOG_DIRECTIONS = {"in": "input", "out": "output", "inout": "inout"}
 VHDL_DIRECTIONS = {"in": "in", "out": "out", "inout": "inout"}
 
 
-def _get_ioring_header() -> list[str]:
+def get_ioring_header() -> list[str]:
     """Language-agnostic list of strings to use as the IO ring header"""
     return [
         "",
@@ -20,17 +20,17 @@ def _get_ioring_header() -> list[str]:
     ]
 
 
-def _get_signal_top_ports(sig: dict[str, Any]) -> list[dict]:
+def get_signal_top_ports(sig: dict[str, Any]) -> list[dict]:
     """Language-agnostic list of ports for the top level RTL for a given signal"""
 
     port_base = {
         "direction": sig["direction"],
         "width": sig["width"],
-        "is_bus": not _signal_is_scalar(sig),
+        "is_bus": not signal_is_scalar(sig),
     }
 
     port_list = []
-    if _signal_is_differential(sig):
+    if signal_is_differential(sig):
         port_list.append({**port_base, "name": f"{sig['name']}_p"})
         port_list.append({**port_base, "name": f"{sig['name']}_n"})
     else:
@@ -39,12 +39,12 @@ def _get_signal_top_ports(sig: dict[str, Any]) -> list[dict]:
     return port_list
 
 
-def _get_signal_nets(sig: dict[str, Any]) -> list[dict]:
+def get_signal_nets(sig: dict[str, Any]) -> list[dict]:
     """Language-agnostic list of nets from the IO ring to fabric-facing logic for a given signal"""
 
     net_base = {
         "width": sig["width"],
-        "is_bus": not _signal_is_scalar(sig),
+        "is_bus": not signal_is_scalar(sig),
     }
 
     net_list = []
@@ -58,13 +58,13 @@ def _get_signal_nets(sig: dict[str, Any]) -> list[dict]:
     return net_list
 
 
-def _get_signal_ioring_ports(sig: dict[str, Any]) -> list[dict]:
+def get_signal_ioring_ports(sig: dict[str, Any]) -> list[dict]:
     """Language-agnostic list of ports for IO ring RTL for a given siganl"""
 
     port_base = {
         "direction": sig["direction"],
         "width": sig["width"],
-        "is_bus": not _signal_is_scalar(sig),
+        "is_bus": not signal_is_scalar(sig),
     }
 
     # No bypassed signals in the IO ring.
@@ -72,7 +72,7 @@ def _get_signal_ioring_ports(sig: dict[str, Any]) -> list[dict]:
         return []
 
     port_list = []
-    if _signal_is_differential(sig):
+    if signal_is_differential(sig):
         if sig["direction"] == "in":
             port_list.append({**port_base, "name": f"{sig['name']}_p"})
             port_list.append({**port_base, "name": f"{sig['name']}_n"})

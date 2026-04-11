@@ -32,10 +32,9 @@ def _get_pin_names_from_signal(sig: dict) -> list[str]:
     # Single-ended signal
     if "pins" in sig:
         if isinstance(sig["pins"], str):
-            pin = sig["pins"]
-            pins = [pin]
+            pins = [sig["pins"]]
         else:
-            pins = [pin for pin in sig["pins"]]
+            pins = sig["pins"]
     # Differential pair
     else:
         if isinstance(sig["pinset"]["p"], str):
@@ -43,8 +42,7 @@ def _get_pin_names_from_signal(sig: dict) -> list[str]:
             pin_n = sig["pinset"]["n"]
             pins = [pin_p, pin_n]
         else:
-            pins = list(sig["pinset"]["p"])
-            pins.extend(sig["pinset"]["n"])
+            pins = sig["pinset"]["p"] + sig["pinset"]["n"]
 
     return pins
 
@@ -64,7 +62,7 @@ def _check_pin_name_format(signals: list[dict]) -> None:
         name = sig["name"]
         pins = _get_pin_names_from_signal(sig)
         for pin in pins:
-            if not re.match(pattern, pin):
+            if not pattern.match(pin):
                 raise ValidationError(f"signal '{name}' has pin '{pin}': is malformed")
 
 
@@ -90,7 +88,7 @@ def _check_unique_pins(signals: list[dict]) -> None:
     Raises ValidationError identifying the first duplicate pin found.
     """
     uniq_pins = set()
-    pins = list()
+    pins = []
     # Get all of the pins of every signal in the design
     for sig in signals:
         pins.extend(_get_pin_names_from_signal(sig))
@@ -238,7 +236,7 @@ def _check_buffer_inferable(sig: dict) -> None:
 
     name = sig["name"]
     buffer = sig["buffer"]
-    if buffer not in BUFFER_INFERABLE and sig.get("infer", False):
+    if buffer not in BUFFER_INFERABLE and sig["infer"]:
         raise ValidationError(f"signal '{name}': buffer {buffer} not inferable")
 
 

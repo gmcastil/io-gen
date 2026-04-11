@@ -67,6 +67,8 @@ def main() -> None:
             rtl_only=args.rtl_only,
             xdc_only=args.xdc_only,
         )
+    except PermissionError as e:
+        print(f"Error: {e.strerror}: {e.filename}", file=sys.stderr)
     except (ValidationError, OSError, NotImplementedError, ValueError) as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)

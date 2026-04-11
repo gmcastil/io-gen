@@ -1,8 +1,8 @@
 import pytest
 
 from io_gen.tables import SignalTable, PinTable
-from io_gen.tables.signal_table import _build_signal_table
-from io_gen.tables.pin_table import _build_pin_table
+from io_gen.tables.signal_table import build_signal_table
+from io_gen.tables.pin_table import build_pin_table
 from io_gen.tables.meta_table import MetaTable
 
 from io_gen.generate.vhdl_ioring import (
@@ -24,12 +24,12 @@ _TEST_META = MetaTable(title="Test", part="xc7k325tffg900-2", architecture="rtl"
 
 def _make_signal_table(signals: list) -> SignalTable:
     doc = {"title": "Test", "part": "xc7k325tffg900-2", "signals": signals}
-    return _build_signal_table(doc)
+    return build_signal_table(doc)
 
 
 def _make_tables(signals: list) -> tuple[SignalTable, PinTable]:
     st = _make_signal_table(signals)
-    pt = _build_pin_table(st)
+    pt = build_pin_table(st)
     return st, pt
 
 
@@ -1291,3 +1291,4 @@ def test_generate_vhdl_ioring_integration() -> None:
     assert "ibufds_ref_clk_i0" in output
     assert "obufds_lvds_data_i2" in output
     assert "iobuf_gpio_i4" in output
+

@@ -1,13 +1,13 @@
 import pytest
 
 from io_gen import ValidationError
-from io_gen.tables.signal_table import _build_signal_table, SignalTable
+from io_gen.tables.signal_table import build_signal_table, SignalTable
 from io_gen.validate import validate_verilog
 
 
 def _make_signal_table(signals: list) -> SignalTable:
     doc = {"title": "Test", "part": "xc7k325tffg900-2", "signals": signals}
-    return _build_signal_table(doc)
+    return build_signal_table(doc)
 
 
 # ---------------------------------------------------------------------------

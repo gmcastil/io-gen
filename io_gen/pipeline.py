@@ -1,9 +1,8 @@
-import os
 from pathlib import Path
 
 from io_gen.validate import validate, validate_verilog, validate_vhdl
-from io_gen.tables.signal_table import _build_signal_table
-from io_gen.tables.pin_table import _build_pin_table
+from io_gen.tables.signal_table import build_signal_table
+from io_gen.tables.pin_table import build_pin_table
 from io_gen.tables.meta_table import _build_meta_table
 
 from io_gen.generate.xdc import generate_xdc
@@ -54,13 +53,9 @@ def run_pipeline(
     # OSError which is being caught higher up)
     if not validate_only:
         output_dir.mkdir(parents=True, exist_ok=True)
-
-        # Before spinning anything up, lets make sure that the output
-        # direcotry exists and is writable
-        if not os.access(output_dir, os.W_OK):
-            raise OSError(
-                f"Output directory {output_dir} does not exist or is not writable by current user"
-            )
+    # Now prove that it's writable (this will raise a PermissionError if not)
+    Path(output_dir / ".io_gen_probe").touch()
+    Path(output_dir / ".io_gen_probe").unlink()
 
     # Get the validated data from YAML
     valid_doc = validate(yaml_path)
@@ -70,7 +65,7 @@ def run_pipeline(
     meta_table = _build_meta_table(valid_doc)
 
     # Create the table of signals from the validated doc
-    signal_table = _build_signal_table(valid_doc)
+    signal_table = build_signal_table(valid_doc)
     # Now that we know the language and top level module or component names, we validate
     # the signal table components
     if lang == "verilog":
@@ -79,11 +74,11 @@ def run_pipeline(
         validate_vhdl(signal_table, meta_table, top)
 
     # Create a mapping between signal names and a list of the pins for that signal
-    pin_table = _build_pin_table(signal_table)
+    pin_table = build_pin_table(signal_table)
 
     # If we're only validating the YAML, we're out of here now
     if validate_only:
-        return None
+        return
 
     if not rtl_only:
         with open(output_dir / f"{top}.xdc", "w") as xdc:

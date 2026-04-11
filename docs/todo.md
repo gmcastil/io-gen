@@ -34,10 +34,10 @@
 - [x] Write tests for `_generate_verilog_ioring_ports`
 - [x] Implement `_generate_verilog_ioring_ports`
 - [x] Implement `generate_verilog_ioring` assembler
-- [ ] Write tests for VHDL top-level generator (`tests/test_vhdl_top.py`)
-- [ ] Implement VHDL top-level generator (`io_gen/generate/vhdl_top.py`)
-- [ ] Write tests for VHDL IO ring generator (`tests/test_vhdl_ioring.py`)
-- [ ] Implement VHDL IO ring generator (`io_gen/generate/vhdl_ioring.py`)
+- [x] Write tests for VHDL top-level generator (`tests/test_vhdl_top.py`)
+- [x] Implement VHDL top-level generator (`io_gen/generate/vhdl_top.py`)
+- [x] Write tests for VHDL IO ring generator (`tests/test_vhdl_ioring.py`)
+- [x] Implement VHDL IO ring generator (`io_gen/generate/vhdl_ioring.py`)
 
 ## CLI
 
@@ -45,7 +45,6 @@
 - [x] `--rtl-only` flag
 - [x] `--xdc-only` flag
 - [x] Per-stage progress feedback via `print()` in `pipeline.py`
-- [ ] Stdout mode (dropped - ambiguous with multiple output files)
 
 ## Validation - Pending Checks
 
@@ -55,15 +54,6 @@
 - [x] Instance name format - the optional `instance` field becomes an HDL
       identifier in the IO ring. Must be validated as a legal identifier
       before generation. Same language considerations as signal names.
-
-## Refactoring
-
-- [ ] Flatten nested signal/port loops in `_generate_vhdl_ports` (`vhdl_top.py`) -
-      build a flat port list first, then a single `enumerate` loop; same pattern
-      already applied in `_generate_vhdl_ioring_ports`
-- [ ] Push indentation out of `_instantiate_*` buffer functions and into the body
-      assembler (`_generate_vhdl_ioring_body`) - primitives should return unindented
-      strings; formatting belongs at join time. Apply same fix to Verilog ioring.
 
 ## Housekeeping
 

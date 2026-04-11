@@ -3,8 +3,8 @@ from typing import Any
 from io_gen.tables import SignalTable
 from io_gen.tables import PinTable
 
-from .formatting import _indent_join
-from .common import _get_ioring_header, _get_signal_ioring_ports, VLOG_DIRECTIONS
+from .formatting import indent_join
+from .common import get_ioring_header, get_signal_ioring_ports, VLOG_DIRECTIONS
 
 
 def generate_verilog_ioring(
@@ -17,7 +17,7 @@ def generate_verilog_ioring(
     """
 
     rtl = []
-    for line in _get_ioring_header():
+    for line in get_ioring_header():
         if line:
             rtl.append(f"// {line}")
         else:
@@ -26,10 +26,10 @@ def generate_verilog_ioring(
     rtl.append(f"//)")
     rtl.append(f"(")
     rtl.append(_generate_verilog_ioring_ports(signal_table))
-    rtl.append(f");")
-    rtl.append(f"")
+    rtl.append(");")
+    rtl.append("")
     rtl.append(_generate_verilog_ioring_body(signal_table, pin_table))
-    rtl.append(f"")
+    rtl.append("")
     # Add a newline here so that the file ends appropriately
     rtl.append(f"endmodule\n")
 
@@ -40,7 +40,7 @@ def _generate_verilog_ioring_ports(signal_table: SignalTable) -> str:
     """Generate the indented port declaration list for the IO ring in Verilog"""
     ports = []
     for sig in signal_table.active():
-        for port in _get_signal_ioring_ports(sig):
+        for port in get_signal_ioring_ports(sig):
             direction = VLOG_DIRECTIONS[port["direction"]]
             if port["is_bus"]:
                 width = f"[{port['width'] - 1}:0]"
@@ -50,7 +50,7 @@ def _generate_verilog_ioring_ports(signal_table: SignalTable) -> str:
             line = f"{direction:<8}{dim:<16}{port['name']}"
             ports.append(line)
 
-    return _indent_join(ports, 1, ",\n")
+    return indent_join(ports, 1, ",\n")
 
 
 def _generate_verilog_ioring_body(
@@ -68,7 +68,7 @@ def _generate_verilog_ioring_body(
             for pin_row in pin_table[sig["name"]]:
                 body.append(_INSTANTIATE_BUFFERS[sig["buffer"]](sig["name"], pin_row))
 
-    return _indent_join(body, 0, "\n\n")
+    return indent_join(body, 0, "\n\n")
 
 
 def _infer_ibuf(name: str) -> str:
@@ -94,7 +94,7 @@ def _instantiate_ibuf(name: str, pin_row: dict[str, Any]) -> str:
         inst.append(f"    .O  ({name}),")
         inst.append(f"    .I  ({name}_pad)")
     inst.append(f");")
-    return _indent_join(inst, 1)
+    return indent_join(inst, 1)
 
 
 def _instantiate_obuf(name: str, pin_row: dict[str, Any]) -> str:
@@ -110,7 +110,7 @@ def _instantiate_obuf(name: str, pin_row: dict[str, Any]) -> str:
         inst.append(f"    .O  ({name}_pad),")
         inst.append(f"    .I  ({name})")
     inst.append(f");")
-    return _indent_join(inst, 1)
+    return indent_join(inst, 1)
 
 
 def _instantiate_ibufds(name: str, pin_row: dict[str, Any]) -> str:
@@ -128,7 +128,7 @@ def _instantiate_ibufds(name: str, pin_row: dict[str, Any]) -> str:
         inst.append(f"    .I  ({name}_p),")
         inst.append(f"    .IB ({name}_n)")
     inst.append(f");")
-    return _indent_join(inst, 1)
+    return indent_join(inst, 1)
 
 
 def _instantiate_obufds(name: str, pin_row: dict[str, Any]) -> str:
@@ -146,7 +146,7 @@ def _instantiate_obufds(name: str, pin_row: dict[str, Any]) -> str:
         inst.append(f"    .OB ({name}_n),")
         inst.append(f"    .I  ({name})")
     inst.append(f");")
-    return _indent_join(inst, 1)
+    return indent_join(inst, 1)
 
 
 def _instantiate_iobuf(name: str, pin_row: dict[str, Any]) -> str:
@@ -166,7 +166,7 @@ def _instantiate_iobuf(name: str, pin_row: dict[str, Any]) -> str:
         inst.append(f"    .IO ({name}_pad),")
         inst.append(f"    .T  ({name}_t)")
     inst.append(f");")
-    return _indent_join(inst, 1)
+    return indent_join(inst, 1)
 
 
 _INFER_BUFFERS = {

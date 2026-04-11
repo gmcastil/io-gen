@@ -5,7 +5,7 @@ from copy import deepcopy
 
 class SignalTable:
     def __init__(self) -> None:
-        self.table = list()
+        self.table = []
 
     def __iter__(self) -> Iterator[dict[str, Any]]:
         return iter(self.table)
@@ -16,33 +16,18 @@ class SignalTable:
     def add(self, sig: dict[str, Any]) -> None:
         """Add a signal to the signal table, resolving fields as needed"""
 
-        # Assert that the common fields exist first - name, pins or pinset, and width
-        assert "name" in sig
-        assert "pins" in sig or "pinset" in sig
-        # Assert the shape - doing this here as a way of documenting our expectations here
-        if "pins" in sig:
-            assert isinstance(sig["pins"], str) or isinstance(sig["pins"], list)
-        elif "pinset" in sig:
-            assert isinstance(sig["pinset"], dict)
-            assert isinstance(sig["pinset"]["p"], str) or isinstance(
-                sig["pinset"]["p"], list
-            )
-            assert isinstance(sig["pinset"]["n"], str) or isinstance(
-                sig["pinset"]["n"], list
-            )
-
         # The schema gives this as a default, but can't enforce it
         if not sig.get("generate", True):
             return
 
         # Row entries are mixed value dicts
-        row: dict[str, Any] = dict()
-        # The philospohy here is that we are building up our row entry, not just
+        row: dict[str, Any] = {}
+        # The philosophy here is that we are building up our row entry, not just
         # reassigning what came out of the YAML. Start with the common stuff
         row["name"] = sig["name"]
         if "pins" in sig:
             if isinstance(sig["pins"], str):
-                # Here, width isn't requied in the schema, so we insert it
+                # Here, width isn't required in the schema, so we insert it
                 row["width"] = 1
                 row["pins"] = sig["pins"]
             else:
@@ -51,7 +36,7 @@ class SignalTable:
                 # Linter can't tell that this is list[str] so we cast it (that's why have those assertions earlier)
                 row["pins"] = deepcopy(sig["pins"])
         else:
-            # Linter can't identify this either, so we csat to a dict[str, obj] before we try to get the 'p' value
+            # Linter can't identify this either, so we cast to a dict[str, obj] before we try to get the 'p' value
             if isinstance(sig["pinset"]["p"], str):
                 row["width"] = 1
                 row["pinset"] = deepcopy(sig["pinset"])
@@ -74,7 +59,7 @@ class SignalTable:
         else:
             row["buffer"] = sig["buffer"]
 
-        # Consruct the instance name that everything in the IO ring will use later, if we're not bypassing
+        # Construct the instance name that everything in the IO ring will use later, if we're not bypassing
         if row["bypass"]:
             row["instance"] = None
         else:
@@ -87,12 +72,13 @@ class SignalTable:
         return [sig for sig in self.table if not sig["bypass"]]
 
 
-def _signal_is_scalar(sig: dict[str, Any]) -> bool:
+def signal_is_scalar(sig: dict[str, Any]) -> bool:
     """Returns True if signal is a scalar, otherwise False"""
 
-    # Depending on who calls this, this might not have been validated yet
+    # Depending on when this is called, the signal might not be validated yet
     if "pinset" in sig:
-        assert type(sig["pinset"]["p"]) == type(sig["pinset"]["n"])
+        if type(sig["pinset"]["p"]) != type(sig["pinset"]["n"]):
+            raise ValueError("pinset p and n must be the same type")
 
     # Are we dealing with a scalar or an array?
     if "pins" in sig and isinstance(sig["pins"], str):
@@ -105,13 +91,13 @@ def _signal_is_scalar(sig: dict[str, Any]) -> bool:
     return result
 
 
-def _signal_is_differential(sig: dict[str, Any]) -> bool:
-    """Returns True if signal is a differential pair, otherse False"""
+def signal_is_differential(sig: dict[str, Any]) -> bool:
+    """Returns True if signal is a differential pair, others False"""
     return "pinset" in sig
 
 
-def _build_signal_table(doc: dict) -> SignalTable:
-    """Add signal information from valiated input data and build the SignalTable"""
+def build_signal_table(doc: dict) -> SignalTable:
+    """Add signal information from validated input data and build the SignalTable"""
 
     table = SignalTable()
     signals = doc["signals"]

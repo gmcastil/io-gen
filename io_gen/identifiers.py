@@ -19,11 +19,11 @@ _VERILOG_ID = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*$")
 _VHDL_ID = re.compile(r"^[a-zA-Z]([a-zA-Z0-9]|_[a-zA-Z0-9])*$")
 
 
-def _is_valid_verilog_identifier(name: str) -> bool:
+def is_valid_verilog_identifier(name: str) -> bool:
     """Returns True if identifier name is a valid simple identifier"""
     return bool(_VERILOG_ID.match(name))
 
 
-def _is_valid_vhdl_identifier(name: str) -> bool:
+def is_valid_vhdl_identifier(name: str) -> bool:
     """Returns True if identifier name is a valid simple identifier"""
     return bool(_VHDL_ID.match(name))

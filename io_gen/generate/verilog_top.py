@@ -1,11 +1,11 @@
 from io_gen.tables import SignalTable
 
-from .formatting import _indent_join, _indent_strings
+from .formatting import indent_join, indent_strings
 
 from .common import (
-    _get_signal_top_ports,
-    _get_signal_nets,
-    _get_signal_ioring_ports,
+    get_signal_top_ports,
+    get_signal_nets,
+    get_signal_ioring_ports,
     VLOG_DIRECTIONS,
 )
 
@@ -22,11 +22,11 @@ def generate_verilog_top(signal_table: SignalTable, top: str) -> str:
     rtl.append(f"(")
     rtl.append(_generate_verilog_ports(signal_table))
     rtl.append(f");")
-    rtl.append(f"")
+    rtl.append("")
     rtl.append(_generate_verilog_wires(signal_table))
-    rtl.append(f"")
+    rtl.append("")
     rtl.append(_generate_verilog_ioring_inst(signal_table, top))
-    rtl.append(f"")
+    rtl.append("")
     # Add a newline here so that the file ends appropriately
     rtl.append(f"endmodule\n")
 
@@ -54,7 +54,7 @@ def _generate_verilog_ports(signal_table: SignalTable) -> str:
             ports.append(f"// {comment_str}")
 
         # Get all the ports for this signal
-        sig_ports = _get_signal_top_ports(sig)
+        sig_ports = get_signal_top_ports(sig)
         # Need to keep track of the last item so that on the last signal in the
         # table and the last port, we can omit the comma
         last_index = len(sig_ports) - 1
@@ -63,17 +63,17 @@ def _generate_verilog_ports(signal_table: SignalTable) -> str:
             if port["is_bus"]:
                 width = f"[{port['width'] - 1}:0]"
             else:
-                width = f""
+                width = ""
             dim = f"wire {width}"
             # Every port but the last port of the last signal gets a comma
             if last_index == port_index and sig_index == len(signal_table) - 1:
-                suffix = f""
+                suffix = ""
             else:
-                suffix = f","
+                suffix = ","
             line = f"{direction:<8}{dim:<16}{port['name']}{suffix}"
             ports.append(line)
 
-    return _indent_join(ports)
+    return indent_join(ports)
 
 
 def _generate_verilog_wires(signal_table: SignalTable) -> str:
@@ -87,7 +87,7 @@ def _generate_verilog_wires(signal_table: SignalTable) -> str:
     wires = []
     for sig in signal_table.active():
         # The IO ring might be empty, which is handled transparently
-        for net in _get_signal_nets(sig):
+        for net in get_signal_nets(sig):
             name = net["name"]
             width = net["width"]
 
@@ -101,7 +101,7 @@ def _generate_verilog_wires(signal_table: SignalTable) -> str:
             # 8 columns for the net dimension, then the port name
             wires.append(f"{dim:<16}{name};")
 
-    return _indent_join(wires)
+    return indent_join(wires)
 
 
 def _generate_verilog_ioring_inst(signal_table: SignalTable, top: str) -> str:
@@ -116,7 +116,7 @@ def _generate_verilog_ioring_inst(signal_table: SignalTable, top: str) -> str:
     inst.append("//)")
     inst.append(f"{top}_io_i0 (")
 
-    inst = _indent_strings(inst, 1)
+    inst = indent_strings(inst, 1)
 
     # Need to collect all the ports in the instance and find the longest name, then
     # round it up so that there is always space between the last character of longest
@@ -124,7 +124,7 @@ def _generate_verilog_ioring_inst(signal_table: SignalTable, top: str) -> str:
     # the port assignment lands on a 4 space tab stop
     ioring_ports = []
     for sig in signal_table.active():
-        for port in _get_signal_ioring_ports(sig):
+        for port in get_signal_ioring_ports(sig):
             ioring_ports.append(port["name"])
 
     longest_name = len(max(ioring_ports, key=len))
@@ -134,7 +134,7 @@ def _generate_verilog_ioring_inst(signal_table: SignalTable, top: str) -> str:
     # amount of whitespace, join the port map itself into one already indented string,
     # and then add to the instantiation string
     port_strings = [f".{name:<{name_len}}({name})" for name in ioring_ports]
-    inst.append(_indent_join(port_strings, 2, ",\n"))
+    inst.append(indent_join(port_strings, 2, ",\n"))
 
     inst.append(f"    );")
 

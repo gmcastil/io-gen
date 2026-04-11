@@ -1,7 +1,7 @@
 import pytest
 
 from io_gen.tables import SignalTable
-from io_gen.tables.signal_table import _build_signal_table
+from io_gen.tables.signal_table import build_signal_table
 from io_gen.tables.meta_table import MetaTable
 
 from io_gen.generate.vhdl_top import (
@@ -16,7 +16,7 @@ _TEST_META = MetaTable(title="Test", part="xc7k325tffg900-2", architecture="rtl"
 
 def _make_signal_table(signals: list) -> SignalTable:
     doc = {"title": "Test", "part": "xc7k325tffg900-2", "signals": signals}
-    return _build_signal_table(doc)
+    return build_signal_table(doc)
 
 
 # ---- _generate_vhdl_ports --------------------------------------------------

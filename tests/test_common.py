@@ -1,14 +1,14 @@
 import pytest
 
 from io_gen.tables import SignalTable
-from io_gen.tables.signal_table import _build_signal_table
+from io_gen.tables.signal_table import build_signal_table
 
-from io_gen.generate.common import _get_signal_top_ports, _get_signal_ioring_ports
+from io_gen.generate.common import get_signal_top_ports, get_signal_ioring_ports
 
 
 def _make_signal_table(signals: list) -> SignalTable:
     doc = {"title": "Test", "part": "xc7k325tffg900-2", "signals": signals}
-    return _build_signal_table(doc)
+    return build_signal_table(doc)
 
 
 def _make_sig_row(sig: dict) -> dict:
@@ -179,7 +179,7 @@ TOP_PORT_CASES = [
 def test_get_signal_top_ports(sig: dict, expected: list[dict]) -> None:
     """Each signal type produces the correct top-level port entries."""
     row = _make_sig_row(sig)
-    assert _get_signal_top_ports(row) == expected
+    assert get_signal_top_ports(row) == expected
 
 
 # ---- _get_signal_ioring_ports -----------------------------------------------
@@ -374,4 +374,4 @@ IORING_PORT_CASES = [
 def test_get_signal_ioring_ports(sig: dict, expected: list[dict]) -> None:
     """Each signal type produces the correct IO ring port entries."""
     row = _make_sig_row(sig)
-    assert _get_signal_ioring_ports(row) == expected
+    assert get_signal_ioring_ports(row) == expected

@@ -1,6 +1,6 @@
 import pytest
 
-from io_gen.tables.signal_table import SignalTable, _build_signal_table
+from io_gen.tables.signal_table import SignalTable, build_signal_table
 
 
 # ---------------------------------------------------------------------------
@@ -416,7 +416,7 @@ def test_build_signal_table_count_and_order() -> None:
             },
         ],
     }
-    table = _build_signal_table(doc)
+    table = build_signal_table(doc)
     rows = list(table)
     assert len(rows) == 2
     assert rows[0]["name"] == "sys_clk"

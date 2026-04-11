@@ -4,8 +4,8 @@ from io_gen.tables import SignalTable
 from io_gen.tables import PinTable
 from io_gen.tables import MetaTable
 
-from .formatting import _indent_join
-from .common import _get_ioring_header, _get_signal_ioring_ports, VHDL_DIRECTIONS
+from .formatting import indent_join
+from .common import get_ioring_header, get_signal_ioring_ports, VHDL_DIRECTIONS
 
 
 def generate_vhdl_ioring(
@@ -18,7 +18,7 @@ def generate_vhdl_ioring(
     """
     arch = meta_table.architecture
     rtl = []
-    for line in _get_ioring_header():
+    for line in get_ioring_header():
         if line:
             rtl.append(f"-- {line}")
         else:
@@ -52,7 +52,7 @@ def _generate_vhdl_ioring_ports(signal_table: SignalTable) -> str:
     """Generate the indented port declaration list for the IO ring in VHDL."""
     port_names = []
     for sig in signal_table.active():
-        for port in _get_signal_ioring_ports(sig):
+        for port in get_signal_ioring_ports(sig):
             port_names.append(port["name"])
 
     if not port_names:
@@ -63,7 +63,7 @@ def _generate_vhdl_ioring_ports(signal_table: SignalTable) -> str:
 
     all_ports = []
     for sig in signal_table.active():
-        all_ports.extend(_get_signal_ioring_ports(sig))
+        all_ports.extend(get_signal_ioring_ports(sig))
 
     ports = []
     for port_index, port in enumerate(all_ports):
@@ -84,7 +84,7 @@ def _generate_vhdl_ioring_ports(signal_table: SignalTable) -> str:
         # Assemble the actual line
         ports.append(f"{lhs_line}: {rhs_line}")
 
-    return _indent_join(ports, 2)
+    return indent_join(ports, 2)
 
 
 def _generate_vhdl_ioring_body(signal_table: SignalTable, pin_table: PinTable) -> str:
@@ -97,7 +97,7 @@ def _generate_vhdl_ioring_body(signal_table: SignalTable, pin_table: PinTable) -
             for pin_row in pin_table[sig["name"]]:
                 body.append(_INSTANTIATE_BUFFERS[sig["buffer"]](sig["name"], pin_row))
 
-    return _indent_join(body, 0, "\n\n")
+    return indent_join(body, 0, "\n\n")
 
 
 def _infer_ibuf(name: str) -> str:
@@ -124,7 +124,7 @@ def _instantiate_ibuf(name: str, pin_row: dict[str, Any]) -> str:
         inst.append(f"    O   => {name},")
         inst.append(f"    I   => {name}_pad")
     inst.append(");")
-    return _indent_join(inst, 1)
+    return indent_join(inst, 1)
 
 
 def _instantiate_obuf(name: str, pin_row: dict[str, Any]) -> str:
@@ -141,7 +141,7 @@ def _instantiate_obuf(name: str, pin_row: dict[str, Any]) -> str:
         inst.append(f"    O   => {name}_pad,")
         inst.append(f"    I   => {name}")
     inst.append(");")
-    return _indent_join(inst, 1)
+    return indent_join(inst, 1)
 
 
 def _instantiate_ibufds(name: str, pin_row: dict[str, Any]) -> str:
@@ -160,7 +160,7 @@ def _instantiate_ibufds(name: str, pin_row: dict[str, Any]) -> str:
         inst.append(f"    I   => {name}_p,")
         inst.append(f"    IB  => {name}_n")
     inst.append(");")
-    return _indent_join(inst, 1)
+    return indent_join(inst, 1)
 
 
 def _instantiate_obufds(name: str, pin_row: dict[str, Any]) -> str:
@@ -179,7 +179,7 @@ def _instantiate_obufds(name: str, pin_row: dict[str, Any]) -> str:
         inst.append(f"    OB  => {name}_n,")
         inst.append(f"    I   => {name}")
     inst.append(");")
-    return _indent_join(inst, 1)
+    return indent_join(inst, 1)
 
 
 def _instantiate_iobuf(name: str, pin_row: dict[str, Any]) -> str:
@@ -200,7 +200,7 @@ def _instantiate_iobuf(name: str, pin_row: dict[str, Any]) -> str:
         inst.append(f"    IO  => {name}_pad,")
         inst.append(f"    T   => {name}_t")
     inst.append(");")
-    return _indent_join(inst, 1)
+    return indent_join(inst, 1)
 
 
 _INFER_BUFFERS = {

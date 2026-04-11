@@ -1,14 +1,14 @@
 import pytest
 
 from io_gen.generate.xdc import generate_xdc
-from io_gen.tables.pin_table import _build_pin_table
-from io_gen.tables.signal_table import _build_signal_table
+from io_gen.tables.pin_table import build_pin_table
+from io_gen.tables.signal_table import build_signal_table
 
 
 def _make_tables(signals: list) -> tuple:
     doc = {"title": "Test", "part": "xc7k325tffg900-2", "signals": signals}
-    st = _build_signal_table(doc)
-    pt = _build_pin_table(st)
+    st = build_signal_table(doc)
+    pt = build_pin_table(st)
     return st, pt
 
 
@@ -323,8 +323,8 @@ set_property IOSTANDARD LVCMOS18 [get_ports spare_pad]
 
 def test_integration_output() -> None:
     """Full document produces the expected XDC string."""
-    st = _build_signal_table(_INTEGRATION_DOC)
-    pt = _build_pin_table(st)
+    st = build_signal_table(_INTEGRATION_DOC)
+    pt = build_pin_table(st)
     assert generate_xdc(st, pt) == _EXPECTED_XDC
 
 

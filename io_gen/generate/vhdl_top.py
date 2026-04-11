@@ -2,13 +2,13 @@ from pytest import Metafunc
 from io_gen.tables import SignalTable
 from io_gen.tables.meta_table import MetaTable
 
-from .formatting import _indent_join, _indent_strings
+from .formatting import indent_join, indent_strings
 
 from .common import (
     VHDL_DIRECTIONS,
-    _get_signal_top_ports,
-    _get_signal_nets,
-    _get_signal_ioring_ports,
+    get_signal_top_ports,
+    get_signal_nets,
+    get_signal_ioring_ports,
 )
 
 
@@ -63,7 +63,7 @@ def _generate_vhdl_ports(signal_table: SignalTable) -> str:
     # tab stop.
     port_names = []
     for sig in signal_table:
-        for port in _get_signal_top_ports(sig):
+        for port in get_signal_top_ports(sig):
             port_names.append(port["name"])
 
     longest_name = len(max(port_names, key=len))
@@ -76,7 +76,7 @@ def _generate_vhdl_ports(signal_table: SignalTable) -> str:
             ports.append(f"-- {comment_str}")
 
         # Get all the ports for this signal
-        sig_ports = _get_signal_top_ports(sig)
+        sig_ports = get_signal_top_ports(sig)
         # Need to keep track of the last item so that on the last signal in the
         # table and the last port, we can omit the comma
         last_index = len(sig_ports) - 1
@@ -98,7 +98,7 @@ def _generate_vhdl_ports(signal_table: SignalTable) -> str:
             # Assemble the actual line
             ports.append(f"{lhs_line}: {rhs_line}")
 
-    return _indent_join(ports, 2)
+    return indent_join(ports, 2)
 
 
 def _generate_vhdl_signals(signal_table: SignalTable) -> str:
@@ -114,7 +114,7 @@ def _generate_vhdl_signals(signal_table: SignalTable) -> str:
     rhs_sig_strings = []
 
     for sig in signal_table.active():
-        for net in _get_signal_nets(sig):
+        for net in get_signal_nets(sig):
             # Craft the string to go on the LHS of the colon
             lhs_sig_strings.append(f"signal {net['name']}")
 
@@ -140,7 +140,7 @@ def _generate_vhdl_signals(signal_table: SignalTable) -> str:
     for lhs, rhs in zip(lhs_sig_strings, rhs_sig_strings):
         sig_decls.append(f"{lhs:<{name_len}}: {rhs}")
 
-    return _indent_join(sig_decls)
+    return indent_join(sig_decls)
 
 
 def _generate_vhdl_ioring_inst(signal_table: SignalTable, top: str) -> str:
@@ -156,7 +156,7 @@ def _generate_vhdl_ioring_inst(signal_table: SignalTable, top: str) -> str:
     inst.append("-- )")
     inst.append("port map (")
 
-    inst = _indent_strings(inst, 1)
+    inst = indent_strings(inst, 1)
 
     # Need to collect all the ports in the instance and find the longest name, then
     # round it up so that there is always space between the last character of the longest
@@ -164,7 +164,7 @@ def _generate_vhdl_ioring_inst(signal_table: SignalTable, top: str) -> str:
     # operator lands on a 4 space tab stop
     ioring_ports = []
     for sig in signal_table.active():
-        for port in _get_signal_ioring_ports(sig):
+        for port in get_signal_ioring_ports(sig):
             ioring_ports.append(port["name"])
 
     longest_name = len(max(ioring_ports, key=len))
@@ -174,7 +174,7 @@ def _generate_vhdl_ioring_inst(signal_table: SignalTable, top: str) -> str:
     # amount of whitespace, join the port map itself into one already indented string,
     # and then add to the instantiation string
     port_strings = [f"{name:<{name_len}}=> {name}" for name in ioring_ports]
-    inst.append(_indent_join(port_strings, 2, ",\n"))
+    inst.append(indent_join(port_strings, 2, ",\n"))
 
     inst.append("    );")
 

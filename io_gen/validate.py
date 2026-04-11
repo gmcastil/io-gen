@@ -11,7 +11,7 @@ from referencing.jsonschema import DRAFT202012
 from .tables.meta_table import MetaTable
 from .tables.signal_table import SignalTable
 from .exceptions import ValidationError
-from .identifiers import _is_valid_verilog_identifier, _is_valid_vhdl_identifier
+from .identifiers import is_valid_verilog_identifier, is_valid_vhdl_identifier
 from .checks import (
     _check_pin_name_format,
     _check_unique_signal_names,
@@ -173,15 +173,15 @@ def validate_verilog(signal_table: SignalTable, top: str) -> None:
         Top-level module name supplied at runtime.
     """
     # Check the top level name
-    if not _is_valid_verilog_identifier(top):
+    if not is_valid_verilog_identifier(top):
         raise ValidationError(
             f"Top level module name '{top}' is not a valid Verilog identifier"
         )
     # Check all the signal names
     for sig in signal_table:
-        if not _is_valid_verilog_identifier(sig["name"]):
+        if not is_valid_verilog_identifier(sig["name"]):
             raise ValidationError(f"{sig['name']} is not a valid Verilog identifier")
-        if not sig["bypass"] and not _is_valid_verilog_identifier(sig["instance"]):
+        if not sig["bypass"] and not is_valid_verilog_identifier(sig["instance"]):
             raise ValidationError(
                 f"{sig['instance']} is not a valid Verilog identifier"
             )
@@ -206,18 +206,18 @@ def validate_vhdl(signal_table: SignalTable, meta_table: MetaTable, top: str) ->
     # Check the architecture value
     if meta_table.architecture is None:
         raise ValidationError("No architecture was specified")
-    if not _is_valid_vhdl_identifier(meta_table.architecture):
+    if not is_valid_vhdl_identifier(meta_table.architecture):
         raise ValidationError(
             f"Specified architecture '{meta_table.architecture}' is not a valid VHDL identifier"
         )
     # Check the top level name
-    if not _is_valid_vhdl_identifier(top):
+    if not is_valid_vhdl_identifier(top):
         raise ValidationError(
             f"Top level entity name '{top}' is not a valid VHDL identifier"
         )
     # Check all the signal names
     for sig in signal_table:
-        if not _is_valid_vhdl_identifier(sig["name"]):
+        if not is_valid_vhdl_identifier(sig["name"]):
             raise ValidationError(f"{sig['name']} is not a valid VHDL identifier")
-        if not sig["bypass"] and not _is_valid_vhdl_identifier(sig["instance"]):
+        if not sig["bypass"] and not is_valid_vhdl_identifier(sig["instance"]):
             raise ValidationError(f"{sig['instance']} is not a valid VHDL identifier")

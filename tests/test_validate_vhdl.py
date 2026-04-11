@@ -1,14 +1,14 @@
 import pytest
 
 from io_gen import ValidationError
-from io_gen.tables.signal_table import _build_signal_table, SignalTable
+from io_gen.tables.signal_table import build_signal_table, SignalTable
 from io_gen.tables.meta_table import _build_meta_table, MetaTable
 from io_gen.validate import validate_vhdl
 
 
 def _make_signal_table(signals: list) -> SignalTable:
     doc = {"title": "Test", "part": "xc7k325tffg900-2", "signals": signals}
-    return _build_signal_table(doc)
+    return build_signal_table(doc)
 
 
 def _make_meta_table(architecture: str | None = "rtl") -> MetaTable:
@@ -223,6 +223,7 @@ def test_invalid_instance_override_raises(instance: str) -> None:
 # ---------------------------------------------------------------------------
 # Invalid architecture name
 # ---------------------------------------------------------------------------
+
 
 def test_missing_architecture_raises() -> None:
     """A doc with no architecture field raises ValidationError for VHDL."""

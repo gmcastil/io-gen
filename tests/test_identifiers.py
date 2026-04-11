@@ -1,6 +1,6 @@
 import pytest
 
-from io_gen.identifiers import _is_valid_verilog_identifier
+from io_gen.identifiers import is_valid_verilog_identifier
 
 
 # ---------------------------------------------------------------------------
@@ -36,7 +36,7 @@ INVALID_VERILOG_CASES = [
     [pytest.param(n, id=label) for label, n in VALID_VERILOG_CASES],
 )
 def test_valid_verilog_identifier(name: str) -> None:
-    assert _is_valid_verilog_identifier(name) is True
+    assert is_valid_verilog_identifier(name) is True
 
 
 @pytest.mark.parametrize(
@@ -44,4 +44,4 @@ def test_valid_verilog_identifier(name: str) -> None:
     [pytest.param(n, id=label) for label, n in INVALID_VERILOG_CASES],
 )
 def test_invalid_verilog_identifier(name: str) -> None:
-    assert _is_valid_verilog_identifier(name) is False
+    assert is_valid_verilog_identifier(name) is False

@@ -1,4 +1,4 @@
-from io_gen.tables import PinTable, _pin_is_differential
+from io_gen.tables import PinTable, pin_is_differential
 from io_gen.tables import SignalTable
 
 
@@ -20,7 +20,7 @@ def generate_xdc(signal_table: SignalTable, pin_table: PinTable) -> str:
 
         for pin in pins:
             # Differential pairs here
-            if _pin_is_differential(pin):
+            if pin_is_differential(pin):
                 pkg_pin_p = pin["pinset"]["p"]
                 pkg_pin_n = pin["pinset"]["n"]
                 iostandard = pin["iostandard"]

@@ -9,6 +9,7 @@ Entries are in reverse chronological order.
 - Examples all build and match what is in the repo
 - Added `make examples` target
 - I think I'm ready for actual YAML for an actual board
+- Went through an earlier code review, fixed a bunch of stuff that was medium to minor
 
 ## 2026-04-09 - Addressing lingering validation items
 

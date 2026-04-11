@@ -1,7 +1,7 @@
 import pytest
 
-from io_gen.tables.pin_table import PinTable, _build_pin_table
-from io_gen.tables.signal_table import SignalTable, _build_signal_table
+from io_gen.tables.pin_table import PinTable, build_pin_table
+from io_gen.tables.signal_table import SignalTable, build_signal_table
 
 
 # ---------------------------------------------------------------------------
@@ -257,8 +257,8 @@ _INTEGRATION_DOC = {
 
 def test_build_pin_table_signal_membership() -> None:
     """build_pin_table includes generate:true signals and excludes generate:false signals."""
-    signal_table = _build_signal_table(_INTEGRATION_DOC)
-    pin_table = _build_pin_table(signal_table)
+    signal_table = build_signal_table(_INTEGRATION_DOC)
+    pin_table = build_pin_table(signal_table)
     assert "sys_clk" in pin_table.table
     assert "led" in pin_table.table
     assert "ref_clk" in pin_table.table
@@ -267,22 +267,22 @@ def test_build_pin_table_signal_membership() -> None:
 
 def test_build_pin_table_len() -> None:
     """len(pin_table) excludes generate:false signals."""
-    signal_table = _build_signal_table(_INTEGRATION_DOC)
-    pin_table = _build_pin_table(signal_table)
+    signal_table = build_signal_table(_INTEGRATION_DOC)
+    pin_table = build_pin_table(signal_table)
     assert len(pin_table) == 3
 
 
 def test_build_pin_table_bus_row_count() -> None:
     """A bus signal produces one row per pin in the pin table."""
-    signal_table = _build_signal_table(_INTEGRATION_DOC)
-    pin_table = _build_pin_table(signal_table)
+    signal_table = build_signal_table(_INTEGRATION_DOC)
+    pin_table = build_pin_table(signal_table)
     assert len(pin_table.table["led"]) == 4
 
 
 def test_build_pin_table_returns_pin_table_instance() -> None:
     """build_pin_table returns a PinTable instance."""
-    signal_table = _build_signal_table(_INTEGRATION_DOC)
-    pin_table = _build_pin_table(signal_table)
+    signal_table = build_signal_table(_INTEGRATION_DOC)
+    pin_table = build_pin_table(signal_table)
     assert isinstance(pin_table, PinTable)
 
 
