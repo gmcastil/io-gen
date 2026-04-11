@@ -70,11 +70,10 @@
 
 ## Deferred
 
+- [x] DIRECTION constraint emitted for every port in the XDC (`set_property DIRECTION`)
 - [ ] Add support for marking inputs as clocks and inserting BUFG into the design
 - [ ] Create a Basys3 YAML and validate XDC output using a Vivado I/O Planning
       project (UG899). This project type operates purely at the pin assignment
       level - no RTL needed - and Vivado validates constraints directly against
       the device model. Catches pin assignment and IOSTANDARD violations without
       a synthesis run. Preferred integration test for XDC correctness.
-- [ ] IOSTANDARD compatibility with bank VCCO voltage - left to a future
-      validation pass or the downstream toolchain

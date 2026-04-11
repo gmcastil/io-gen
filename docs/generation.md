@@ -28,7 +28,7 @@ io_gen/generate/
 
 | File             | Public function           | Module                | Contents                           |
 | ---------------- | ------------------------- | --------------------- | ---------------------------------- |
-| `<top>.xdc`      | `generate_xdc`            | `xdc.py`              | Pin and IOSTANDARD constraints     |
+| `<top>.xdc`      | `generate_xdc`            | `xdc.py`              | Pin, IOSTANDARD, and DIRECTION constraints |
 | `<top>.<ext>`    | `generate_<lang>_top`     | `<lang>_top.py`       | Top-level module or entity         |
 | `<top>_io.<ext>` | `generate_<lang>_ioring`  | `<lang>_ioring.py`    | IO ring with buffer instantiations |
 
@@ -44,8 +44,8 @@ Where `<ext>` is `v` or `vhd` and `<lang>` is `verilog` or `vhdl`.
 
 Iterates the signal table. For each signal, emits any signal-level comment,
 then looks up the signal's pin rows in the pin table and emits one
-`set_property PACKAGE_PIN` and one `set_property IOSTANDARD` constraint
-per pin row.
+`set_property PACKAGE_PIN`, one `set_property IOSTANDARD`, and one
+`set_property DIRECTION` constraint per pin row.
 
 ---
 

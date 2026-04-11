@@ -96,7 +96,7 @@ appropriate buffer from context.
 When `bypass: true` is specified, the signal will not be included in the IO
 ring, no internal signal will be created, and it will simply be dangling in the
 HDL. It will still receive a port in the top level RTL and the corresponding
-`IOSTANDARD` and `PACKAGE_PIN` constraints in the XDC.
+`IOSTANDARD`, `PACKAGE_PIN`, and `DIRECTION` constraints in the XDC.
 
 ---
 
@@ -109,7 +109,7 @@ supported.
 
 | File             | Contents                                  |
 | ---------------- | ----------------------------------------- |
-| `<top>.xdc`      | Pin assignment and IOSTANDARD constraints |
+| `<top>.xdc`      | Pin assignment, IOSTANDARD, and DIRECTION constraints |
 | `<top>.<ext>`    | Top-level module or entity with port list |
 | `<top>_io.<ext>` | IO ring with buffer instantiations        |
 

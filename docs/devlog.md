@@ -3,6 +3,20 @@
 Entries are in reverse chronological order.
 
 ---
+
+## 2026-04-09 - End to end operation is done
+
+- At this point the tool is pretty much finished
+- There is still work to do with a Basys3 example and some Tcl and bash scripts
+  to let users (and myself) validate XDC outputs for a given device. I dont
+  intend to make it a part of the tool (I dont want Vivado as a dependancy). But I
+  want to make it clear to users how one would take the XDC output and load it
+  into Vivado and have Vivado validate. Not sure what that looks like yet
+- Also going to maintain user cores for the Basys3 so that I can actually go through
+  to a bitstream and the output implementation logs
+- For now, the project is almost done except for the Vivado end to end proof in hardware,
+  and then going through the documentation and editing it, making sure its up to date, etc.
+
 ## 2026-04-09 - VHDL generation is complete
 
 - Architecture now needs to be specified in the meta table
