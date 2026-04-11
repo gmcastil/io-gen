@@ -3,7 +3,7 @@ from pathlib import Path
 from io_gen.validate import validate, validate_verilog, validate_vhdl
 from io_gen.tables.signal_table import build_signal_table
 from io_gen.tables.pin_table import build_pin_table
-from io_gen.tables.meta_table import _build_meta_table
+from io_gen.tables.meta_table import build_meta_table
 
 from io_gen.generate.xdc import generate_xdc
 from io_gen.generate.verilog_top import generate_verilog_top
@@ -53,16 +53,19 @@ def run_pipeline(
     # OSError which is being caught higher up)
     if not validate_only:
         output_dir.mkdir(parents=True, exist_ok=True)
-    # Now prove that it's writable (this will raise a PermissionError if not)
-    Path(output_dir / ".io_gen_probe").touch()
-    Path(output_dir / ".io_gen_probe").unlink()
+        # Now prove that it's writable (this will raise a PermissionError if not)
+        probe = output_dir / ".io_gen_probe"
+        try:
+            probe.touch()
+        finally:
+            probe.unlink(missing_ok=True)
 
     # Get the validated data from YAML
     valid_doc = validate(yaml_path)
     print(f"Info: Validated YAML at {yaml_path}")
 
     # Create the table of metadata
-    meta_table = _build_meta_table(valid_doc)
+    meta_table = build_meta_table(valid_doc)
 
     # Create the table of signals from the validated doc
     signal_table = build_signal_table(valid_doc)

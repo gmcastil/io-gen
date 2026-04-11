@@ -2,10 +2,12 @@ from typing import Any
 from collections.abc import Iterator
 from copy import deepcopy
 
+from ..exceptions import ValidationError
+
 
 class SignalTable:
     def __init__(self) -> None:
-        self.table = []
+        self.table: list[dict[str, Any]] = []
 
     def __iter__(self) -> Iterator[dict[str, Any]]:
         return iter(self.table)
@@ -77,8 +79,8 @@ def signal_is_scalar(sig: dict[str, Any]) -> bool:
 
     # Depending on when this is called, the signal might not be validated yet
     if "pinset" in sig:
-        if type(sig["pinset"]["p"]) != type(sig["pinset"]["n"]):
-            raise ValueError("pinset p and n must be the same type")
+        if type(sig["pinset"]["p"]) is not type(sig["pinset"]["n"]):
+            raise ValidationError("pinset p and n must be the same type")
 
     # Are we dealing with a scalar or an array?
     if "pins" in sig and isinstance(sig["pins"], str):

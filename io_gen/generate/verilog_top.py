@@ -127,6 +127,12 @@ def _generate_verilog_ioring_inst(signal_table: SignalTable, top: str) -> str:
         for port in get_signal_ioring_ports(sig):
             ioring_ports.append(port["name"])
 
+    # Empty IO ring is possible
+    if not ioring_ports:
+        return ""
+
+    # Note that we're adding an extra character to the name length because Verilog
+    # adds a '.' to the port name in instantiations of modules.
     longest_name = len(max(ioring_ports, key=len))
     name_len = (((longest_name + 1) // 4 + 1) * 4) - 1
 

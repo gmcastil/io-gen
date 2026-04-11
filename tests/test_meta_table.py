@@ -1,7 +1,7 @@
 import pytest
 
 from io_gen.tables import MetaTable
-from io_gen.tables.meta_table import _build_meta_table
+from io_gen.tables.meta_table import build_meta_table
 
 # A few details - the first string is the test name, second is the actual dict from JSON,
 # the third is the expected title, and the fourth is the expected part number. The
@@ -55,9 +55,8 @@ def test_build_meta_table(
     expected_architecture: str | None,
 ) -> None:
     """build_meta_table returns a MetaTable with title, part, and architecture from the doc"""
-    result = _build_meta_table(doc)
+    result = build_meta_table(doc)
     assert isinstance(result, MetaTable)
     assert result.title == expected_title
     assert result.part == expected_part
     assert result.architecture == expected_architecture
-

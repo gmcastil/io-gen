@@ -1,4 +1,3 @@
-from pytest import Metafunc
 from io_gen.tables import SignalTable
 from io_gen.tables.meta_table import MetaTable
 
@@ -166,6 +165,10 @@ def _generate_vhdl_ioring_inst(signal_table: SignalTable, top: str) -> str:
     for sig in signal_table.active():
         for port in get_signal_ioring_ports(sig):
             ioring_ports.append(port["name"])
+
+    # Empty IO ring is possible
+    if not ioring_ports:
+        return ""
 
     longest_name = len(max(ioring_ports, key=len))
     name_len = ((longest_name // 4) + 1) * 4
