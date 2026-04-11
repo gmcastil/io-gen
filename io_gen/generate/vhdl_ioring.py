@@ -90,9 +90,7 @@ def _generate_vhdl_ioring_ports(signal_table: SignalTable) -> str:
 def _generate_vhdl_ioring_body(signal_table: SignalTable, pin_table: PinTable) -> str:
     """Generate the buffer instantiation body for the VHDL IO ring"""
     body = []
-    for sig in signal_table:
-        if sig["bypass"]:
-            continue
+    for sig in signal_table.active():
         if sig["infer"]:
             body.append(_INFER_BUFFERS[sig["buffer"]](sig["name"]))
         else:

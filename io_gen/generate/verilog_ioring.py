@@ -39,11 +39,7 @@ def generate_verilog_ioring(
 def _generate_verilog_ioring_ports(signal_table: SignalTable) -> str:
     """Generate the indented port declaration list for the IO ring in Verilog"""
     ports = []
-    for sig in signal_table:
-        # Skip ports that don't exist in the IO ring
-        if sig["bypass"]:
-            continue
-
+    for sig in signal_table.active():
         for port in _get_signal_ioring_ports(sig):
             direction = VLOG_DIRECTIONS[port["direction"]]
             if port["is_bus"]:
@@ -62,10 +58,7 @@ def _generate_verilog_ioring_body(
 ) -> str:
     """Generate the buffer instantiation body for the Verilog IO ring"""
     body = []
-    for sig in signal_table:
-        if sig["bypass"]:
-            continue
-
+    for sig in signal_table.active():
         # Already checked during validation that this entire signal will be inferable, so
         # look up the function to call an call it
         if sig["infer"]:
