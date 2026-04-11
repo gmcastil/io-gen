@@ -43,7 +43,9 @@ Every signal must use exactly one of two pin assignment strategies:
 
 - `pins` - single-ended, either a scalar string (one pin) or an array of
   strings (a bus). A scalar string means no bus indexing; an array means
-  bus indexing applies even if only one element.
+  bus indexing applies even if only one element. Array order is
+  index-preserving: `pins[0]` maps to `foo[0]`, `pins[1]` to `foo[1]`,
+  and so on.
 - `pinset` - differential pair, with `p` and `n` legs each being either a
   scalar string (one pair) or an array of strings (a bus of pairs). Same
   scalar vs array distinction applies.

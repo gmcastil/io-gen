@@ -1,53 +1,73 @@
 # 125 MHz system clock
 set_property PACKAGE_PIN G22 [get_ports sys_clk_pad]
 set_property IOSTANDARD LVCMOS18 [get_ports sys_clk_pad]
+set_property DIRECTION IN [get_ports sys_clk_pad]
 
 # User LEDs
 set_property PACKAGE_PIN A22 [get_ports {led_pad[0]}]
 set_property IOSTANDARD LVCMOS18 [get_ports {led_pad[0]}]
+set_property DIRECTION OUT [get_ports {led_pad[0]}]
 set_property PACKAGE_PIN B22 [get_ports {led_pad[1]}]
 set_property IOSTANDARD LVCMOS18 [get_ports {led_pad[1]}]
+set_property DIRECTION OUT [get_ports {led_pad[1]}]
 set_property PACKAGE_PIN C22 [get_ports {led_pad[2]}]
 set_property IOSTANDARD LVCMOS18 [get_ports {led_pad[2]}]
+set_property DIRECTION OUT [get_ports {led_pad[2]}]
 set_property PACKAGE_PIN D22 [get_ports {led_pad[3]}]
 set_property IOSTANDARD LVCMOS18 [get_ports {led_pad[3]}]
+set_property DIRECTION OUT [get_ports {led_pad[3]}]
 
 # User LED (inferred buffer)
 set_property PACKAGE_PIN K22 [get_ports user_led_pad]
 set_property IOSTANDARD LVCMOS18 [get_ports user_led_pad]
+set_property DIRECTION OUT [get_ports user_led_pad]
 
 # 200 MHz reference clock
 set_property PACKAGE_PIN H22 [get_ports ref_clk_p]
 set_property IOSTANDARD LVDS [get_ports ref_clk_p]
+set_property DIRECTION IN [get_ports ref_clk_p]
 set_property PACKAGE_PIN H23 [get_ports ref_clk_n]
 set_property IOSTANDARD LVDS [get_ports ref_clk_n]
+set_property DIRECTION IN [get_ports ref_clk_n]
 
 # LVDS data outputs
 set_property PACKAGE_PIN AA1 [get_ports {lvds_data_p[0]}]
 set_property IOSTANDARD LVDS [get_ports {lvds_data_p[0]}]
+set_property DIRECTION OUT [get_ports {lvds_data_p[0]}]
 set_property PACKAGE_PIN AA2 [get_ports {lvds_data_n[0]}]
 set_property IOSTANDARD LVDS [get_ports {lvds_data_n[0]}]
+set_property DIRECTION OUT [get_ports {lvds_data_n[0]}]
 set_property PACKAGE_PIN AB1 [get_ports {lvds_data_p[1]}]
 set_property IOSTANDARD LVDS [get_ports {lvds_data_p[1]}]
+set_property DIRECTION OUT [get_ports {lvds_data_p[1]}]
 set_property PACKAGE_PIN AB2 [get_ports {lvds_data_n[1]}]
 set_property IOSTANDARD LVDS [get_ports {lvds_data_n[1]}]
+set_property DIRECTION OUT [get_ports {lvds_data_n[1]}]
 set_property PACKAGE_PIN AC1 [get_ports {lvds_data_p[2]}]
 set_property IOSTANDARD LVDS [get_ports {lvds_data_p[2]}]
+set_property DIRECTION OUT [get_ports {lvds_data_p[2]}]
 set_property PACKAGE_PIN AC2 [get_ports {lvds_data_n[2]}]
 set_property IOSTANDARD LVDS [get_ports {lvds_data_n[2]}]
+set_property DIRECTION OUT [get_ports {lvds_data_n[2]}]
 
 # GPIO bus
 set_property PACKAGE_PIN E22 [get_ports {gpio_pad[0]}]
 set_property IOSTANDARD LVCMOS18 [get_ports {gpio_pad[0]}]
+set_property DIRECTION INOUT [get_ports {gpio_pad[0]}]
 set_property PACKAGE_PIN F22 [get_ports {gpio_pad[1]}]
 set_property IOSTANDARD LVCMOS18 [get_ports {gpio_pad[1]}]
+set_property DIRECTION INOUT [get_ports {gpio_pad[1]}]
 set_property PACKAGE_PIN G23 [get_ports {gpio_pad[2]}]
 set_property IOSTANDARD LVCMOS18 [get_ports {gpio_pad[2]}]
+set_property DIRECTION INOUT [get_ports {gpio_pad[2]}]
 set_property PACKAGE_PIN A23 [get_ports {gpio_pad[3]}]
 set_property IOSTANDARD LVCMOS18 [get_ports {gpio_pad[3]}]
+set_property DIRECTION INOUT [get_ports {gpio_pad[3]}]
 set_property PACKAGE_PIN B23 [get_ports {gpio_pad[4]}]
 set_property IOSTANDARD LVCMOS18 [get_ports {gpio_pad[4]}]
+set_property DIRECTION INOUT [get_ports {gpio_pad[4]}]
 
 # Spare output pin
 set_property PACKAGE_PIN J24 [get_ports spare_pad]
 set_property IOSTANDARD LVCMOS18 [get_ports spare_pad]
+set_property DIRECTION OUT [get_ports spare_pad]

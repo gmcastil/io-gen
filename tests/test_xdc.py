@@ -162,6 +162,114 @@ def test_port_name_in_output(sig: dict, expected_port: str) -> None:
     assert expected_port in generate_xdc(st, pt)
 
 
+# ---------------------------------------------------------------------------
+# DIRECTION constraint
+# ---------------------------------------------------------------------------
+
+DIRECTION_CASES = [
+    (
+        "scalar_se_in",
+        {
+            "name": "sys_clk",
+            "pins": "G22",
+            "direction": "in",
+            "buffer": "ibuf",
+            "iostandard": "LVCMOS18",
+        },
+        "set_property DIRECTION IN [get_ports sys_clk_pad]",
+    ),
+    (
+        "scalar_se_out",
+        {
+            "name": "led_en",
+            "pins": "A22",
+            "direction": "out",
+            "buffer": "obuf",
+            "iostandard": "LVCMOS18",
+        },
+        "set_property DIRECTION OUT [get_ports led_en_pad]",
+    ),
+    (
+        "scalar_se_inout",
+        {
+            "name": "gpio",
+            "pins": "E22",
+            "direction": "inout",
+            "buffer": "iobuf",
+            "iostandard": "LVCMOS18",
+        },
+        "set_property DIRECTION INOUT [get_ports gpio_pad]",
+    ),
+    (
+        "bus_se_out",
+        {
+            "name": "led",
+            "pins": ["A22", "B22"],
+            "width": 2,
+            "direction": "out",
+            "buffer": "obuf",
+            "iostandard": "LVCMOS18",
+        },
+        "set_property DIRECTION OUT [get_ports {led_pad[1]}]",
+    ),
+    (
+        "scalar_diff_in",
+        {
+            "name": "ref_clk",
+            "pinset": {"p": "H22", "n": "H23"},
+            "direction": "in",
+            "buffer": "ibufds",
+            "iostandard": "LVDS",
+        },
+        "set_property DIRECTION IN [get_ports ref_clk_p]",
+    ),
+    (
+        "scalar_diff_in_n_side",
+        {
+            "name": "ref_clk",
+            "pinset": {"p": "H22", "n": "H23"},
+            "direction": "in",
+            "buffer": "ibufds",
+            "iostandard": "LVDS",
+        },
+        "set_property DIRECTION IN [get_ports ref_clk_n]",
+    ),
+    (
+        "bus_diff_out",
+        {
+            "name": "lvds_data",
+            "pinset": {"p": ["AA1", "AB1"], "n": ["AA2", "AB2"]},
+            "width": 2,
+            "direction": "out",
+            "buffer": "obufds",
+            "iostandard": "LVDS",
+        },
+        "set_property DIRECTION OUT [get_ports {lvds_data_p[0]}]",
+    ),
+    (
+        "bypass_out",
+        {
+            "name": "spare",
+            "pins": "J24",
+            "direction": "out",
+            "iostandard": "LVCMOS18",
+            "bypass": True,
+        },
+        "set_property DIRECTION OUT [get_ports spare_pad]",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "sig, expected_line",
+    [pytest.param(s, l, id=n) for n, s, l in DIRECTION_CASES],
+)
+def test_direction_in_output(sig: dict, expected_line: str) -> None:
+    """A DIRECTION constraint is emitted for every port."""
+    st, pt = _make_tables([sig])
+    assert expected_line in generate_xdc(st, pt)
+
+
 def test_xdc_comment_emitted() -> None:
     """comment.xdc is emitted as a # line before the signal's constraints."""
     st, pt = _make_tables(
@@ -282,42 +390,55 @@ _EXPECTED_XDC = """\
 # 125 MHz system clock
 set_property PACKAGE_PIN G22 [get_ports sys_clk_pad]
 set_property IOSTANDARD LVCMOS18 [get_ports sys_clk_pad]
+set_property DIRECTION IN [get_ports sys_clk_pad]
 
 # User LEDs
 set_property PACKAGE_PIN A22 [get_ports {led_pad[0]}]
 set_property IOSTANDARD LVCMOS18 [get_ports {led_pad[0]}]
+set_property DIRECTION OUT [get_ports {led_pad[0]}]
 set_property PACKAGE_PIN B22 [get_ports {led_pad[1]}]
 set_property IOSTANDARD LVCMOS18 [get_ports {led_pad[1]}]
+set_property DIRECTION OUT [get_ports {led_pad[1]}]
 
 # 200 MHz reference clock
 set_property PACKAGE_PIN H22 [get_ports ref_clk_p]
 set_property IOSTANDARD LVDS [get_ports ref_clk_p]
+set_property DIRECTION IN [get_ports ref_clk_p]
 set_property PACKAGE_PIN H23 [get_ports ref_clk_n]
 set_property IOSTANDARD LVDS [get_ports ref_clk_n]
+set_property DIRECTION IN [get_ports ref_clk_n]
 
 # LVDS data outputs
 set_property PACKAGE_PIN AA1 [get_ports {lvds_data_p[0]}]
 set_property IOSTANDARD LVDS [get_ports {lvds_data_p[0]}]
+set_property DIRECTION OUT [get_ports {lvds_data_p[0]}]
 set_property PACKAGE_PIN AA2 [get_ports {lvds_data_n[0]}]
 set_property IOSTANDARD LVDS [get_ports {lvds_data_n[0]}]
+set_property DIRECTION OUT [get_ports {lvds_data_n[0]}]
 set_property PACKAGE_PIN AB1 [get_ports {lvds_data_p[1]}]
 set_property IOSTANDARD LVDS [get_ports {lvds_data_p[1]}]
+set_property DIRECTION OUT [get_ports {lvds_data_p[1]}]
 set_property PACKAGE_PIN AB2 [get_ports {lvds_data_n[1]}]
 set_property IOSTANDARD LVDS [get_ports {lvds_data_n[1]}]
+set_property DIRECTION OUT [get_ports {lvds_data_n[1]}]
 
 # Chip select
 set_property PACKAGE_PIN E22 [get_ports {cs_n_pad[0]}]
 set_property IOSTANDARD LVCMOS18 [get_ports {cs_n_pad[0]}]
+set_property DIRECTION OUT [get_ports {cs_n_pad[0]}]
 
 # Sync clock
 set_property PACKAGE_PIN F22 [get_ports {sync_clk_p[0]}]
 set_property IOSTANDARD LVDS [get_ports {sync_clk_p[0]}]
+set_property DIRECTION OUT [get_ports {sync_clk_p[0]}]
 set_property PACKAGE_PIN F23 [get_ports {sync_clk_n[0]}]
 set_property IOSTANDARD LVDS [get_ports {sync_clk_n[0]}]
+set_property DIRECTION OUT [get_ports {sync_clk_n[0]}]
 
 # Spare output pin
 set_property PACKAGE_PIN J24 [get_ports spare_pad]
 set_property IOSTANDARD LVCMOS18 [get_ports spare_pad]
+set_property DIRECTION OUT [get_ports spare_pad]
 """
 
 
