@@ -20,6 +20,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--lang",
+        type=str.lower,
         choices=["verilog", "vhdl"],
         default="verilog",
         metavar="LANG",
