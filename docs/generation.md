@@ -16,10 +16,10 @@ io_gen/generate/
     xdc.py              # generate_xdc
     verilog_top.py      # generate_verilog_top + private helpers
     verilog_ioring.py   # generate_verilog_ioring + private helpers
+    vhdl_top.py         # generate_vhdl_top + private helpers
+    vhdl_ioring.py      # generate_vhdl_ioring + private helpers
     common.py           # language-agnostic per-signal port/net helpers
-    formatting.py       # _format_port_block, _indent_join
-    vhdl_top.py         # generate_vhdl_top + private helpers (pending)
-    vhdl_ioring.py      # generate_vhdl_ioring + private helpers (pending)
+    formatting.py       # indent_join, indent_strings
 ```
 
 ---
@@ -51,9 +51,11 @@ per pin row.
 
 ## HDL Top-Level File
 
-**Public function:** `generate_<lang>_top(signal_table) -> str`
+**Public functions:**
+- `generate_verilog_top(signal_table, top) -> str`
+- `generate_vhdl_top(signal_table, meta_table, top) -> str`
 
-**Input:** signal table
+**Input:** signal table (and meta table for VHDL, which carries the architecture name)
 
 Assembles the complete top-level module or entity by calling private helpers
 in order:
@@ -86,9 +88,11 @@ signals to the IO ring's corresponding ports.
 
 ## HDL IO Ring File
 
-**Public function:** `generate_<lang>_ioring(signal_table, pin_table) -> str`
+**Public functions:**
+- `generate_verilog_ioring(signal_table, pin_table, top) -> str`
+- `generate_vhdl_ioring(signal_table, pin_table, meta_table, top) -> str`
 
-**Input:** signal table + pin table
+**Input:** signal table + pin table (and meta table for VHDL)
 
 Assembles the complete IO ring module or entity by calling private helpers:
 

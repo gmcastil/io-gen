@@ -183,8 +183,8 @@ Key design decisions:
 - Rows are plain dicts with variable shape (three shapes - see `docs/signal_table.md`)
 - Each factory function lives in the same module as its class
 - Tables are a package: `io_gen/tables/`
-  - `io_gen/tables/signal_table.py` - `SignalTable`, `_build_signal_table()`, `_signal_is_scalar()`, `_signal_is_differential()`
-  - `io_gen/tables/pin_table.py` - `PinTable`, `_build_pin_table()`, `_pin_is_differential()`
+  - `io_gen/tables/signal_table.py` - `SignalTable`, `build_signal_table()`, `signal_is_scalar()`, `signal_is_differential()`
+  - `io_gen/tables/pin_table.py` - `PinTable`, `build_pin_table()`, `pin_is_differential()`
   - `io_gen/tables/meta_table.py` - `MetaTable`, `_build_meta_table()`
   - `io_gen/tables/__init__.py` - re-exports all classes and private helpers
 - `_signal_is_scalar(sig)` distinguishes scalar vs. bus (single pin vs. array)
@@ -198,7 +198,8 @@ Key design decisions:
 - [x] Verilog top-level generator fully implemented and tested (`io_gen/generate/verilog_top.py`, `tests/test_verilog_top.py`)
 - [x] Verilog IO ring fully implemented and tested (`io_gen/generate/verilog_ioring.py`, `tests/test_verilog_ioring.py`)
 - [x] `generate_verilog_ioring` assembler complete
-- [ ] VHDL generators (deferred until Verilog is validated end-to-end in Vivado)
+- [x] VHDL top-level generator fully implemented and tested (`io_gen/generate/vhdl_top.py`, `tests/test_vhdl_top.py`)
+- [x] VHDL IO ring fully implemented and tested (`io_gen/generate/vhdl_ioring.py`, `tests/test_vhdl_ioring.py`)
 
 Key design decisions:
 
@@ -273,7 +274,7 @@ Keep the following in mind throughout development:
 - Follow PEP 8 for all code style (naming, spacing, line length, imports, etc.)
   with the understanding that formatting is enforced by the black formatting
   plugin.
-- `top` is a positional CLI argument, not a YAML field
+- `top` is passed via `--top NAME` on the CLI, not a YAML field
 - ASCII only. Do not include non-ASCII characters, emojis, or unicode characters
 - Type hints are required on all functions and methods in both application and test code
 - When iterating over signals, use `sig` as the loop variable, not `signal`

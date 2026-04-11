@@ -40,7 +40,7 @@ output.
 2. If `validate_only`, return.
 3. Call table construction with the validated document.
 4. Call the appropriate generators based on flags, collecting returned strings.
-5. Write strings to files in `output_dir`, or print to stdout if `stdout` is set.
+5. Write strings to files in `output_dir`.
 
 ---
 

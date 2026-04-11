@@ -44,7 +44,7 @@ Each signal row in the signal table is expanded into one or more pin rows:
 
 - Signals with `generate: false` in the YAML are excluded from the signal table
   entirely during construction and never reach the pin table or any generator.
-- The meta table is currently unused after construction.
+- The meta table carries `architecture`, which is used by `validate_vhdl` and both VHDL generators.
 - The signal table is the primary data structure. The pin table is a lookup
   structure keyed by signal name, used by generators that need physical pin
   details.

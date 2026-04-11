@@ -150,7 +150,7 @@ def _instantiate_obufds(name: str, pin_row: dict[str, Any]) -> str:
 
 
 def _instantiate_iobuf(name: str, pin_row: dict[str, Any]) -> str:
-    """Instatiate an IOBUF"""
+    """Instantiate an IOBUF"""
     inst = []
     inst.append(f"IOBUF //#(")
     inst.append(f"//)")

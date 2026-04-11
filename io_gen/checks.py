@@ -254,7 +254,7 @@ def _check_minimum_ports_generated(signals: list[dict]) -> None:
 
 
 def _check_non_ascii(path: Path) -> None:
-    """Checks a file to verify there are no none non-ASCII characters present
+    """Checks a file to verify there are no non-ASCII characters present
 
     Raises ValidationError identifying the location of the first non-ASCII character
     in the provided path.

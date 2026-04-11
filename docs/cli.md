@@ -3,19 +3,19 @@
 ## Usage
 
 ```
-io-gen [options] <input.yaml> <top>
+io-gen --top NAME [options] input.yaml
 ```
 
-`<input.yaml>` is the path to the YAML pin description file.
+`input.yaml` is the path to the YAML pin description file.
 
-`<top>` is the HDL module or entity name. Must be a valid HDL identifier.
+`--top NAME` is required. The HDL module or entity name. Must be a valid HDL identifier.
 Drives all output file names and the IO ring module or entity name (`<top>_io`).
 
 ## Options
 
 ### `--lang <vhdl|verilog>`
 
-The output HDL language. Defaults to TBD. Not required when `--xdc-only`
+The output HDL language. Defaults to `verilog`. Not required when `--xdc-only`
 is specified.
 
 ### `--output <dir>`

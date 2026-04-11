@@ -62,7 +62,7 @@ def get_signal_nets(sig: dict[str, Any]) -> list[dict]:
 
 
 def get_signal_ioring_ports(sig: dict[str, Any]) -> list[dict]:
-    """Language-agnostic list of ports for IO ring RTL for a given siganl"""
+    """Language-agnostic list of ports for IO ring RTL for a given signal"""
 
     port_base = {
         "direction": sig["direction"],
