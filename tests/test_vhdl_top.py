@@ -18,24 +18,10 @@ def _make_signal_table(signals: list) -> SignalTable:
 
 # ---- _generate_vhdl_ports --------------------------------------------------
 
-
-def test_generate_vhdl_ports_returns_str() -> None:
-    st = _make_signal_table(
-        [
-            {
-                "name": "sys_clk",
-                "pins": "G22",
-                "direction": "in",
-                "buffer": "ibuf",
-                "iostandard": "LVCMOS18",
-            },
-        ]
-    )
-    assert isinstance(_generate_vhdl_ports(st), str)
-
-
-# Port declarations are checked as substrings. name_len is driven by the longest
-# port name in the table - single-signal tables produce their own alignment.
+# Each case builds a single-signal table and asserts the complete output string.
+# name_len = ((len(longest_port_name) // 4) + 1) * 4; indent = level 2 (8 spaces).
+# Differential signals produce two ports combined into one expected string.
+# Last port has no trailing semicolon.
 
 PORT_DECL_CASES = [
     (
@@ -47,8 +33,8 @@ PORT_DECL_CASES = [
             "buffer": "ibuf",
             "iostandard": "LVCMOS18",
         },
-        # longest port name = sys_clk_pad (11), name_len = 16
-        "sys_clk_pad     : in    std_logic",
+        # port: sys_clk_pad (11), name_len = 12
+        "        sys_clk_pad : in    std_logic",
     ),
     (
         "bus_se_output",
@@ -60,11 +46,11 @@ PORT_DECL_CASES = [
             "buffer": "obuf",
             "iostandard": "LVCMOS18",
         },
-        # longest port name = led_pad (7), name_len = 12
-        "led_pad     : out   std_logic_vector(3 downto 0)",
+        # port: led_pad (7), name_len = 8
+        "        led_pad : out   std_logic_vector(3 downto 0)",
     ),
     (
-        "scalar_diff_input_p",
+        "scalar_diff_input",
         {
             "name": "ref_clk",
             "pinset": {"p": "H22", "n": "H23"},
@@ -72,22 +58,12 @@ PORT_DECL_CASES = [
             "buffer": "ibufds",
             "iostandard": "LVDS",
         },
-        # longest port name = ref_clk_p or ref_clk_n (9), name_len = 12
-        "ref_clk_p   : in    std_logic",
+        # ports: ref_clk_p, ref_clk_n (9), name_len = 12
+        "        ref_clk_p   : in    std_logic;\n"
+        "        ref_clk_n   : in    std_logic",
     ),
     (
-        "scalar_diff_input_n",
-        {
-            "name": "ref_clk",
-            "pinset": {"p": "H22", "n": "H23"},
-            "direction": "in",
-            "buffer": "ibufds",
-            "iostandard": "LVDS",
-        },
-        "ref_clk_n   : in    std_logic",
-    ),
-    (
-        "bus_diff_output_p",
+        "bus_diff_output",
         {
             "name": "lvds_data",
             "pinset": {"p": ["AA1", "AB1", "AC1"], "n": ["AA2", "AB2", "AC2"]},
@@ -96,20 +72,9 @@ PORT_DECL_CASES = [
             "buffer": "obufds",
             "iostandard": "LVDS",
         },
-        # longest port name = lvds_data_p or lvds_data_n (11), name_len = 16
-        "lvds_data_p     : out   std_logic_vector(2 downto 0)",
-    ),
-    (
-        "bus_diff_output_n",
-        {
-            "name": "lvds_data",
-            "pinset": {"p": ["AA1", "AB1", "AC1"], "n": ["AA2", "AB2", "AC2"]},
-            "width": 3,
-            "direction": "out",
-            "buffer": "obufds",
-            "iostandard": "LVDS",
-        },
-        "lvds_data_n     : out   std_logic_vector(2 downto 0)",
+        # ports: lvds_data_p, lvds_data_n (11), name_len = 12
+        "        lvds_data_p : out   std_logic_vector(2 downto 0);\n"
+        "        lvds_data_n : out   std_logic_vector(2 downto 0)",
     ),
     (
         "bus_se_inout",
@@ -121,8 +86,8 @@ PORT_DECL_CASES = [
             "buffer": "iobuf",
             "iostandard": "LVCMOS18",
         },
-        # longest port name = gpio_pad (8), name_len = 12
-        "gpio_pad    : inout std_logic_vector(4 downto 0)",
+        # port: gpio_pad (8), name_len = 12
+        "        gpio_pad    : inout std_logic_vector(4 downto 0)",
     ),
     (
         "scalar_se_bypass",
@@ -133,8 +98,8 @@ PORT_DECL_CASES = [
             "iostandard": "LVCMOS18",
             "bypass": True,
         },
-        # longest port name = spare_pad (9), name_len = 12
-        "spare_pad   : out   std_logic",
+        # port: spare_pad (9), name_len = 12
+        "        spare_pad   : out   std_logic",
     ),
     (
         "bus_width_16",
@@ -146,20 +111,20 @@ PORT_DECL_CASES = [
             "buffer": "obuf",
             "iostandard": "LVCMOS18",
         },
-        # longest port name = data_pad (8), name_len = 12
-        "data_pad    : out   std_logic_vector(15 downto 0)",
+        # port: data_pad (8), name_len = 12
+        "        data_pad    : out   std_logic_vector(15 downto 0)",
     ),
 ]
 
 
 @pytest.mark.parametrize(
-    "sig, expected_decl",
-    [pytest.param(s, d, id=n) for n, s, d in PORT_DECL_CASES],
+    "sig, expected",
+    [pytest.param(s, e, id=n) for n, s, e in PORT_DECL_CASES],
 )
-def test_port_decl_in_output(sig: dict, expected_decl: str) -> None:
-    """The correct port declaration appears in the output for each signal type."""
+def test_port_decl_output(sig: dict, expected: str) -> None:
+    """Complete port declaration output for each signal type."""
     st = _make_signal_table([sig])
-    assert expected_decl in _generate_vhdl_ports(st)
+    assert _generate_vhdl_ports(st) == expected
 
 
 def test_hdl_comment_emitted() -> None:
@@ -176,7 +141,12 @@ def test_hdl_comment_emitted() -> None:
             },
         ]
     )
-    assert "-- 125 MHz system clock input" in _generate_vhdl_ports(st)
+    # port: sys_clk_pad (11), name_len = 12
+    expected = (
+        "        -- 125 MHz system clock input\n"
+        "        sys_clk_pad : in    std_logic"
+    )
+    assert _generate_vhdl_ports(st) == expected
 
 
 def test_no_hdl_comment_no_dash_line() -> None:
@@ -216,9 +186,12 @@ def test_no_trailing_semicolon_on_last_port() -> None:
             },
         ]
     )
-    output = _generate_vhdl_ports(st)
-    last_line = [ln for ln in output.splitlines() if ln.strip()][-1]
-    assert not last_line.endswith(";")
+    # ports: sys_clk_pad (11), led_pad (7); name_len = 12
+    expected = (
+        "        sys_clk_pad : in    std_logic;\n"
+        "        led_pad     : out   std_logic_vector(1 downto 0)"
+    )
+    assert _generate_vhdl_ports(st) == expected
 
 
 # ---- integration -----------------------------------------------------------
@@ -315,8 +288,9 @@ def test_ports_integration_output() -> None:
 
 # ---- _generate_vhdl_signals ------------------------------------------------
 
-# Signal declarations are checked as substrings. name_len is driven by the
-# longest net name in the table.
+# Each case builds a single-signal table and asserts the complete output string.
+# name_len = ((len("signal " + longest_net_name) // 4) + 1) * 4; indent = level 1 (4 spaces).
+# iobuf expands to three declarations: <name>_i, <name>_o, <name>_t.
 
 SIGNAL_DECL_CASES = [
     (
@@ -328,8 +302,8 @@ SIGNAL_DECL_CASES = [
             "buffer": "ibuf",
             "iostandard": "LVCMOS18",
         },
-        # longest net name = sys_clk (7), name_len = 9
-        ["    signal sys_clk   : std_logic;"],
+        # lhs = "signal sys_clk" (14), name_len = 16
+        "    signal sys_clk  : std_logic;",
     ),
     (
         "bus_se_output",
@@ -341,8 +315,8 @@ SIGNAL_DECL_CASES = [
             "buffer": "obuf",
             "iostandard": "LVCMOS18",
         },
-        # longest net name = led (3), name_len = 5
-        ["    signal led   : std_logic_vector(3 downto 0);"],
+        # lhs = "signal led" (10), name_len = 12
+        "    signal led  : std_logic_vector(3 downto 0);",
     ),
     (
         "scalar_diff_input",
@@ -353,8 +327,8 @@ SIGNAL_DECL_CASES = [
             "buffer": "ibufds",
             "iostandard": "LVDS",
         },
-        # longest net name = ref_clk (7), name_len = 9
-        ["    signal ref_clk   : std_logic;"],
+        # lhs = "signal ref_clk" (14), name_len = 16
+        "    signal ref_clk  : std_logic;",
     ),
     (
         "bus_diff_output",
@@ -366,8 +340,8 @@ SIGNAL_DECL_CASES = [
             "buffer": "obufds",
             "iostandard": "LVDS",
         },
-        # longest net name = lvds_data (9), name_len = 13
-        ["    signal lvds_data    : std_logic_vector(2 downto 0);"],
+        # lhs = "signal lvds_data" (16), name_len = 20
+        "    signal lvds_data    : std_logic_vector(2 downto 0);",
     ),
     (
         "scalar_iobuf",
@@ -378,12 +352,10 @@ SIGNAL_DECL_CASES = [
             "buffer": "iobuf",
             "iostandard": "LVCMOS18",
         },
-        # longest net name = gpio_i/gpio_o/gpio_t (6), name_len = 9
-        [
-            "    signal gpio_i   : std_logic;",
-            "    signal gpio_o   : std_logic;",
-            "    signal gpio_t   : std_logic;",
-        ],
+        # lhs = "signal gpio_i/o/t" (13), name_len = 16
+        "    signal gpio_i   : std_logic;\n"
+        "    signal gpio_o   : std_logic;\n"
+        "    signal gpio_t   : std_logic;",
     ),
     (
         "bus_iobuf",
@@ -395,11 +367,10 @@ SIGNAL_DECL_CASES = [
             "buffer": "iobuf",
             "iostandard": "LVCMOS18",
         },
-        [
-            "    signal gpio_i   : std_logic_vector(2 downto 0);",
-            "    signal gpio_o   : std_logic_vector(2 downto 0);",
-            "    signal gpio_t   : std_logic_vector(2 downto 0);",
-        ],
+        # lhs = "signal gpio_i/o/t" (13), name_len = 16
+        "    signal gpio_i   : std_logic_vector(2 downto 0);\n"
+        "    signal gpio_o   : std_logic_vector(2 downto 0);\n"
+        "    signal gpio_t   : std_logic_vector(2 downto 0);",
     ),
     (
         "bus_length_1_se",
@@ -411,7 +382,8 @@ SIGNAL_DECL_CASES = [
             "buffer": "obuf",
             "iostandard": "LVCMOS18",
         },
-        ["    signal led   : std_logic_vector(0 downto 0);"],
+        # lhs = "signal led" (10), name_len = 12
+        "    signal led  : std_logic_vector(0 downto 0);",
     ),
     (
         "bus_length_1_iobuf",
@@ -423,11 +395,10 @@ SIGNAL_DECL_CASES = [
             "buffer": "iobuf",
             "iostandard": "LVCMOS18",
         },
-        [
-            "    signal gpio_i   : std_logic_vector(0 downto 0);",
-            "    signal gpio_o   : std_logic_vector(0 downto 0);",
-            "    signal gpio_t   : std_logic_vector(0 downto 0);",
-        ],
+        # lhs = "signal gpio_i/o/t" (13), name_len = 16
+        "    signal gpio_i   : std_logic_vector(0 downto 0);\n"
+        "    signal gpio_o   : std_logic_vector(0 downto 0);\n"
+        "    signal gpio_t   : std_logic_vector(0 downto 0);",
     ),
     (
         "bus_width_16_se",
@@ -439,8 +410,8 @@ SIGNAL_DECL_CASES = [
             "buffer": "obuf",
             "iostandard": "LVCMOS18",
         },
-        # longest net name = data (4), name_len = 5
-        ["    signal data   : std_logic_vector(15 downto 0);"],
+        # lhs = "signal data" (11), name_len = 12
+        "    signal data : std_logic_vector(15 downto 0);",
     ),
     (
         "bus_width_16_iobuf",
@@ -452,25 +423,22 @@ SIGNAL_DECL_CASES = [
             "buffer": "iobuf",
             "iostandard": "LVCMOS18",
         },
-        [
-            "    signal data_i   : std_logic_vector(15 downto 0);",
-            "    signal data_o   : std_logic_vector(15 downto 0);",
-            "    signal data_t   : std_logic_vector(15 downto 0);",
-        ],
+        # lhs = "signal data_i/o/t" (13), name_len = 16
+        "    signal data_i   : std_logic_vector(15 downto 0);\n"
+        "    signal data_o   : std_logic_vector(15 downto 0);\n"
+        "    signal data_t   : std_logic_vector(15 downto 0);",
     ),
 ]
 
 
 @pytest.mark.parametrize(
-    "sig, expected_lines",
+    "sig, expected",
     [pytest.param(s, e, id=n) for n, s, e in SIGNAL_DECL_CASES],
 )
-def test_signal_decl_in_output(sig: dict, expected_lines: list[str]) -> None:
-    """The correct signal declaration(s) appear in the output for each signal type."""
+def test_signal_decl_output(sig: dict, expected: str) -> None:
+    """Complete signal declaration output for each signal type."""
     st = _make_signal_table([sig])
-    output = _generate_vhdl_signals(st)
-    for line in expected_lines:
-        assert line in output
+    assert _generate_vhdl_signals(st) == expected
 
 
 def test_bypass_excluded_from_signals() -> None:
@@ -489,7 +457,23 @@ def test_bypass_excluded_from_signals() -> None:
     assert "spare" not in _generate_vhdl_signals(st)
 
 
-# longest net name = lvds_data (9), name_len = 13
+def test_signals_all_bypass_returns_empty_string() -> None:
+    """All-bypass signal table produces an empty string, not a ValueError."""
+    st = _make_signal_table(
+        [
+            {
+                "name": "spare",
+                "pins": "J24",
+                "direction": "out",
+                "iostandard": "LVCMOS18",
+                "bypass": True,
+            },
+        ]
+    )
+    assert _generate_vhdl_signals(st) == ""
+
+
+# lhs = "signal lvds_data" (16), name_len = 20
 _EXPECTED_SIGNALS = (
     "    signal sys_clk      : std_logic;\n"
     "    signal led          : std_logic_vector(3 downto 0);\n"
@@ -510,10 +494,12 @@ def test_signals_integration_output() -> None:
 
 # ---- _generate_vhdl_ioring_inst --------------------------------------------
 
+# Each case builds a signal table and asserts the complete output string.
+# name_len = ((len(longest_ioring_port_name) // 4) + 1) * 4; port map at level 2.
 
-def test_ioring_inst_returns_str() -> None:
-    """_generate_vhdl_ioring_inst returns a string."""
-    st = _make_signal_table(
+IORING_INST_CASES = [
+    (
+        "scalar_se_input",
         [
             {
                 "name": "sys_clk",
@@ -522,14 +508,40 @@ def test_ioring_inst_returns_str() -> None:
                 "buffer": "ibuf",
                 "iostandard": "LVCMOS18",
             },
-        ]
-    )
-    assert isinstance(_generate_vhdl_ioring_inst(st, "test"), str)
-
-
-def test_ioring_inst_header() -> None:
-    """Instance label, commented generic map, and port map keyword appear on separate lines."""
-    st = _make_signal_table(
+        ],
+        "test",
+        # ioring ports: sys_clk_pad (11), sys_clk (7); name_len = 12
+        "    test_io_i0 : entity work.test_io\n"
+        "    -- generic map (\n"
+        "    -- )\n"
+        "    port map (\n"
+        "        sys_clk_pad => sys_clk_pad,\n"
+        "        sys_clk     => sys_clk\n"
+        "    );",
+    ),
+    (
+        "scalar_se_output_alignment",
+        [
+            {
+                "name": "led",
+                "pins": "A22",
+                "direction": "out",
+                "buffer": "obuf",
+                "iostandard": "LVCMOS18",
+            },
+        ],
+        "test",
+        # ioring ports: led_pad (7), led (3); name_len = 8
+        "    test_io_i0 : entity work.test_io\n"
+        "    -- generic map (\n"
+        "    -- )\n"
+        "    port map (\n"
+        "        led_pad => led_pad,\n"
+        "        led     => led\n"
+        "    );",
+    ),
+    (
+        "bypass_excluded",
         [
             {
                 "name": "sys_clk",
@@ -538,36 +550,26 @@ def test_ioring_inst_header() -> None:
                 "buffer": "ibuf",
                 "iostandard": "LVCMOS18",
             },
-        ]
-    )
-    output = _generate_vhdl_ioring_inst(st, "test")
-    lines = output.splitlines()
-    assert lines[0] == "    test_io_i0 : entity work.test_io"
-    assert lines[1] == "    -- generic map ("
-    assert lines[2] == "    -- )"
-    assert lines[3] == "    port map ("
-
-
-def test_ioring_inst_closing() -> None:
-    """The instance closes with a 4-space-indented ');'."""
-    st = _make_signal_table(
-        [
             {
-                "name": "sys_clk",
-                "pins": "G22",
-                "direction": "in",
-                "buffer": "ibuf",
+                "name": "spare",
+                "pins": "J24",
+                "direction": "out",
                 "iostandard": "LVCMOS18",
+                "bypass": True,
             },
-        ]
-    )
-    output = _generate_vhdl_ioring_inst(st, "test")
-    assert output.splitlines()[-1] == "    );"
-
-
-def test_ioring_inst_last_port_no_comma() -> None:
-    """The last port connection has no trailing comma."""
-    st = _make_signal_table(
+        ],
+        "test",
+        # spare is bypass:true - excluded; ports: sys_clk_pad (11), sys_clk (7); name_len = 12
+        "    test_io_i0 : entity work.test_io\n"
+        "    -- generic map (\n"
+        "    -- )\n"
+        "    port map (\n"
+        "        sys_clk_pad => sys_clk_pad,\n"
+        "        sys_clk     => sys_clk\n"
+        "    );",
+    ),
+    (
+        "two_signals_last_port_no_comma",
         [
             {
                 "name": "sys_clk",
@@ -584,57 +586,30 @@ def test_ioring_inst_last_port_no_comma() -> None:
                 "buffer": "obuf",
                 "iostandard": "LVCMOS18",
             },
-        ]
-    )
-    output = _generate_vhdl_ioring_inst(st, "test")
-    port_lines = [ln for ln in output.splitlines() if "=>" in ln]
-    assert not port_lines[-1].endswith(",")
+        ],
+        "test",
+        # ioring ports: sys_clk_pad (11), sys_clk (7), led_pad (7), led (3); name_len = 12
+        "    test_io_i0 : entity work.test_io\n"
+        "    -- generic map (\n"
+        "    -- )\n"
+        "    port map (\n"
+        "        sys_clk_pad => sys_clk_pad,\n"
+        "        sys_clk     => sys_clk,\n"
+        "        led_pad     => led_pad,\n"
+        "        led         => led\n"
+        "    );",
+    ),
+]
 
 
-def test_ioring_inst_bypass_excluded() -> None:
-    """bypass:true signals do not appear in the IO ring instantiation."""
-    st = _make_signal_table(
-        [
-            {
-                "name": "sys_clk",
-                "pins": "G22",
-                "direction": "in",
-                "buffer": "ibuf",
-                "iostandard": "LVCMOS18",
-            },
-            {
-                "name": "spare",
-                "pins": "J24",
-                "direction": "out",
-                "iostandard": "LVCMOS18",
-                "bypass": True,
-            },
-        ]
-    )
-    output = _generate_vhdl_ioring_inst(st, "test")
-    assert "spare" not in output
-
-
-def test_ioring_inst_alignment_tab_stop() -> None:
-    """The '=>' lands at the next tab stop column.
-
-    'led_pad' is 7 chars; 8 (indent) + 7 + 1 (min space) = 16, which is already
-    a multiple of 4. name_len = 8 (next_tab 16 - indent 8 = 8).
-    """
-    st = _make_signal_table(
-        [
-            {
-                "name": "led",
-                "pins": "A22",
-                "direction": "out",
-                "buffer": "obuf",
-                "iostandard": "LVCMOS18",
-            },
-        ]
-    )
-    output = _generate_vhdl_ioring_inst(st, "test")
-    assert "        led_pad => led_pad," in output
-    assert "        led     => led" in output
+@pytest.mark.parametrize(
+    "signals, top, expected",
+    [pytest.param(s, t, e, id=n) for n, s, t, e in IORING_INST_CASES],
+)
+def test_ioring_inst_output(signals: list, top: str, expected: str) -> None:
+    """Complete IO ring instantiation output for each case."""
+    st = _make_signal_table(signals)
+    assert _generate_vhdl_ioring_inst(st, top) == expected
 
 
 # longest ioring port name = user_led_pad (12), name_len = 16
@@ -666,9 +641,8 @@ _EXPECTED_IORING_INST = (
 def test_ioring_inst_integration() -> None:
     """Full signal set produces the expected IO ring instantiation.
 
-    spare is bypass:true and must be absent. name_len=16 because the longest
-    port name is user_led_pad (12); 8 (indent) + 12 + 1 (min space) = 21,
-    rounded up to next multiple of 4 gives 24, so name_len = 24 - 8 = 16.
+    spare is bypass:true and must be absent. name_len = 16 because the longest
+    ioring port name is user_led_pad (12); ((12 // 4) + 1) * 4 = 16.
     """
     st = _make_signal_table(_INTEGRATION_SIGNALS)
     assert _generate_vhdl_ioring_inst(st, "example") == _EXPECTED_IORING_INST
@@ -810,6 +784,6 @@ def test_generate_vhdl_top_library_clauses() -> None:
 
 
 def test_generate_vhdl_top_integration() -> None:
-    """Full signal set produces output matching example.vhd."""
+    """Full signal set produces the expected complete output."""
     st = _make_signal_table(_INTEGRATION_SIGNALS)
     assert generate_vhdl_top(st, "example", "rtl") == _EXPECTED_TOP
