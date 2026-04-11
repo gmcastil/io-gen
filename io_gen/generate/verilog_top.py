@@ -1,6 +1,6 @@
 from io_gen.tables import SignalTable
 
-from .formatting import _indent_join
+from .formatting import _indent_join, _indent_strings
 
 from .common import (
     _get_signal_top_ports,
@@ -56,7 +56,7 @@ def _generate_verilog_ports(signal_table: SignalTable) -> str:
         # Get all the ports for this signal
         sig_ports = _get_signal_top_ports(sig)
         # Need to keep track of the last item so that on the last signal in the
-        # table and the last port, we can drop the comma
+        # table and the last port, we can omit the comma
         last_index = len(sig_ports) - 1
         for port_index, port in enumerate(sig_ports):
             direction = VLOG_DIRECTIONS[port["direction"]]
@@ -73,7 +73,7 @@ def _generate_verilog_ports(signal_table: SignalTable) -> str:
             line = f"{direction:<8}{dim:<16}{port['name']}{suffix}"
             ports.append(line)
 
-    return _indent_join(ports, 1, "\n")
+    return _indent_join(ports)
 
 
 def _generate_verilog_wires(signal_table: SignalTable) -> str:
@@ -86,13 +86,11 @@ def _generate_verilog_wires(signal_table: SignalTable) -> str:
     """
     wires = []
     for sig in signal_table:
-        # Skip bypass signals - they have no internal wire
-        sig_nets = _get_signal_nets(sig)
-
-        if not sig_nets:
+        if sig["bypass"]:
             continue
 
-        for net in sig_nets:
+        # The IO ring might be empty, which is handled transparently
+        for net in _get_signal_nets(sig):
             name = net["name"]
             width = net["width"]
 
@@ -106,7 +104,7 @@ def _generate_verilog_wires(signal_table: SignalTable) -> str:
             # 8 columns for the net dimension, then the port name
             wires.append(f"{dim:<16}{name};")
 
-    return _indent_join(wires, 1, "\n")
+    return _indent_join(wires)
 
 
 def _generate_verilog_ioring_inst(signal_table: SignalTable, top: str) -> str:
@@ -117,13 +115,17 @@ def _generate_verilog_ioring_inst(signal_table: SignalTable, top: str) -> str:
     Signals with generate: false are excluded.
     """
     inst = []
-    inst.append(f"{'':<4}{top}_io //#(")
-    inst.append(f"{'':<4}//)")
-    inst.append(f"{'':<4}{top}_io_i0 (")
+    inst.append(f"{top}_io //#(")
+    inst.append("//)")
+    inst.append(f"{top}_io_i0 (")
 
+    inst = _indent_strings(inst, 1)
+
+    # Need to collect all the ports in the instance and find the longest name, then
+    # round it up so that there is always space between the last character of longest
+    # name plus 1 for the '.' character and also such that the open parenthesis in
+    # the port assignment lands on a 4 space tab stop
     ioring_ports = []
-
-    # Get all of the names for every signal in the IO ring
     for sig in signal_table:
         # Skip top level signals that do not go to the IO ring
         if sig["bypass"]:
@@ -131,25 +133,15 @@ def _generate_verilog_ioring_inst(signal_table: SignalTable, top: str) -> str:
         for port in _get_signal_ioring_ports(sig):
             ioring_ports.append(port["name"])
 
-    # Now calculate how many spaces we need for the port name in the instance by
-    # getting the length of the longest name
     longest_name = len(max(ioring_ports, key=len))
-    # Then account for the '.' in the length of the first field and round up to
-    # the next multiple of 4 so we can keep all of our columns aligned nicely
     name_len = (((longest_name + 1) // 4 + 1) * 4) - 1
 
-    # Now iterate the list of ports in the IO ring and format them with a 4 space
-    # indent, followed by another 4 spaces, then the calculated max length rounded up,
-    # then the same port name again inside parens, and a trailing comma, except on
-    # the last port
-    for index, name in enumerate(ioring_ports):
-        if index == len(ioring_ports) - 1:
-            suffix = ""
-        else:
-            suffix = ","
-        inst.append(f"{'':<8}.{name:<{name_len}}({name}){suffix}")
+    # Now iterate the list of ports in the IO ring and format them with the calculated
+    # amount of whitespace, join the port map itself into one already indented string,
+    # and then add to the instantiation string
+    port_strings = [f".{name:<{name_len}}({name})" for name in ioring_ports]
+    inst.append(_indent_join(port_strings, 2, ",\n"))
 
-    # Now attach the trailing parenthesis on its own
-    inst.append(f"{'':<4});")
+    inst.append(f"    );")
 
     return "\n".join(inst)

@@ -47,9 +47,6 @@ def _get_signal_nets(sig: dict[str, Any]) -> list[dict]:
         "is_bus": not _signal_is_scalar(sig),
     }
 
-    if sig["bypass"]:
-        return []
-
     net_list = []
     if sig["buffer"] not in TRISTATE_BUFFERS:
         net_list.append({**net_base, "name": sig["name"]})
