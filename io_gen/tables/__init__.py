@@ -1,5 +1,5 @@
 # Reexport these so that others can import them with `from tables import SignalTable`
-from .meta_table import MetaTable, _build_meta_table
+from .meta_table import MetaTable, build_meta_table
 from .signal_table import (
     SignalTable,
     build_signal_table,

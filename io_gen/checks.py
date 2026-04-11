@@ -236,7 +236,7 @@ def _check_buffer_inferable(sig: dict) -> None:
 
     name = sig["name"]
     buffer = sig["buffer"]
-    if buffer not in BUFFER_INFERABLE and sig["infer"]:
+    if buffer not in BUFFER_INFERABLE:
         raise ValidationError(f"signal '{name}': buffer {buffer} not inferable")
 
 

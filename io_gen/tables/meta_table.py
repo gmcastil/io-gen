@@ -8,7 +8,7 @@ class MetaTable:
     architecture: str | None
 
 
-def _build_meta_table(doc: dict) -> MetaTable:
+def build_meta_table(doc: dict) -> MetaTable:
     # The architecture is optional and can't be enforced by the schema
     arch = doc.get("architecture", None)
     return MetaTable(doc["title"], doc["part"], arch)

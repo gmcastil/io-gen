@@ -42,6 +42,9 @@ def get_signal_top_ports(sig: dict[str, Any]) -> list[dict]:
 def get_signal_nets(sig: dict[str, Any]) -> list[dict]:
     """Language-agnostic list of nets from the IO ring to fabric-facing logic for a given signal"""
 
+    if sig["bypass"]:
+        return []
+
     net_base = {
         "width": sig["width"],
         "is_bus": not signal_is_scalar(sig),

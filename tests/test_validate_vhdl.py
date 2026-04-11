@@ -2,7 +2,7 @@ import pytest
 
 from io_gen import ValidationError
 from io_gen.tables.signal_table import build_signal_table, SignalTable
-from io_gen.tables.meta_table import _build_meta_table, MetaTable
+from io_gen.tables.meta_table import build_meta_table, MetaTable
 from io_gen.validate import validate_vhdl
 
 
@@ -15,7 +15,7 @@ def _make_meta_table(architecture: str | None = "rtl") -> MetaTable:
     doc = {"title": "Test", "part": "xc7k325tffg900-2", "signals": []}
     if architecture is not None:
         doc["architecture"] = architecture
-    return _build_meta_table(doc)
+    return build_meta_table(doc)
 
 
 # ---------------------------------------------------------------------------
