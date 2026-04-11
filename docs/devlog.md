@@ -3,6 +3,12 @@
 Entries are in reverse chronological order.
 
 ---
+## 2026-04-09 - VHDL generation is complete
+
+- Architecture now needs to be specified in the meta table
+- Examples all build and match what is in the repo
+- Added `make examples` target
+- I think I'm ready for actual YAML for an actual board
 
 ## 2026-04-09 - Addressing lingering validation items
 
