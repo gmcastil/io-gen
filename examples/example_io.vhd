@@ -32,6 +32,7 @@ entity example_io is
 end entity example_io;
 
 architecture rtl of example_io is
+
 begin
 
     ibuf_sys_clk_i0 : IBUF
