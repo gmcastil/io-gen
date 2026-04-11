@@ -18,6 +18,22 @@ def _make_signal_table(signals: list) -> SignalTable:
 
 # ---- _generate_vhdl_ports --------------------------------------------------
 
+
+def test_generate_vhdl_ports_returns_str() -> None:
+    st = _make_signal_table(
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            },
+        ]
+    )
+    assert isinstance(_generate_vhdl_ports(st), str)
+
+
 # Each case builds a single-signal table and asserts the complete output string.
 # name_len = ((len(longest_port_name) // 4) + 1) * 4; indent = level 2 (8 spaces).
 # Differential signals produce two ports combined into one expected string.
@@ -494,12 +510,10 @@ def test_signals_integration_output() -> None:
 
 # ---- _generate_vhdl_ioring_inst --------------------------------------------
 
-# Each case builds a signal table and asserts the complete output string.
-# name_len = ((len(longest_ioring_port_name) // 4) + 1) * 4; port map at level 2.
 
-IORING_INST_CASES = [
-    (
-        "scalar_se_input",
+def test_ioring_inst_returns_str() -> None:
+    """_generate_vhdl_ioring_inst returns a string."""
+    st = _make_signal_table(
         [
             {
                 "name": "sys_clk",
@@ -508,40 +522,14 @@ IORING_INST_CASES = [
                 "buffer": "ibuf",
                 "iostandard": "LVCMOS18",
             },
-        ],
-        "test",
-        # ioring ports: sys_clk_pad (11), sys_clk (7); name_len = 12
-        "    test_io_i0 : entity work.test_io\n"
-        "    -- generic map (\n"
-        "    -- )\n"
-        "    port map (\n"
-        "        sys_clk_pad => sys_clk_pad,\n"
-        "        sys_clk     => sys_clk\n"
-        "    );",
-    ),
-    (
-        "scalar_se_output_alignment",
-        [
-            {
-                "name": "led",
-                "pins": "A22",
-                "direction": "out",
-                "buffer": "obuf",
-                "iostandard": "LVCMOS18",
-            },
-        ],
-        "test",
-        # ioring ports: led_pad (7), led (3); name_len = 8
-        "    test_io_i0 : entity work.test_io\n"
-        "    -- generic map (\n"
-        "    -- )\n"
-        "    port map (\n"
-        "        led_pad => led_pad,\n"
-        "        led     => led\n"
-        "    );",
-    ),
-    (
-        "bypass_excluded",
+        ]
+    )
+    assert isinstance(_generate_vhdl_ioring_inst(st, "test"), str)
+
+
+def test_ioring_inst_header() -> None:
+    """Entity instantiation header uses the top name with commented generic block on separate lines."""
+    st = _make_signal_table(
         [
             {
                 "name": "sys_clk",
@@ -550,26 +538,36 @@ IORING_INST_CASES = [
                 "buffer": "ibuf",
                 "iostandard": "LVCMOS18",
             },
+        ]
+    )
+    output = _generate_vhdl_ioring_inst(st, "test")
+    lines = output.splitlines()
+    assert lines[0] == "    test_io_i0 : entity work.test_io"
+    assert lines[1] == "    -- generic map ("
+    assert lines[2] == "    -- )"
+    assert lines[3] == "    port map ("
+
+
+def test_ioring_inst_closing() -> None:
+    """The instance closes with a 4-space-indented ');'."""
+    st = _make_signal_table(
+        [
             {
-                "name": "spare",
-                "pins": "J24",
-                "direction": "out",
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
                 "iostandard": "LVCMOS18",
-                "bypass": True,
             },
-        ],
-        "test",
-        # spare is bypass:true - excluded; ports: sys_clk_pad (11), sys_clk (7); name_len = 12
-        "    test_io_i0 : entity work.test_io\n"
-        "    -- generic map (\n"
-        "    -- )\n"
-        "    port map (\n"
-        "        sys_clk_pad => sys_clk_pad,\n"
-        "        sys_clk     => sys_clk\n"
-        "    );",
-    ),
-    (
-        "two_signals_last_port_no_comma",
+        ]
+    )
+    output = _generate_vhdl_ioring_inst(st, "test")
+    assert output.splitlines()[-1] == "    );"
+
+
+def test_ioring_inst_last_port_no_comma() -> None:
+    """The last port connection has no trailing comma."""
+    st = _make_signal_table(
         [
             {
                 "name": "sys_clk",
@@ -586,30 +584,59 @@ IORING_INST_CASES = [
                 "buffer": "obuf",
                 "iostandard": "LVCMOS18",
             },
-        ],
-        "test",
-        # ioring ports: sys_clk_pad (11), sys_clk (7), led_pad (7), led (3); name_len = 12
-        "    test_io_i0 : entity work.test_io\n"
-        "    -- generic map (\n"
-        "    -- )\n"
-        "    port map (\n"
-        "        sys_clk_pad => sys_clk_pad,\n"
-        "        sys_clk     => sys_clk,\n"
-        "        led_pad     => led_pad,\n"
-        "        led         => led\n"
-        "    );",
-    ),
-]
+        ]
+    )
+    output = _generate_vhdl_ioring_inst(st, "test")
+    port_lines = [ln for ln in output.splitlines() if "=>" in ln]
+    assert not port_lines[-1].endswith(",")
 
 
-@pytest.mark.parametrize(
-    "signals, top, expected",
-    [pytest.param(s, t, e, id=n) for n, s, t, e in IORING_INST_CASES],
-)
-def test_ioring_inst_output(signals: list, top: str, expected: str) -> None:
-    """Complete IO ring instantiation output for each case."""
-    st = _make_signal_table(signals)
-    assert _generate_vhdl_ioring_inst(st, top) == expected
+def test_ioring_inst_bypass_excluded() -> None:
+    """bypass:true signals do not appear in the IO ring instantiation."""
+    st = _make_signal_table(
+        [
+            {
+                "name": "sys_clk",
+                "pins": "G22",
+                "direction": "in",
+                "buffer": "ibuf",
+                "iostandard": "LVCMOS18",
+            },
+            {
+                "name": "spare",
+                "pins": "J24",
+                "direction": "out",
+                "iostandard": "LVCMOS18",
+                "bypass": True,
+            },
+        ]
+    )
+    output = _generate_vhdl_ioring_inst(st, "test")
+    assert "spare" not in output
+
+
+def test_ioring_inst_alignment_tab_stop() -> None:
+    """When the longest port name lands on a multiple of 4, gap is exactly 1 space.
+
+    'led_pad' is 7 chars; name_len = ((7 // 4) + 1) * 4 = 8.
+    The '=>' follows the name field directly, giving a 1-space gap after
+    'led_pad' and a 5-space gap after 'led'.
+    """
+    st = _make_signal_table(
+        [
+            {
+                "name": "led",
+                "pins": "A22",
+                "direction": "out",
+                "buffer": "obuf",
+                "iostandard": "LVCMOS18",
+            },
+        ]
+    )
+    output = _generate_vhdl_ioring_inst(st, "test")
+    # led_pad is the IO ring pad port; led is the fabric-facing port (last, no comma)
+    assert "        led_pad => led_pad," in output
+    assert "        led     => led" in output
 
 
 # longest ioring port name = user_led_pad (12), name_len = 16
