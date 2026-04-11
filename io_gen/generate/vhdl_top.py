@@ -113,10 +113,7 @@ def _generate_vhdl_signals(signal_table: SignalTable) -> str:
     lhs_sig_strings = []
     rhs_sig_strings = []
 
-    for sig in signal_table:
-        if sig["bypass"]:
-            continue
-
+    for sig in signal_table.active():
         for net in _get_signal_nets(sig):
             # Craft the string to go on the LHS of the colon
             lhs_sig_strings.append(f"signal {net['name']}")
@@ -166,9 +163,7 @@ def _generate_vhdl_ioring_inst(signal_table: SignalTable, top: str) -> str:
     # name and the port assignment operator (=>) and also such that the port assignment
     # operator lands on a 4 space tab stop
     ioring_ports = []
-    for sig in signal_table:
-        if sig["bypass"]:
-            continue
+    for sig in signal_table.active():
         for port in _get_signal_ioring_ports(sig):
             ioring_ports.append(port["name"])
 

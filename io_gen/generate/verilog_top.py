@@ -85,10 +85,7 @@ def _generate_verilog_wires(signal_table: SignalTable) -> str:
     All other signals use the bare signal name regardless of buffer type.
     """
     wires = []
-    for sig in signal_table:
-        if sig["bypass"]:
-            continue
-
+    for sig in signal_table.active():
         # The IO ring might be empty, which is handled transparently
         for net in _get_signal_nets(sig):
             name = net["name"]
@@ -126,10 +123,7 @@ def _generate_verilog_ioring_inst(signal_table: SignalTable, top: str) -> str:
     # name plus 1 for the '.' character and also such that the open parenthesis in
     # the port assignment lands on a 4 space tab stop
     ioring_ports = []
-    for sig in signal_table:
-        # Skip top level signals that do not go to the IO ring
-        if sig["bypass"]:
-            continue
+    for sig in signal_table.active():
         for port in _get_signal_ioring_ports(sig):
             ioring_ports.append(port["name"])
 
