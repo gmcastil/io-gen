@@ -5,7 +5,7 @@ from io_gen.tables import PinTable
 from io_gen.tables import MetaTable
 
 from .formatting import indent_join
-from .common import get_ioring_header, get_signal_ioring_ports, VHDL_DIRECTIONS
+from .common import get_header, get_signal_ioring_ports, VHDL_DIRECTIONS
 
 
 def generate_vhdl_ioring(
@@ -18,7 +18,7 @@ def generate_vhdl_ioring(
     """
     arch = meta_table.architecture
     rtl = []
-    for line in get_ioring_header():
+    for line in get_header():
         if line:
             rtl.append(f"-- {line}")
         else:

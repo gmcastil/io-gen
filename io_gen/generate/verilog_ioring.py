@@ -4,7 +4,7 @@ from io_gen.tables import SignalTable
 from io_gen.tables import PinTable
 
 from .formatting import indent_join
-from .common import get_ioring_header, get_signal_ioring_ports, VLOG_DIRECTIONS
+from .common import get_header, get_signal_ioring_ports, VLOG_DIRECTIONS
 
 
 def generate_verilog_ioring(
@@ -17,7 +17,7 @@ def generate_verilog_ioring(
     """
 
     rtl = []
-    for line in get_ioring_header():
+    for line in get_header():
         if line:
             rtl.append(f"// {line}")
         else:

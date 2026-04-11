@@ -1,10 +1,19 @@
 from io_gen.tables import PinTable, pin_is_differential
 from io_gen.tables import SignalTable
 
+from .common import get_header
+
 
 def generate_xdc(signal_table: SignalTable, pin_table: PinTable) -> str:
     """Generate XDC constraints from the signal and pin tables"""
-    sig_pins = []
+    xdc_lines = []
+    header = []
+    for line in get_header():
+        if line:
+            header.append(f"# {line}")
+        else:
+            header.append("#")
+    xdc_lines.append("\n".join(header))
     for sig in signal_table:
         name = sig["name"]
         comment = sig["comment"].get("xdc", None)
@@ -99,7 +108,7 @@ def generate_xdc(signal_table: SignalTable, pin_table: PinTable) -> str:
 
         # This gives a block of pin constraints, with the comment at the top and no intervening
         # blank lines.
-        sig_pins.append("\n".join(lines))
+        xdc_lines.append("\n".join(lines))
 
     # Now join them with a blank line in between each block and fnish with a newline at the end
-    return "\n\n".join(sig_pins) + "\n"
+    return "\n\n".join(xdc_lines) + "\n"
