@@ -11,6 +11,9 @@
         "part": {
             "type": "string"
         },
+        "constraints": {
+            "$ref": "defs/constraints.json"
+        },
         "architecture": {
             "type": "string"
         },
@@ -205,6 +208,7 @@
     "required": [
         "title",
         "part",
+        "constraints",
         "signals"
     ]
 }

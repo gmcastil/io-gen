@@ -1,0 +1,29 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "defs/constraints.json",
+    "title": "IO constraints",
+    "type": "object",
+    "required": [
+        "cfgbvs",
+        "config_voltage"
+    ],
+    "properties": {
+        "cfgbvs": {
+            "type": "string",
+            "enum": [
+                "VCCO",
+                "GND"
+            ]
+        },
+        "config_voltage": {
+            "type": "number",
+            "enum": [
+                1.5,
+                1.8,
+                2.5,
+                3.3
+            ]
+        },
+        "additionalProperties": false
+    }
+}

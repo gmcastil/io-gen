@@ -2,6 +2,10 @@ title: Example Design
 part: xc7k325tffg900-2
 architecture: rtl
 
+constraints:
+  cfgbvs: GND
+  config_voltage: 1.8
+
 signals:
 
     # Scalar single-ended input
