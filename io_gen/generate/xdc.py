@@ -1,11 +1,16 @@
 from io_gen.tables import PinTable, pin_is_differential
 from io_gen.tables import SignalTable
+from io_gen.tables import ConstraintsTable
 
 from .common import get_header
 
 
-def generate_xdc(signal_table: SignalTable, pin_table: PinTable) -> str:
+def generate_xdc(
+    signal_table: SignalTable, pin_table: PinTable, constraints_table: ConstraintsTable
+) -> str:
     """Generate XDC constraints from the signal and pin tables"""
+
+    # Start by writing out the header
     xdc_lines = []
     header = []
     for line in get_header():
@@ -14,6 +19,15 @@ def generate_xdc(signal_table: SignalTable, pin_table: PinTable) -> str:
         else:
             header.append("#")
     xdc_lines.append("\n".join(header))
+
+    # Set general configuration and bank voltage constraints
+    constraints = [
+        f"set_property CONFIG_VOLTAGE {constraints_table.config_voltage} [current_design]",
+        f"set_property CFGBVS {constraints_table.cfgbvs} [current_design]",
+    ]
+    xdc_lines.append("\n".join(constraints))
+
+    # Now add the individual pin constraints
     for sig in signal_table:
         name = sig["name"]
         comment = sig["comment"].get("xdc", None)

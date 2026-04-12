@@ -31,6 +31,9 @@ VALID_STRUCTURAL_CASES = [
         """
         title: Test
         part: xc7k325tffg900-2
+        constraints:
+          config_voltage: 3.3
+          cfgbvs: VCCO
         signals:
           - name: sys_clk
             pins: G22
@@ -44,6 +47,9 @@ VALID_STRUCTURAL_CASES = [
         """
         title: Test
         part: xc7k325tffg900-2
+        constraints:
+          config_voltage: 3.3
+          cfgbvs: VCCO
         signals:
           - name: sys_clk
             pins: G22
@@ -72,6 +78,84 @@ INVALID_STRUCTURAL_CASES = [
         "missing_title",
         """
         part: xc7k325tffg900-2
+        constraints:
+          config_voltage: 3.3
+          cfgbvs: VCCO
+        signals:
+          - name: sys_clk
+            pins: G22
+            direction: in
+            buffer: ibuf
+            iostandard: LVCMOS18
+        """,
+    ),
+    (
+        "missing_constraints",
+        """
+        title: Test
+        part: xc7k325tffg900-2
+        signals:
+          - name: sys_clk
+            pins: G22
+            direction: in
+            buffer: ibuf
+            iostandard: LVCMOS18
+        """,
+    ),
+    (
+        "missing_config_voltage",
+        """
+        title: Test
+        part: xc7k325tffg900-2
+        constraints:
+          cfgbvs: VCCO
+        signals:
+          - name: sys_clk
+            pins: G22
+            direction: in
+            buffer: ibuf
+            iostandard: LVCMOS18
+        """,
+    ),
+    (
+        "missing_cfgbvs",
+        """
+        title: Test
+        part: xc7k325tffg900-2
+        constraints:
+          config_voltage: 3.3
+        signals:
+          - name: sys_clk
+            pins: G22
+            direction: in
+            buffer: ibuf
+            iostandard: LVCMOS18
+        """,
+    ),
+    (
+        "invalid_config_voltage",
+        """
+        title: Test
+        part: xc7k325tffg900-2
+        constraints:
+          config_voltage: 2.0
+          cfgbvs: VCCO
+        signals:
+          - name: sys_clk
+            pins: G22
+            direction: in
+            buffer: ibuf
+            iostandard: LVCMOS18
+        """,
+    ),
+    (
+        "invalid_cfgbvs",
+        """
+        title: Test
+        part: xc7k325tffg900-2
+        constraints:
+          config_voltage: 3.3
+          cfgbvs: VCCIO
         signals:
           - name: sys_clk
             pins: G22
@@ -85,6 +169,9 @@ INVALID_STRUCTURAL_CASES = [
         """
         title: Test
         part: xc7k325tffg900-2
+        constraints:
+          config_voltage: 3.3
+          cfgbvs: VCCO
         signals:
           - name: sys_clk
             pins: G22
@@ -97,6 +184,9 @@ INVALID_STRUCTURAL_CASES = [
         """
         title: Test
         part: xc7k325tffg900-2
+        constraints:
+          config_voltage: 3.3
+          cfgbvs: VCCO
         signals:
           - name: sys_clk
             pins: G22
@@ -110,6 +200,9 @@ INVALID_STRUCTURAL_CASES = [
         """
         title: Test
         part: xc7k325tffg900-2
+        constraints:
+          config_voltage: 3.3
+          cfgbvs: VCCO
         signals:
           - name: led
             pins: [A22, B22]
@@ -123,6 +216,9 @@ INVALID_STRUCTURAL_CASES = [
         """
         title: Test
         part: xc7k325tffg900-2
+        constraints:
+          config_voltage: 3.3
+          cfgbvs: VCCO
         signals:
           - name: sys_clk
             pins: G22
@@ -135,6 +231,9 @@ INVALID_STRUCTURAL_CASES = [
         """
         title: Test
         part: xc7k325tffg900-2
+        constraints:
+          config_voltage: 3.3
+          cfgbvs: VCCO
         signals:
           - name: ref_clk
             pinset:
@@ -149,6 +248,9 @@ INVALID_STRUCTURAL_CASES = [
         """
         title: Test
         part: xc7k325tffg900-2
+        constraints:
+          config_voltage: 3.3
+          cfgbvs: VCCO
         signals:
           - name: spare
             pins: J24
@@ -163,6 +265,9 @@ INVALID_STRUCTURAL_CASES = [
         """
         title: Test
         part: xc7k325tffg900-2
+        constraints:
+          config_voltage: 3.3
+          cfgbvs: VCCO
         signals:
           - name: clk
             pins: G22
@@ -197,6 +302,9 @@ VALID_INTEGRATION_CASES = [
         """
         title: Test
         part: xc7k325tffg900-2
+        constraints:
+          config_voltage: 3.3
+          cfgbvs: VCCO
         signals:
           - name: sys_clk
             pins: G22
@@ -207,6 +315,10 @@ VALID_INTEGRATION_CASES = [
         {
             "title": "Test",
             "part": "xc7k325tffg900-2",
+            "constraints": {
+                "config_voltage": 3.3,
+                "cfgbvs": "VCCO",
+            },
             "signals": [
                 {
                     "name": "sys_clk",
@@ -223,6 +335,9 @@ VALID_INTEGRATION_CASES = [
         """
         title: Test
         part: xc7k325tffg900-2
+        constraints:
+          config_voltage: 3.3
+          cfgbvs: VCCO
         signals:
           - name: sys_clk
             pins: G22
@@ -236,6 +351,10 @@ VALID_INTEGRATION_CASES = [
         {
             "title": "Test",
             "part": "xc7k325tffg900-2",
+            "constraints": {
+                "config_voltage": 3.3,
+                "cfgbvs": "VCCO",
+            },
             "signals": [
                 {
                     "name": "sys_clk",

@@ -2,6 +2,10 @@ title: Digilent Basys3 Reference Design
 part: xc7a35tcpg236-1
 architecture: rtl
 
+constraints:
+  cfgbvs: VCCO
+  config_voltage: 3.3
+
 signals:
 
   - name: clk_100m00

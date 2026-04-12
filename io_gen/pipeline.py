@@ -4,6 +4,7 @@ from io_gen.validate import validate, validate_verilog, validate_vhdl
 from io_gen.tables.signal_table import build_signal_table
 from io_gen.tables.pin_table import build_pin_table
 from io_gen.tables.meta_table import build_meta_table
+from io_gen.tables.constraints_table import build_constraints_table
 
 from io_gen.generate.xdc import generate_xdc
 from io_gen.generate.verilog_top import generate_verilog_top
@@ -67,6 +68,9 @@ def run_pipeline(
     # Create the table of metadata
     meta_table = build_meta_table(valid_doc)
 
+    # Create the table additional constraints to pass to the XDC generator
+    constraints_table = build_constraints_table(valid_doc)
+
     # Create the table of signals from the validated doc
     signal_table = build_signal_table(valid_doc)
     # Now that we know the language and top level module or component names, we validate
@@ -85,7 +89,7 @@ def run_pipeline(
 
     if not rtl_only:
         with open(output_dir / f"{top}.xdc", "w") as xdc:
-            xdc.write(generate_xdc(signal_table, pin_table))
+            xdc.write(generate_xdc(signal_table, pin_table, constraints_table))
             print(f"Info: Wrote XDC constraints to {output_dir / f'{top}.xdc'}")
 
     if not xdc_only:

@@ -31,6 +31,7 @@ from .checks import (
 SCHEMA_TOP = "schema.json"
 # Referenced JSON files stored in schema/defs
 SCHEMA_REFS = [
+    "constraints.json",
     "direction.json",
     "buffer.json",
     "pinset.json",
