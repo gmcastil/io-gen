@@ -18,7 +18,8 @@ set part [lindex $argv 0]
 set xdc_file [lindex $argv 1]
 set rpt_dir [lindex $argv 2]
 
-set rpt_file [file rootname
+set rpt_file [file rootname "${xdc_file}"].rpt
+set rpx_file [file rootname "${xdc_file}"].rpx
 
 set proj_name "drc-validation"
 
@@ -28,7 +29,7 @@ set_property DESIGN_MODE PinPlanning [current_fileset]
 
 open_io_design -name "io_plan"
 read_xdc "${xdc_file}"
-report_drc -no_waivers -name drc_1 -ruledecks {default} -file "${rpt_file}"
+report_drc -no_waivers -name drc_1 -ruledecks {default} -file "${rpt_file}" -rpx "${rpx_file}"
 
 close_project
 

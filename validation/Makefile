@@ -1,18 +1,39 @@
 SHELL		:= /bin/bash
-
-MKDIR		:= mkdir
-
-IOGEN		:= io-gen
+MAKEFILE_DIR	:= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
 BOARD		:= basys3
-OUTPUT_DIR	:= $(PWD)/$(BOARD)
+BOARD_DIR	:= $(MAKEFILE_DIR)/$(BOARD)
+BOARD_YAML	:= $(BOARD_DIR)/$(BOARD).yaml
+OUTPUT_DIR	:= $(BOARD_DIR)/output
+BOARD_XDC	:= $(OUTPUT_DIR)/$(BOARD).xdc
 
-.PHONY: $(BOARD)
-$(BOARD): $(BOARD).yaml
+include $(BOARD_DIR)/board.mk
+
+MKDIR		:= mkdir
+RM		:= rm
+# Users may need to source the .venv/bin/activate script to make sure
+# that io-gen is in their PATH
+IOGEN		:= io-gen
+# Users probably need to source the settings64.sh script in the Vivado
+# installation directory to make sure this is in their PATH
+VIVADO		:= echo
+# Put Vivado in batch mode and stick the journal and log in the output directory
+VIVADO_ARGS	:= -mode tcl -log $(OUTPUT_DIR)/vivado.log -journal $(OUTPUT_DIR)/vivado.jou
+VIVADO_TCLARGS	:= $(PART) $(BOARD_DIR)/$(BOARD).xdc $(OUTPUT_DIR)
+RUN_DRC		:= $(MAKEFILE_DIR)/run_drc.tcl
+
+.PHONY: validate drc $(BOARD) clean
+
+validate: drc
+
+drc: $(BOARD)
+	$(VIVADO) $(VIVADO_ARGS) -source $(RUN_DRC) -tclargs $(VIVADO_TCLARGS)
+
+$(BOARD): $(BOARD_YAML)
 	$(MKDIR) -pv $(OUTPUT_DIR)
-	$(IOGEN) --top $(BOARD) --lang verilog --output $(OUTPUT_DIR) $(BOARD).yaml
-	$(IOGEN) --top $(BOARD) --lang vhdl --output $(OUTPUT_DIR) $(BOARD).yaml
+	$(IOGEN) --top $(BOARD) --lang verilog --output $(OUTPUT_DIR) $(BOARD_YAML)
+	$(IOGEN) --top $(BOARD) --lang vhdl --output $(OUTPUT_DIR) $(BOARD_YAML)
 
 clean:
-	$(RM) -rf basys3
+	$(RM) -rf $(BOARD_DIR)
 
