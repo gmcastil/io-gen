@@ -28,11 +28,11 @@ RUN_DRC		:= $(MAKEFILE_DIR)/run_drc.tcl
 validate: drc
 
 drc: $(BOARD)
-	@$(MKDIR) -pv $(REPORTS_DIR)
+	@$(MKDIR) -p $(REPORTS_DIR)
 	@$(VIVADO) $(VIVADO_ARGS) -source $(RUN_DRC) -tclargs $(VIVADO_TCLARGS)
 
 $(BOARD): $(BOARD_YAML)
-	@$(MKDIR) -pv $(OUTPUT_DIR)
+	@$(MKDIR) -p $(OUTPUT_DIR)
 	@$(IOGEN) --top $(BOARD) --lang verilog --output $(OUTPUT_DIR) $(BOARD_YAML)
 	@$(IOGEN) --top $(BOARD) --lang vhdl --output $(OUTPUT_DIR) $(BOARD_YAML)
 
