@@ -38,4 +38,5 @@ $(BOARD): $(BOARD_YAML)
 
 clean:
 	@$(RM) -rf $(OUTPUT_DIR)
+	@$(RM) -rf $(MAKEFILE_DIR)/.Xil
 
