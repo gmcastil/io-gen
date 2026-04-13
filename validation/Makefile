@@ -28,7 +28,7 @@ RUN_DRC		:= $(MAKEFILE_DIR)/run_drc.tcl
 validate: drc
 
 drc: $(BOARD)
-	$(MKDIR) -pv $(REPORTS_DIR)
+	@$(MKDIR) -pv $(REPORTS_DIR)
 	@$(VIVADO) $(VIVADO_ARGS) -source $(RUN_DRC) -tclargs $(VIVADO_TCLARGS)
 
 $(BOARD): $(BOARD_YAML)
