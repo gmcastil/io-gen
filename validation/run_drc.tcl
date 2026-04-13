@@ -15,7 +15,7 @@ if { [llength $argv] != 4} {
 
 # From tclargs - these should be validated prior to running 
 set part [lindex $argv 0]
-set board [lindex $argv 1
+set board [lindex $argv 1]
 set xdc_file [lindex $argv 2]
 set output_dir [lindex $argv 3]
 

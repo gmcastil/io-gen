@@ -5,6 +5,7 @@ BOARD		:= basys3
 BOARD_DIR	:= $(MAKEFILE_DIR)/$(BOARD)
 BOARD_YAML	:= $(BOARD_DIR)/$(BOARD).yaml
 OUTPUT_DIR	:= $(BOARD_DIR)/output
+REPORTS_DIR	:= $(OUTPUT_DIR)/reports
 BOARD_XDC	:= $(OUTPUT_DIR)/$(BOARD).xdc
 
 include $(BOARD_DIR)/board.mk
@@ -19,7 +20,7 @@ IOGEN		:= io-gen
 VIVADO		:= vivado
 # Put Vivado in batch mode and stick the journal and log in the output directory
 VIVADO_ARGS	:= -mode tcl -log $(OUTPUT_DIR)/vivado.log -journal $(OUTPUT_DIR)/vivado.jou -notrace
-VIVADO_TCLARGS	:= $(PART) $(BOARD) $(BOARD_XDC) $(OUTPUT_DIR)
+VIVADO_TCLARGS	:= $(PART) $(BOARD) $(BOARD_XDC) $(REPORTS_DIR)
 RUN_DRC		:= $(MAKEFILE_DIR)/run_drc.tcl
 
 .PHONY: validate drc $(BOARD) clean
@@ -27,6 +28,7 @@ RUN_DRC		:= $(MAKEFILE_DIR)/run_drc.tcl
 validate: drc
 
 drc: $(BOARD)
+	$(MKDIR) -pv $(REPORTS_DIR)
 	@$(VIVADO) $(VIVADO_ARGS) -source $(RUN_DRC) -tclargs $(VIVADO_TCLARGS)
 
 $(BOARD): $(BOARD_YAML)
@@ -35,5 +37,5 @@ $(BOARD): $(BOARD_YAML)
 	@$(IOGEN) --top $(BOARD) --lang vhdl --output $(OUTPUT_DIR) $(BOARD_YAML)
 
 clean:
-	@$(RM) -rf $(BOARD_DIR)
+	@$(RM) -rf $(OUTPUT_DIR)
 
