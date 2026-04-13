@@ -8,19 +8,19 @@ proc usage { } {
 }
 
 # Input argument checking
-if { [llength $argv] != 3} {
+if { [llength $argv] != 4} {
     usage
     exit 1
 }
 
 # From tclargs - these should be validated prior to running 
 set part [lindex $argv 0]
-set xdc_file [lindex $argv 1]
-set rpt_dir [lindex $argv 2]
+set board [lindex $argv 1
+set xdc_file [lindex $argv 2]
+set output_dir [lindex $argv 3]
 
-set rpt_file [file rootname "${xdc_file}"].rpt
-set rpx_file [file rootname "${xdc_file}"].rpx
-
+set rpt_file "${output_dir}/${board}.rpt"
+set rpx_file "${output_dir}/${board}.rpx"
 set proj_name "drc-validation"
 
 # Create an in-memory pin planning project

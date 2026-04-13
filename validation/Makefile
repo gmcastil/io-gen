@@ -19,7 +19,7 @@ IOGEN		:= io-gen
 VIVADO		:= vivado
 # Put Vivado in batch mode and stick the journal and log in the output directory
 VIVADO_ARGS	:= -mode tcl -log $(OUTPUT_DIR)/vivado.log -journal $(OUTPUT_DIR)/vivado.jou -notrace
-VIVADO_TCLARGS	:= $(PART) $(BOARD_XDC) $(OUTPUT_DIR)
+VIVADO_TCLARGS	:= $(PART) $(BOARD) $(BOARD_XDC) $(OUTPUT_DIR)
 RUN_DRC		:= $(MAKEFILE_DIR)/run_drc.tcl
 
 .PHONY: validate drc $(BOARD) clean
@@ -27,13 +27,13 @@ RUN_DRC		:= $(MAKEFILE_DIR)/run_drc.tcl
 validate: drc
 
 drc: $(BOARD)
-	$(VIVADO) $(VIVADO_ARGS) -source $(RUN_DRC) -tclargs $(VIVADO_TCLARGS)
+	@$(VIVADO) $(VIVADO_ARGS) -source $(RUN_DRC) -tclargs $(VIVADO_TCLARGS)
 
 $(BOARD): $(BOARD_YAML)
-	$(MKDIR) -pv $(OUTPUT_DIR)
-	$(IOGEN) --top $(BOARD) --lang verilog --output $(OUTPUT_DIR) $(BOARD_YAML)
-	$(IOGEN) --top $(BOARD) --lang vhdl --output $(OUTPUT_DIR) $(BOARD_YAML)
+	@$(MKDIR) -pv $(OUTPUT_DIR)
+	@$(IOGEN) --top $(BOARD) --lang verilog --output $(OUTPUT_DIR) $(BOARD_YAML)
+	@$(IOGEN) --top $(BOARD) --lang vhdl --output $(OUTPUT_DIR) $(BOARD_YAML)
 
 clean:
-	$(RM) -rf $(BOARD_DIR)
+	@$(RM) -rf $(BOARD_DIR)
 
