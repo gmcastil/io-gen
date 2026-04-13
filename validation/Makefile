@@ -16,10 +16,10 @@ RM		:= rm
 IOGEN		:= io-gen
 # Users probably need to source the settings64.sh script in the Vivado
 # installation directory to make sure this is in their PATH
-VIVADO		:= echo
+VIVADO		:= vivado
 # Put Vivado in batch mode and stick the journal and log in the output directory
-VIVADO_ARGS	:= -mode tcl -log $(OUTPUT_DIR)/vivado.log -journal $(OUTPUT_DIR)/vivado.jou
-VIVADO_TCLARGS	:= $(PART) $(BOARD_DIR)/$(BOARD).xdc $(OUTPUT_DIR)
+VIVADO_ARGS	:= -mode tcl -log $(OUTPUT_DIR)/vivado.log -journal $(OUTPUT_DIR)/vivado.jou -notrace
+VIVADO_TCLARGS	:= $(PART) $(BOARD_XDC) $(OUTPUT_DIR)
 RUN_DRC		:= $(MAKEFILE_DIR)/run_drc.tcl
 
 .PHONY: validate drc $(BOARD) clean
