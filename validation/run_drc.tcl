@@ -32,4 +32,5 @@ read_xdc "${xdc_file}"
 report_drc -no_waivers -name drc_1 -ruledecks {default} -file "${rpt_file}" -rpx "${rpx_file}"
 
 close_project
+exit
 
