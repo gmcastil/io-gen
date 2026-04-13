@@ -79,6 +79,3 @@ YAML description to placed-and-routed hardware.
 | `example_io.v`   | Expected Verilog IO ring output                |
 | `example.vhd`    | Expected VHDL top-level output                 |
 | `example_io.vhd` | Expected VHDL IO ring output                   |
-
-Tcl scripts and the user logic core will be added here once the generator is
-producing correct output end-to-end.

@@ -40,39 +40,77 @@ existing files.
 
 ## Installation
 
-TBD - pip install instructions once packaged.
+`io-gen` requires Python 3.11 or later. To install from GitHub
+
+```bash
+pip install git+https://github.com/gmcastil/io-gen.git
+```
+
+or to install from a local clone use `pip`
+
+```
+pip install .
+```
+
+On macOS with `homebrew` installed, it's usually preferable to use `pipx` to
+install the tool locally.
+
+```
+pipx install .
+```
+
+For development, an editable installation keeps the source files in place, so
+changes will take effect immediately
+
+```
+pip install -e .
+```
+
+After installation, the `io-gen` command will be available in the PATH.
 
 ---
 
 ## Usage
 
-TBD - basic invocation, flag descriptions, and a short example.
+```
+io-gen --top NAME [--lang LANG] [--output DIR] [--validate-only | --rtl-only | --xdc-only] input.yaml
+```
 
----
+`--top NAME` is required. Sets the HDL module or entity name and drives all
+output file names. Must be a valid HDL identifier.
 
-## Output Files
+`--lang verilog|vhdl` selects the output language (default: `verilog`). Ignored
+when `--xdc-only` is specified.
 
-For a given `--top` name and `--lang` selection, `io-gen` produces up to three
-files in the output directory:
+`--output DIR` sets the output directory (default: current directory). Created
+if it does not exist.
 
-| File             | Contents                                  |
-| ---------------- | ----------------------------------------- |
-| `<top>.xdc`      | Pin assignment and IOSTANDARD constraints |
-| `<top>.<ext>`    | Top-level module or entity with port list |
-| `<top>_io.<ext>` | IO ring with buffer instantiations        |
+The following three options are mutually exclusive:
 
-Where `<ext>` is `v` for Verilog or `vhd` for VHDL. Generation of HDL or XDC
-only is also supported via `--rtl-only` and `--xdc-only`.
+- `--validate-only` — parse and validate the input YAML without writing any
+  output. Exits non-zero on failure. Useful in CI.
+- `--rtl-only` — generate HDL files only. Skip the XDC file.
+- `--xdc-only` — generate the XDC file only. Skip HDL files. `--lang` is not
+  required.
+
+### Example
+
+```
+io-gen --top example --lang verilog --output out/ examples/example.yaml
+```
+
+Produces `out/example.xdc`, `out/example.v`, and `out/example_io.v`. Reference
+output for all supported signal types is in `examples/`.
 
 ---
 
 ## Examples
 
 The `examples/` directory contains a reference YAML file covering every
-supported signal type, along with the expected generated output files. It also
-describes an end-to-end hardware validation flow that runs the full chain from
-YAML through Vivado to a bitstream on a Basys 3, providing concrete proof that
-the tool produces correct, synthesizable output. See
+supported signal type, along with the expected generated output files. The
+`validation/` directory contains a YAML file describing the pins of the
+Digilent Basys3 FPGA board and a `Makefile` which uses Vivado to run the IO
+planning default DRC on the output XDC file. See
 [examples/README.md](examples/README.md) for details.
 
 ---
