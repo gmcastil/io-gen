@@ -37,6 +37,7 @@ help:
 	@$(PRINTF) '%s\n' "Available targets:"
 	@$(PRINTF) '%-16s %s\n' "  help" "This help menu"
 	@$(PRINTF) '%-16s %s\n' "  test" "Run entire test suite"
+	@$(PRINTF) '%-16s %s\n' "  examples" "Rebuild examples"
 	@$(PRINTF) '%-16s %s\n' "  install" "Use pip to perform an editable install"
 	@$(PRINTF) '%-16s %s\n' "  debug" "Run entire test suite, with PDB and output directed to console"
 	@$(PRINTF) '%-16s %s\n' "  coverage" "Run tests with coverage"
