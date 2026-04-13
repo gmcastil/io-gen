@@ -19,7 +19,7 @@ IOGEN		:= io-gen
 # installation directory to make sure this is in their PATH
 VIVADO		:= vivado
 # Put Vivado in batch mode and stick the journal and log in the output directory
-VIVADO_ARGS	:= -mode tcl -log $(OUTPUT_DIR)/vivado.log -journal $(OUTPUT_DIR)/vivado.jou -notrace
+VIVADO_ARGS	:= -mode tcl -log $(REPORTS_DIR)/vivado.log -journal $(REPORTS_DIR)/vivado.jou -notrace
 VIVADO_TCLARGS	:= $(PART) $(BOARD) $(BOARD_XDC) $(REPORTS_DIR)
 RUN_DRC		:= $(MAKEFILE_DIR)/run_drc.tcl
 
