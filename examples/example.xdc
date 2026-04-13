@@ -3,6 +3,9 @@
 # Regenerate from source YAML using io-gen
 #
 
+set_property CONFIG_VOLTAGE 1.8 [current_design]
+set_property CFGBVS GND [current_design]
+
 # 125 MHz system clock
 set_property PACKAGE_PIN G22 [get_ports sys_clk_pad]
 set_property IOSTANDARD LVCMOS18 [get_ports sys_clk_pad]
