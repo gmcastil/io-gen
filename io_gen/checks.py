@@ -11,6 +11,7 @@ BUFFER_DIRECTIONS = {
     "ibufds": "in",
     "obufds": "out",
     "iobuf": "inout",
+    "iobufds": "inout",
 }
 
 # Pair buffer with whether they are single or differential
@@ -20,6 +21,7 @@ BUFFER_STRATEGIES = {
     "ibufds": "pinset",
     "obufds": "pinset",
     "iobuf": "pins",
+    "iobufds": "pinset",
 }
 
 # Inference only supported for certain buffer types
@@ -168,8 +170,8 @@ def _check_pinset_array_width_match(sig: dict) -> None:
 def _check_buffer_direction(sig: dict) -> None:
     """Check that the buffer type is compatible with the declared direction.
 
-    Required pairings: ibuf->in, obuf->out, ibufds->in, obufds->out, iobuf->inout.
-    Raises ValidationError identifying the signal, buffer, and direction.
+    Required pairings: ibuf->in, obuf->out, ibufds->in, obufds->out, iobuf->inout,
+    iobufds->inout. Raises ValidationError identifying the signal, buffer, and direction.
     Skips signals with generate: false or bypass: true (no buffer required).
     """
     if not sig.get("generate", True) or sig.get("bypass", False):

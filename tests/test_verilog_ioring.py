@@ -12,6 +12,7 @@ from io_gen.generate.verilog_ioring import (
     _instantiate_ibufds,
     _instantiate_obufds,
     _instantiate_iobuf,
+    _instantiate_iobufds,
     _generate_verilog_ioring_ports,
     _generate_verilog_ioring_body,
     generate_verilog_ioring,
@@ -133,8 +134,8 @@ def test_instantiate_ibuf_scalar() -> None:
         "    IBUF //#(\n"
         "    //)\n"
         "    ibuf_sys_clk_i0 (\n"
-        "        .O  (sys_clk),\n"
-        "        .I  (sys_clk_pad)\n"
+        "        .O      (sys_clk),\n"
+        "        .I      (sys_clk_pad)\n"
         "    );"
     )
     assert _instantiate_ibuf("sys_clk", row) == expected
@@ -147,8 +148,8 @@ def test_instantiate_ibuf_bus_first_element() -> None:
         "    IBUF //#(\n"
         "    //)\n"
         "    ibuf_data_i0 (\n"
-        "        .O  (data[0]),\n"
-        "        .I  (data_pad[0])\n"
+        "        .O      (data[0]),\n"
+        "        .I      (data_pad[0])\n"
         "    );"
     )
     assert _instantiate_ibuf("data", row) == expected
@@ -161,8 +162,8 @@ def test_instantiate_ibuf_bus_mid_element() -> None:
         "    IBUF //#(\n"
         "    //)\n"
         "    ibuf_data_i2 (\n"
-        "        .O  (data[2]),\n"
-        "        .I  (data_pad[2])\n"
+        "        .O      (data[2]),\n"
+        "        .I      (data_pad[2])\n"
         "    );"
     )
     assert _instantiate_ibuf("data", row) == expected
@@ -183,8 +184,8 @@ def test_instantiate_obuf_scalar() -> None:
         "    OBUF //#(\n"
         "    //)\n"
         "    obuf_led_i0 (\n"
-        "        .O  (led_pad),\n"
-        "        .I  (led)\n"
+        "        .O      (led_pad),\n"
+        "        .I      (led)\n"
         "    );"
     )
     assert _instantiate_obuf("led", row) == expected
@@ -197,8 +198,8 @@ def test_instantiate_obuf_bus_first_element() -> None:
         "    OBUF //#(\n"
         "    //)\n"
         "    obuf_led_i0 (\n"
-        "        .O  (led_pad[0]),\n"
-        "        .I  (led[0])\n"
+        "        .O      (led_pad[0]),\n"
+        "        .I      (led[0])\n"
         "    );"
     )
     assert _instantiate_obuf("led", row) == expected
@@ -211,8 +212,8 @@ def test_instantiate_obuf_bus_last_element() -> None:
         "    OBUF //#(\n"
         "    //)\n"
         "    obuf_led_i3 (\n"
-        "        .O  (led_pad[3]),\n"
-        "        .I  (led[3])\n"
+        "        .O      (led_pad[3]),\n"
+        "        .I      (led[3])\n"
         "    );"
     )
     assert _instantiate_obuf("led", row) == expected
@@ -259,9 +260,9 @@ def test_instantiate_ibufds_scalar() -> None:
         "    IBUFDS //#(\n"
         "    //)\n"
         "    ibufds_ref_clk_i0 (\n"
-        "        .O  (ref_clk),\n"
-        "        .I  (ref_clk_p),\n"
-        "        .IB (ref_clk_n)\n"
+        "        .O      (ref_clk),\n"
+        "        .I      (ref_clk_p),\n"
+        "        .IB     (ref_clk_n)\n"
         "    );"
     )
     assert _instantiate_ibufds("ref_clk", row) == expected
@@ -274,9 +275,9 @@ def test_instantiate_ibufds_bus() -> None:
         "    IBUFDS //#(\n"
         "    //)\n"
         "    ibufds_ref_clk_i1 (\n"
-        "        .O  (ref_clk[1]),\n"
-        "        .I  (ref_clk_p[1]),\n"
-        "        .IB (ref_clk_n[1])\n"
+        "        .O      (ref_clk[1]),\n"
+        "        .I      (ref_clk_p[1]),\n"
+        "        .IB     (ref_clk_n[1])\n"
         "    );"
     )
     assert _instantiate_ibufds("ref_clk", row) == expected
@@ -323,9 +324,9 @@ def test_instantiate_obufds_scalar() -> None:
         "    OBUFDS //#(\n"
         "    //)\n"
         "    obufds_lvds_data_i0 (\n"
-        "        .O  (lvds_data_p),\n"
-        "        .OB (lvds_data_n),\n"
-        "        .I  (lvds_data)\n"
+        "        .O      (lvds_data_p),\n"
+        "        .OB     (lvds_data_n),\n"
+        "        .I      (lvds_data)\n"
         "    );"
     )
     assert _instantiate_obufds("lvds_data", row) == expected
@@ -338,9 +339,9 @@ def test_instantiate_obufds_bus() -> None:
         "    OBUFDS //#(\n"
         "    //)\n"
         "    obufds_lvds_data_i2 (\n"
-        "        .O  (lvds_data_p[2]),\n"
-        "        .OB (lvds_data_n[2]),\n"
-        "        .I  (lvds_data[2])\n"
+        "        .O      (lvds_data_p[2]),\n"
+        "        .OB     (lvds_data_n[2]),\n"
+        "        .I      (lvds_data[2])\n"
         "    );"
     )
     assert _instantiate_obufds("lvds_data", row) == expected
@@ -387,10 +388,10 @@ def test_instantiate_iobuf_scalar() -> None:
         "    IOBUF //#(\n"
         "    //)\n"
         "    iobuf_gpio_i0 (\n"
-        "        .O  (gpio_i),\n"
-        "        .I  (gpio_o),\n"
-        "        .IO (gpio_pad),\n"
-        "        .T  (gpio_t)\n"
+        "        .O      (gpio_i),\n"
+        "        .I      (gpio_o),\n"
+        "        .IO     (gpio_pad),\n"
+        "        .T      (gpio_t)\n"
         "    );"
     )
     assert _instantiate_iobuf("gpio", row) == expected
@@ -403,13 +404,81 @@ def test_instantiate_iobuf_bus() -> None:
         "    IOBUF //#(\n"
         "    //)\n"
         "    iobuf_gpio_i3 (\n"
-        "        .O  (gpio_i[3]),\n"
-        "        .I  (gpio_o[3]),\n"
-        "        .IO (gpio_pad[3]),\n"
-        "        .T  (gpio_t[3])\n"
+        "        .O      (gpio_i[3]),\n"
+        "        .I      (gpio_o[3]),\n"
+        "        .IO     (gpio_pad[3]),\n"
+        "        .T      (gpio_t[3])\n"
         "    );"
     )
     assert _instantiate_iobuf("gpio", row) == expected
+
+
+# ---- _instantiate_iobufds --------------------------------------------------
+
+
+def _scalar_iobufds_row(instance: str) -> dict:
+    return {
+        "pinset": {"p": "J25", "n": "K25"},
+        "iostandard": "DIFF_HSTL_I",
+        "direction": "inout",
+        "buffer": "iobufds",
+        "infer": False,
+        "instance": instance,
+        "is_bus": False,
+        "index": 0,
+    }
+
+
+def _bus_iobufds_row(instance: str, index: int) -> dict:
+    return {
+        "pinset": {"p": "J25", "n": "K25"},
+        "iostandard": "DIFF_HSTL_I",
+        "direction": "inout",
+        "buffer": "iobufds",
+        "infer": False,
+        "instance": instance,
+        "is_bus": True,
+        "index": index,
+    }
+
+
+def test_instantiate_iobufds_returns_str() -> None:
+    row = _scalar_iobufds_row("iobufds_diff_io_i0")
+    assert isinstance(_instantiate_iobufds("diff_io", row), str)
+
+
+def test_instantiate_iobufds_scalar() -> None:
+    """Scalar IOBUFDS using Xilinx port order: O, I, IO, IOB, T."""
+    row = _scalar_iobufds_row("iobufds_diff_io_i0")
+    expected = (
+        "    IOBUFDS //#(\n"
+        "    //)\n"
+        "    iobufds_diff_io_i0 (\n"
+        "        .O      (diff_io_i),\n"
+        "        .I      (diff_io_o),\n"
+        "        .IO     (diff_io_p),\n"
+        "        .IOB    (diff_io_n),\n"
+        "        .T      (diff_io_t)\n"
+        "    );"
+    )
+    assert _instantiate_iobufds("diff_io", row) == expected
+
+
+def test_instantiate_iobufds_bus() -> None:
+    """Bus IOBUFDS uses subscript on all five ports."""
+    row = _bus_iobufds_row("iobufds_diff_io_i1", 1)
+    expected = (
+        "    IOBUFDS //#(\n"
+        "    //)\n"
+        "    iobufds_diff_io_i1 (\n"
+        "        .O      (diff_io_i[1]),\n"
+        "        .I      (diff_io_o[1]),\n"
+        "        .IO     (diff_io_p[1]),\n"
+        "        .IOB    (diff_io_n[1]),\n"
+        "        .T      (diff_io_t[1])\n"
+        "    );"
+    )
+    assert _instantiate_iobufds("diff_io", row) == expected
 
 
 # ---- _generate_verilog_ioring_ports ----------------------------------------
@@ -460,6 +529,13 @@ _IORING_INTEGRATION_SIGNALS = [
         "direction": "out",
         "iostandard": "LVCMOS18",
         "bypass": True,
+    },
+    {
+        "name": "diff_io",
+        "pinset": {"p": "J25", "n": "K25"},
+        "direction": "inout",
+        "buffer": "iobufds",
+        "iostandard": "DIFF_HSTL_I",
     },
 ]
 
@@ -624,6 +700,61 @@ PORT_DECL_CASES = [
         "input   wire [2:0]      lvds_data",
     ),
     (
+        "scalar_diff_inout_p",
+        {
+            "name": "diff_io",
+            "pinset": {"p": "J25", "n": "K25"},
+            "direction": "inout",
+            "buffer": "iobufds",
+            "iostandard": "DIFF_HSTL_I",
+        },
+        "inout   wire            diff_io_p",
+    ),
+    (
+        "scalar_diff_inout_n",
+        {
+            "name": "diff_io",
+            "pinset": {"p": "J25", "n": "K25"},
+            "direction": "inout",
+            "buffer": "iobufds",
+            "iostandard": "DIFF_HSTL_I",
+        },
+        "inout   wire            diff_io_n",
+    ),
+    (
+        "scalar_diff_inout_fabric_i",
+        {
+            "name": "diff_io",
+            "pinset": {"p": "J25", "n": "K25"},
+            "direction": "inout",
+            "buffer": "iobufds",
+            "iostandard": "DIFF_HSTL_I",
+        },
+        "output  wire            diff_io_i",
+    ),
+    (
+        "scalar_diff_inout_fabric_o",
+        {
+            "name": "diff_io",
+            "pinset": {"p": "J25", "n": "K25"},
+            "direction": "inout",
+            "buffer": "iobufds",
+            "iostandard": "DIFF_HSTL_I",
+        },
+        "input   wire            diff_io_o",
+    ),
+    (
+        "scalar_diff_inout_fabric_t",
+        {
+            "name": "diff_io",
+            "pinset": {"p": "J25", "n": "K25"},
+            "direction": "inout",
+            "buffer": "iobufds",
+            "iostandard": "DIFF_HSTL_I",
+        },
+        "input   wire            diff_io_t",
+    ),
+    (
         "bus_width_16_pad_port",
         {
             "name": "data",
@@ -786,7 +917,12 @@ _EXPECTED_IORING_PORTS = (
     "    inout   wire [4:0]      gpio_pad,\n"
     "    output  wire [4:0]      gpio_i,\n"
     "    input   wire [4:0]      gpio_o,\n"
-    "    input   wire [4:0]      gpio_t"
+    "    input   wire [4:0]      gpio_t,\n"
+    "    inout   wire            diff_io_p,\n"
+    "    inout   wire            diff_io_n,\n"
+    "    output  wire            diff_io_i,\n"
+    "    input   wire            diff_io_o,\n"
+    "    input   wire            diff_io_t"
 )
 
 
@@ -831,8 +967,8 @@ def test_ioring_body_scalar_ibuf() -> None:
         "    IBUF //#(\n"
         "    //)\n"
         "    ibuf_sys_clk_i0 (\n"
-        "        .O  (sys_clk),\n"
-        "        .I  (sys_clk_pad)\n"
+        "        .O      (sys_clk),\n"
+        "        .I      (sys_clk_pad)\n"
         "    );"
     )
     assert _generate_verilog_ioring_body(st, pt) == expected
@@ -1028,6 +1164,29 @@ def test_ioring_body_iobuf_bus() -> None:
     assert "\n\n" in output
 
 
+def test_ioring_body_iobufds_scalar() -> None:
+    """Scalar IOBUFDS produces a single instantiation block with IOB port."""
+    st, pt = _make_tables(
+        [
+            {
+                "name": "diff_io",
+                "pinset": {"p": "J25", "n": "K25"},
+                "direction": "inout",
+                "buffer": "iobufds",
+                "iostandard": "DIFF_HSTL_I",
+            }
+        ]
+    )
+    output = _generate_verilog_ioring_body(st, pt)
+    assert "IOBUFDS" in output
+    assert "iobufds_diff_io_i0" in output
+    assert "diff_io_p" in output
+    assert "diff_io_n" in output
+    assert "diff_io_i" in output
+    assert "diff_io_o" in output
+    assert "diff_io_t" in output
+
+
 # ---- generate_verilog_ioring -----------------------------------------------
 
 
@@ -1172,9 +1331,11 @@ def test_generate_verilog_ioring_integration() -> None:
     assert "IBUFDS" in output
     assert "OBUFDS" in output
     assert "IOBUF" in output
+    assert "IOBUFDS" in output
     # All instance names present
     assert "ibuf_sys_clk_i0" in output
     assert "obuf_led_i3" in output
     assert "ibufds_ref_clk_i0" in output
     assert "obufds_lvds_data_i2" in output
     assert "iobuf_gpio_i4" in output
+    assert "iobufds_diff_io_i0" in output

@@ -2,23 +2,30 @@
 
 ## Top-Level Fields
 
-The root of the YAML has five required fields and one optional field:
+The root of the YAML has four required fields and one optional field:
 
 - `title` - a human-readable description of the design
 - `part` - the FPGA part number
-- `CONFIG_VOLTAGE` - the configuration voltage for the FPGA, in volts. Must be
-  one of `1.5`, `1.8`, `2.5`, or `3.3`. Sets the `CONFIG_VOLTAGE` property in
-  the generated XDC. This must match the actual board supply voltage on the
-  configuration bank or configuration failures and marginal I/O behavior can
-  result. See UG912 for details.
-- `CFGBVS` - the voltage selection signal for the configuration bank. Must be
-  `VCCO` (for 3.3V or 2.5V operation) or `GND` (for 1.8V or 1.5V operation).
-  Sets the `CFGBVS` property in the generated XDC. Must be consistent with
-  `config_voltage`. See UG912 for details.
+- `constraints` - a nested object containing Xilinx device configuration
+  properties. See [Constraints](#constraints) below.
 - `signals` - the list of signal descriptors
 - `architecture` *(optional)* - the VHDL architecture name (e.g., `rtl`). Required
   when generating VHDL output; ignored for Verilog. Not enforced by the schema but
   validated at generation time by `validate_vhdl`.
+
+## Constraints
+
+The `constraints` object is required and has two fields:
+
+- `cfgbvs` - the voltage selection signal for the configuration bank. Must be
+  `VCCO` (for 3.3V or 2.5V operation) or `GND` (for 1.8V or 1.5V operation).
+  Sets the `CFGBVS` property in the generated XDC. Must be consistent with
+  `config_voltage`. See UG912 for details.
+- `config_voltage` - the configuration voltage for the FPGA, in volts. Must be
+  one of `1.5`, `1.8`, `2.5`, or `3.3`. Sets the `CONFIG_VOLTAGE` property in
+  the generated XDC. This must match the actual board supply voltage on the
+  configuration bank or configuration failures and marginal I/O behavior can
+  result. See UG912 for details.
 
 ## Signals
 

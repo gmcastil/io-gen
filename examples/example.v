@@ -16,7 +16,10 @@ module example //#(
     // General purpose IO
     inout   wire [4:0]      gpio_pad,
     // Spare output, driven directly
-    output  wire            spare_pad
+    output  wire            spare_pad,
+    // Differential general IO
+    inout   wire            diff_io_p,
+    inout   wire            diff_io_n
 );
 
     wire            sys_clk;
@@ -27,6 +30,9 @@ module example //#(
     wire [4:0]      gpio_i;
     wire [4:0]      gpio_o;
     wire [4:0]      gpio_t;
+    wire            diff_io_i;
+    wire            diff_io_o;
+    wire            diff_io_t;
 
     example_io //#(
     //)
@@ -46,7 +52,12 @@ module example //#(
         .gpio_pad       (gpio_pad),
         .gpio_i         (gpio_i),
         .gpio_o         (gpio_o),
-        .gpio_t         (gpio_t)
+        .gpio_t         (gpio_t),
+        .diff_io_p      (diff_io_p),
+        .diff_io_n      (diff_io_n),
+        .diff_io_i      (diff_io_i),
+        .diff_io_o      (diff_io_o),
+        .diff_io_t      (diff_io_t)
     );
 
 endmodule

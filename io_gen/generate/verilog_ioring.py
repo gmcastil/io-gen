@@ -88,11 +88,11 @@ def _instantiate_ibuf(name: str, pin_row: dict[str, Any]) -> str:
     inst.append(f"//)")
     inst.append(f"{pin_row['instance']} (")
     if pin_row["is_bus"]:
-        inst.append(f"    .O  ({name}[{pin_row['index']}]),")
-        inst.append(f"    .I  ({name}_pad[{pin_row['index']}])")
+        inst.append(f"    .O      ({name}[{pin_row['index']}]),")
+        inst.append(f"    .I      ({name}_pad[{pin_row['index']}])")
     else:
-        inst.append(f"    .O  ({name}),")
-        inst.append(f"    .I  ({name}_pad)")
+        inst.append(f"    .O      ({name}),")
+        inst.append(f"    .I      ({name}_pad)")
     inst.append(f");")
     return indent_join(inst, 1)
 
@@ -104,11 +104,11 @@ def _instantiate_obuf(name: str, pin_row: dict[str, Any]) -> str:
     inst.append(f"//)")
     inst.append(f"{pin_row['instance']} (")
     if pin_row["is_bus"]:
-        inst.append(f"    .O  ({name}_pad[{pin_row['index']}]),")
-        inst.append(f"    .I  ({name}[{pin_row['index']}])")
+        inst.append(f"    .O      ({name}_pad[{pin_row['index']}]),")
+        inst.append(f"    .I      ({name}[{pin_row['index']}])")
     else:
-        inst.append(f"    .O  ({name}_pad),")
-        inst.append(f"    .I  ({name})")
+        inst.append(f"    .O      ({name}_pad),")
+        inst.append(f"    .I      ({name})")
     inst.append(f");")
     return indent_join(inst, 1)
 
@@ -120,13 +120,13 @@ def _instantiate_ibufds(name: str, pin_row: dict[str, Any]) -> str:
     inst.append(f"//)")
     inst.append(f"{pin_row['instance']} (")
     if pin_row["is_bus"]:
-        inst.append(f"    .O  ({name}[{pin_row['index']}]),")
-        inst.append(f"    .I  ({name}_p[{pin_row['index']}]),")
-        inst.append(f"    .IB ({name}_n[{pin_row['index']}])")
+        inst.append(f"    .O      ({name}[{pin_row['index']}]),")
+        inst.append(f"    .I      ({name}_p[{pin_row['index']}]),")
+        inst.append(f"    .IB     ({name}_n[{pin_row['index']}])")
     else:
-        inst.append(f"    .O  ({name}),")
-        inst.append(f"    .I  ({name}_p),")
-        inst.append(f"    .IB ({name}_n)")
+        inst.append(f"    .O      ({name}),")
+        inst.append(f"    .I      ({name}_p),")
+        inst.append(f"    .IB     ({name}_n)")
     inst.append(f");")
     return indent_join(inst, 1)
 
@@ -138,13 +138,13 @@ def _instantiate_obufds(name: str, pin_row: dict[str, Any]) -> str:
     inst.append(f"//)")
     inst.append(f"{pin_row['instance']} (")
     if pin_row["is_bus"]:
-        inst.append(f"    .O  ({name}_p[{pin_row['index']}]),")
-        inst.append(f"    .OB ({name}_n[{pin_row['index']}]),")
-        inst.append(f"    .I  ({name}[{pin_row['index']}])")
+        inst.append(f"    .O      ({name}_p[{pin_row['index']}]),")
+        inst.append(f"    .OB     ({name}_n[{pin_row['index']}]),")
+        inst.append(f"    .I      ({name}[{pin_row['index']}])")
     else:
-        inst.append(f"    .O  ({name}_p),")
-        inst.append(f"    .OB ({name}_n),")
-        inst.append(f"    .I  ({name})")
+        inst.append(f"    .O      ({name}_p),")
+        inst.append(f"    .OB     ({name}_n),")
+        inst.append(f"    .I      ({name})")
     inst.append(f");")
     return indent_join(inst, 1)
 
@@ -156,15 +156,37 @@ def _instantiate_iobuf(name: str, pin_row: dict[str, Any]) -> str:
     inst.append(f"//)")
     inst.append(f"{pin_row['instance']} (")
     if pin_row["is_bus"]:
-        inst.append(f"    .O  ({name}_i[{pin_row['index']}]),")
-        inst.append(f"    .I  ({name}_o[{pin_row['index']}]),")
-        inst.append(f"    .IO ({name}_pad[{pin_row['index']}]),")
-        inst.append(f"    .T  ({name}_t[{pin_row['index']}])")
+        inst.append(f"    .O      ({name}_i[{pin_row['index']}]),")
+        inst.append(f"    .I      ({name}_o[{pin_row['index']}]),")
+        inst.append(f"    .IO     ({name}_pad[{pin_row['index']}]),")
+        inst.append(f"    .T      ({name}_t[{pin_row['index']}])")
     else:
-        inst.append(f"    .O  ({name}_i),")
-        inst.append(f"    .I  ({name}_o),")
-        inst.append(f"    .IO ({name}_pad),")
-        inst.append(f"    .T  ({name}_t)")
+        inst.append(f"    .O      ({name}_i),")
+        inst.append(f"    .I      ({name}_o),")
+        inst.append(f"    .IO     ({name}_pad),")
+        inst.append(f"    .T      ({name}_t)")
+    inst.append(f");")
+    return indent_join(inst, 1)
+
+
+def _instantiate_iobufds(name: str, pin_row: dict[str, Any]) -> str:
+    """Instantiate an IOBUFDS"""
+    inst = []
+    inst.append(f"IOBUFDS //#(")
+    inst.append(f"//)")
+    inst.append(f"{pin_row['instance']} (")
+    if pin_row["is_bus"]:
+        inst.append(f"    .O      ({name}_i[{pin_row['index']}]),")
+        inst.append(f"    .I      ({name}_o[{pin_row['index']}]),")
+        inst.append(f"    .IO     ({name}_p[{pin_row['index']}]),")
+        inst.append(f"    .IOB    ({name}_n[{pin_row['index']}]),")
+        inst.append(f"    .T      ({name}_t[{pin_row['index']}])")
+    else:
+        inst.append(f"    .O      ({name}_i),")
+        inst.append(f"    .I      ({name}_o),")
+        inst.append(f"    .IO     ({name}_p),")
+        inst.append(f"    .IOB    ({name}_n),")
+        inst.append(f"    .T      ({name}_t)")
     inst.append(f");")
     return indent_join(inst, 1)
 
@@ -180,4 +202,5 @@ _INSTANTIATE_BUFFERS = {
     "ibufds": _instantiate_ibufds,
     "obufds": _instantiate_obufds,
     "iobuf": _instantiate_iobuf,
+    "iobufds": _instantiate_iobufds,
 }

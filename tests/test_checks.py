@@ -413,7 +413,8 @@ VALID_BUFFER_DIRECTION = [
     ("obuf_out",               {"name": "sig", "buffer": "obuf",   "direction": "out"}),
     ("ibufds_in",              {"name": "sig", "buffer": "ibufds", "direction": "in"}),
     ("obufds_out",             {"name": "sig", "buffer": "obufds", "direction": "out"}),
-    ("iobuf_inout",            {"name": "sig", "buffer": "iobuf",  "direction": "inout"}),
+    ("iobuf_inout",            {"name": "sig", "buffer": "iobuf",   "direction": "inout"}),
+    ("iobufds_inout",          {"name": "sig", "buffer": "iobufds", "direction": "inout"}),
     ("generate_false_skipped", {"name": "sig", "generate": False}),
     ("bypass_true_skipped",    {"name": "sig", "bypass": True, "direction": "out"}),
 ]
@@ -437,8 +438,10 @@ INVALID_BUFFER_DIRECTION = [
     ("ibufds_inout",  {"name": "sig", "buffer": "ibufds", "direction": "inout"}),
     ("obufds_in",     {"name": "sig", "buffer": "obufds", "direction": "in"}),
     ("obufds_inout",  {"name": "sig", "buffer": "obufds", "direction": "inout"}),
-    ("iobuf_in",      {"name": "sig", "buffer": "iobuf",  "direction": "in"}),
-    ("iobuf_out",     {"name": "sig", "buffer": "iobuf",  "direction": "out"}),
+    ("iobuf_in",      {"name": "sig", "buffer": "iobuf",   "direction": "in"}),
+    ("iobuf_out",     {"name": "sig", "buffer": "iobuf",   "direction": "out"}),
+    ("iobufds_in",    {"name": "sig", "buffer": "iobufds", "direction": "in"}),
+    ("iobufds_out",   {"name": "sig", "buffer": "iobufds", "direction": "out"}),
 ]
 
 
@@ -460,8 +463,9 @@ VALID_BUFFER_STRATEGY_MATCH = [
     ("ibuf_pins",              {"name": "sig", "buffer": "ibuf",   "pins": "G22"}),
     ("obuf_pins",              {"name": "sig", "buffer": "obuf",   "pins": "G22"}),
     ("iobuf_pins",             {"name": "sig", "buffer": "iobuf",  "pins": "G22"}),
-    ("ibufds_pinset",          {"name": "sig", "buffer": "ibufds", "pinset": {"p": "H22", "n": "H23"}}),
-    ("obufds_pinset",          {"name": "sig", "buffer": "obufds", "pinset": {"p": "H22", "n": "H23"}}),
+    ("ibufds_pinset",          {"name": "sig", "buffer": "ibufds",  "pinset": {"p": "H22", "n": "H23"}}),
+    ("obufds_pinset",          {"name": "sig", "buffer": "obufds",  "pinset": {"p": "H22", "n": "H23"}}),
+    ("iobufds_pinset",         {"name": "sig", "buffer": "iobufds", "pinset": {"p": "H22", "n": "H23"}}),
     ("generate_false_skipped", {"name": "sig", "generate": False, "pins": "G22"}),
     ("bypass_true_skipped",    {"name": "sig", "bypass": True,    "pins": "G22"}),
 ]
@@ -480,8 +484,9 @@ INVALID_BUFFER_STRATEGY_MATCH = [
     ("ibuf_pinset",  {"name": "sig", "buffer": "ibuf",   "pinset": {"p": "H22", "n": "H23"}}),
     ("obuf_pinset",  {"name": "sig", "buffer": "obuf",   "pinset": {"p": "H22", "n": "H23"}}),
     ("iobuf_pinset", {"name": "sig", "buffer": "iobuf",  "pinset": {"p": "H22", "n": "H23"}}),
-    ("ibufds_pins",  {"name": "sig", "buffer": "ibufds", "pins": "G22"}),
-    ("obufds_pins",  {"name": "sig", "buffer": "obufds", "pins": "G22"}),
+    ("ibufds_pins",  {"name": "sig", "buffer": "ibufds",  "pins": "G22"}),
+    ("obufds_pins",  {"name": "sig", "buffer": "obufds",  "pins": "G22"}),
+    ("iobufds_pins", {"name": "sig", "buffer": "iobufds", "pins": "G22"}),
 ]
 
 
@@ -555,9 +560,10 @@ def test_valid_buffer_inferable(sig: dict) -> None:
 
 
 INVALID_BUFFER_INFERABLE = [
-    ("ibufds_infer_true", {"name": "sig", "buffer": "ibufds", "infer": True}),
-    ("obufds_infer_true", {"name": "sig", "buffer": "obufds", "infer": True}),
-    ("iobuf_infer_true",  {"name": "sig", "buffer": "iobuf",  "infer": True}),
+    ("ibufds_infer_true",  {"name": "sig", "buffer": "ibufds",  "infer": True}),
+    ("obufds_infer_true",  {"name": "sig", "buffer": "obufds",  "infer": True}),
+    ("iobuf_infer_true",   {"name": "sig", "buffer": "iobuf",   "infer": True}),
+    ("iobufds_infer_true", {"name": "sig", "buffer": "iobufds", "infer": True}),
 ]
 
 

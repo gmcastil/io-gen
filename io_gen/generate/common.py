@@ -4,7 +4,7 @@ from io_gen.tables import signal_is_differential, signal_is_scalar
 
 # Set of tristate buffers that will require '_i', '_o', and '_t' in the signal
 # block and IO ring instances
-TRISTATE_BUFFERS = {"iobuf"}
+TRISTATE_BUFFERS = {"iobuf", "iobufds"}
 
 VLOG_DIRECTIONS = {"in": "input", "out": "output", "inout": "inout"}
 VHDL_DIRECTIONS = {"in": "in", "out": "out", "inout": "inout"}

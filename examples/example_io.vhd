@@ -178,4 +178,5 @@ begin
         IOB     => diff_io_n,
         T       => diff_io_t
     );
+
 end architecture rtl;

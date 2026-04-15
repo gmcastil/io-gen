@@ -4,6 +4,6 @@
     "type": "string",
     "enum": [
         "LVCMOS12", "LVCMOS15", "LVCMOS18", "LVCMOS25", "LVCMOS33",
-        "LVDS", "LVDS_25", "SSTL15", "SSTL18", "TMDS_33"
+        "LVDS", "LVDS_25", "SSTL15", "SSTL18", "TMDS_33", "DIFF_HSTL_I"
     ]
 }

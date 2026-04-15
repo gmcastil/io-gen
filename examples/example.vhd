@@ -20,7 +20,10 @@ entity example is
         -- General purpose IO
         gpio_pad        : inout std_logic_vector(4 downto 0);
         -- Spare output, driven directly
-        spare_pad       : out   std_logic
+        spare_pad       : out   std_logic;
+        -- Differential general IO
+        diff_io_p       : inout std_logic;
+        diff_io_n       : inout std_logic
     );
 end entity example;
 
@@ -34,6 +37,9 @@ architecture rtl of example is
     signal gpio_i       : std_logic_vector(4 downto 0);
     signal gpio_o       : std_logic_vector(4 downto 0);
     signal gpio_t       : std_logic_vector(4 downto 0);
+    signal diff_io_i    : std_logic;
+    signal diff_io_o    : std_logic;
+    signal diff_io_t    : std_logic;
 
 begin
 
@@ -56,7 +62,12 @@ begin
         gpio_pad        => gpio_pad,
         gpio_i          => gpio_i,
         gpio_o          => gpio_o,
-        gpio_t          => gpio_t
+        gpio_t          => gpio_t,
+        diff_io_p       => diff_io_p,
+        diff_io_n       => diff_io_n,
+        diff_io_i       => diff_io_i,
+        diff_io_o       => diff_io_o,
+        diff_io_t       => diff_io_t
     );
 
 end architecture rtl;
