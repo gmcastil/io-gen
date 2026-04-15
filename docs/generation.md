@@ -75,8 +75,8 @@ declaration except the last.
 ### _generate_<lang>_wires
 
 Emits one internal wire or signal declaration per signal. Signals with
-`bypass: true` are excluded. Tristate signals (`iobuf`) emit three
-declarations: `<name>_i`, `<name>_o`, `<name>_t`.
+`bypass: true` are excluded. Tristate signals emit three declarations:
+`<name>_i`, `<name>_o`, `<name>_t`.
 
 ### _generate_<lang>_ioring_inst
 

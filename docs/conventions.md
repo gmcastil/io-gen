@@ -72,15 +72,16 @@ Examples: `ibuf_sys_clk_i0`, `obuf_led_i0`, `obuf_led_i1`, `ibufds_serdes_rx_i3`
 
 Xilinx primitive port conventions used in the IO ring:
 
-| Primitive | Ports                                                    |
-| --------- | -------------------------------------------------------- |
-| IBUF      | I (pad in), O (fabric out)                               |
-| OBUF      | I (fabric in), O (pad out)                               |
-| IBUFDS    | I (pad p), IB (pad n), O (fabric out)                    |
-| OBUFDS    | I (fabric in), O (pad p), OB (pad n)                     |
-| IOBUF     | IO (pad), I (fabric \_o), O (fabric \_i), T (fabric \_t) |
+| Primitive | Ports                                                                        |
+| --------- | ---------------------------------------------------------------------------- |
+| IBUF      | I (pad in), O (fabric out)                                                   |
+| OBUF      | I (fabric in), O (pad out)                                                   |
+| IBUFDS    | I (pad p), IB (pad n), O (fabric out)                                        |
+| OBUFDS    | I (fabric in), O (pad p), OB (pad n)                                         |
+| IOBUF     | IO (pad), I (fabric \_o), O (fabric \_i), T (fabric \_t)                     |
+| IOBUFDS   | IO (pad p), IOB (pad n), I (fabric \_o), O (fabric \_i), T (fabric \_t)     |
 
-Both VHDL and Verilog use uppercase primitive names (IBUF, OBUF, IBUFDS, OBUFDS, IOBUF).
+Both VHDL and Verilog use uppercase primitive names (IBUF, OBUF, IBUFDS, OBUFDS, IOBUF, IOBUFDS).
 This matches the Xilinx UNISIM library source and documentation style. VHDL is case-insensitive
 so lowercase would also compile, but uppercase is the convention.
 

@@ -4,6 +4,18 @@ Entries are in reverse chronological order.
 
 ---
 
+## 2026-04-15 - IOBUFDS support added
+
+**Commits:** `6de3185`, `992d9a5`
+
+- `iobufds` added to `buffer.json` enum
+- Generator support added for both Verilog and VHDL IO ring
+- `example.yaml` updated with scalar `diff_io` signal using `iobufds` / `DIFF_HSTL_I`
+- All four example output files regenerated to include `iobufds_diff_io_i0`
+- Documentation updated: `buffers.md`, `schema.md`, `conventions.md`, `generation.md`, `CLAUDE.md`
+
+---
+
 ## 2026-04-09 - End to end operation is done
 
 - At this point the tool is pretty much finished
