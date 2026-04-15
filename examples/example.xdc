@@ -79,3 +79,11 @@ set_property DIRECTION INOUT [get_ports {gpio_pad[4]}]
 set_property PACKAGE_PIN J24 [get_ports spare_pad]
 set_property IOSTANDARD LVCMOS18 [get_ports spare_pad]
 set_property DIRECTION OUT [get_ports spare_pad]
+
+# Differential IO buffer
+set_property PACKAGE_PIN J25 [get_ports diff_io_p]
+set_property IOSTANDARD DIFF_HSTL_I [get_ports diff_io_p]
+set_property DIRECTION INOUT [get_ports diff_io_p]
+set_property PACKAGE_PIN K25 [get_ports diff_io_n]
+set_property IOSTANDARD DIFF_HSTL_I [get_ports diff_io_n]
+set_property DIRECTION INOUT [get_ports diff_io_n]

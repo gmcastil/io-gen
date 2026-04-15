@@ -27,7 +27,12 @@ entity example_io is
         gpio_pad        : inout std_logic_vector(4 downto 0);
         gpio_i          : out   std_logic_vector(4 downto 0);
         gpio_o          : in    std_logic_vector(4 downto 0);
-        gpio_t          : in    std_logic_vector(4 downto 0)
+        gpio_t          : in    std_logic_vector(4 downto 0);
+        diff_io_p       : inout std_logic;
+        diff_io_n       : inout std_logic;
+        diff_io_i       : out   std_logic;
+        diff_io_o       : in    std_logic;
+        diff_io_t       : in    std_logic
     );
 end entity example_io;
 
@@ -39,40 +44,40 @@ begin
     -- generic map (
     -- )
     port map (
-        O   => sys_clk,
-        I   => sys_clk_pad
+        O       => sys_clk,
+        I       => sys_clk_pad
     );
 
     obuf_led_i0 : OBUF
     -- generic map (
     -- )
     port map (
-        O   => led_pad(0),
-        I   => led(0)
+        O       => led_pad(0),
+        I       => led(0)
     );
 
     obuf_led_i1 : OBUF
     -- generic map (
     -- )
     port map (
-        O   => led_pad(1),
-        I   => led(1)
+        O       => led_pad(1),
+        I       => led(1)
     );
 
     obuf_led_i2 : OBUF
     -- generic map (
     -- )
     port map (
-        O   => led_pad(2),
-        I   => led(2)
+        O       => led_pad(2),
+        I       => led(2)
     );
 
     obuf_led_i3 : OBUF
     -- generic map (
     -- )
     port map (
-        O   => led_pad(3),
-        I   => led(3)
+        O       => led_pad(3),
+        I       => led(3)
     );
 
     user_led_pad <= user_led;
@@ -81,86 +86,96 @@ begin
     -- generic map (
     -- )
     port map (
-        O   => ref_clk,
-        I   => ref_clk_p,
-        IB  => ref_clk_n
+        O       => ref_clk,
+        I       => ref_clk_p,
+        IB      => ref_clk_n
     );
 
     obufds_lvds_data_i0 : OBUFDS
     -- generic map (
     -- )
     port map (
-        O   => lvds_data_p(0),
-        OB  => lvds_data_n(0),
-        I   => lvds_data(0)
+        O       => lvds_data_p(0),
+        OB      => lvds_data_n(0),
+        I       => lvds_data(0)
     );
 
     obufds_lvds_data_i1 : OBUFDS
     -- generic map (
     -- )
     port map (
-        O   => lvds_data_p(1),
-        OB  => lvds_data_n(1),
-        I   => lvds_data(1)
+        O       => lvds_data_p(1),
+        OB      => lvds_data_n(1),
+        I       => lvds_data(1)
     );
 
     obufds_lvds_data_i2 : OBUFDS
     -- generic map (
     -- )
     port map (
-        O   => lvds_data_p(2),
-        OB  => lvds_data_n(2),
-        I   => lvds_data(2)
+        O       => lvds_data_p(2),
+        OB      => lvds_data_n(2),
+        I       => lvds_data(2)
     );
 
     iobuf_gpio_i0 : IOBUF
     -- generic map (
     -- )
     port map (
-        O   => gpio_i(0),
-        I   => gpio_o(0),
-        IO  => gpio_pad(0),
-        T   => gpio_t(0)
+        O       => gpio_i(0),
+        I       => gpio_o(0),
+        IO      => gpio_pad(0),
+        T       => gpio_t(0)
     );
 
     iobuf_gpio_i1 : IOBUF
     -- generic map (
     -- )
     port map (
-        O   => gpio_i(1),
-        I   => gpio_o(1),
-        IO  => gpio_pad(1),
-        T   => gpio_t(1)
+        O       => gpio_i(1),
+        I       => gpio_o(1),
+        IO      => gpio_pad(1),
+        T       => gpio_t(1)
     );
 
     iobuf_gpio_i2 : IOBUF
     -- generic map (
     -- )
     port map (
-        O   => gpio_i(2),
-        I   => gpio_o(2),
-        IO  => gpio_pad(2),
-        T   => gpio_t(2)
+        O       => gpio_i(2),
+        I       => gpio_o(2),
+        IO      => gpio_pad(2),
+        T       => gpio_t(2)
     );
 
     iobuf_gpio_i3 : IOBUF
     -- generic map (
     -- )
     port map (
-        O   => gpio_i(3),
-        I   => gpio_o(3),
-        IO  => gpio_pad(3),
-        T   => gpio_t(3)
+        O       => gpio_i(3),
+        I       => gpio_o(3),
+        IO      => gpio_pad(3),
+        T       => gpio_t(3)
     );
 
     iobuf_gpio_i4 : IOBUF
     -- generic map (
     -- )
     port map (
-        O   => gpio_i(4),
-        I   => gpio_o(4),
-        IO  => gpio_pad(4),
-        T   => gpio_t(4)
+        O       => gpio_i(4),
+        I       => gpio_o(4),
+        IO      => gpio_pad(4),
+        T       => gpio_t(4)
     );
 
+    iobufds_diff_io_i0 : IOBUFDS
+    -- generic map (
+    -- )
+    port map (
+        O       => diff_io_i,
+        I       => diff_io_o,
+        IO      => diff_io_p,
+        IOB     => diff_io_n,
+        T       => diff_io_t
+    );
 end architecture rtl;

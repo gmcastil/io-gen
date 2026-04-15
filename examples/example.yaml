@@ -91,3 +91,16 @@ signals:
     - name: reserved_nc
       pins: H24
       generate: false
+
+    # Scalar differential IO buffer
+    - name: diff_io
+      pinset:
+        p: J25
+        n: K25
+      iostandard: DIFF_HSTL_I
+      direction: inout
+      buffer: iobufds
+      comment:
+        xdc: Differential IO buffer
+        hdl: Differential general IO
+
