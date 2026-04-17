@@ -1,0 +1,46 @@
+--- output/synth/basys3.v	2026-04-17 14:55:32.959319743 -0600
++++ basys3.v	2026-04-17 14:56:21.403515068 -0600
+@@ -125,4 +125,43 @@
+         .spi_hld_n_t    (spi_hld_n_t)
+     );
+ 
++    basys3_user //#(                                                                                       
++    //)                                                                                                    
++    basys3_user_i0 (                                                                                       
++        .clk_100m00     (clk_100m00),                                                                      
++        .slider_sw      (slider_sw),                                                                       
++        .led            (led),                                                                             
++        .seg            (seg),                                                                             
++        .digit_en       (digit_en),
++        .dp             (dp),                                                                              
++        .btn            (btn),
++        .pmod_jxadc     (pmod_jxadc),                                                                    
++        .vga_red        (vga_red),                                                                         
++        .vga_blue       (vga_blue),
++        .vga_green      (vga_green),                                                                       
++        .vga_hsync      (vga_hsync),
++        .vga_vsync      (vga_vsync),                                                                     
++        .uart_rx        (uart_rx),                                                                         
++        .uart_tx        (uart_tx),
++        .ps2_clk_i      (ps2_clk_i),                                                                       
++        .ps2_clk_o      (ps2_clk_o),                                                                     
++        .ps2_clk_t      (ps2_clk_t),                                                                       
++        .ps2_data_i     (ps2_data_i),
++        .ps2_data_o     (ps2_data_o),                                                                      
++        .ps2_data_t     (ps2_data_t),                                                                    
++        .spi_cs_n       (spi_cs_n),                                                                        
++        .spi_sdi_i      (spi_sdi_i),
++        .spi_sdi_o      (spi_sdi_o),                                                                       
++        .spi_sdi_t      (spi_sdi_t),                                                                       
++        .spi_sdo_i      (spi_sdo_i),
++        .spi_sdo_o      (spi_sdo_o),                                                                       
++        .spi_sdo_t      (spi_sdo_t),                                                                       
++        .spi_wp_n_i     (spi_wp_n_i),
++        .spi_wp_n_o     (spi_wp_n_o),                                                                      
++        .spi_wp_n_t     (spi_wp_n_t),                                                                    
++        .spi_hld_n_i    (spi_hld_n_i),                                                                     
++        .spi_hld_n_o    (spi_hld_n_o),
++        .spi_hld_n_t    (spi_hld_n_t)                                                                      
++    );                                                                                                     
++
+ endmodule
