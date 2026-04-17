@@ -6,7 +6,10 @@ from .common import get_header
 
 
 def generate_xdc(
-    signal_table: SignalTable, pin_table: PinTable, constraints_table: ConstraintsTable
+    signal_table: SignalTable,
+    pin_table: PinTable,
+    constraints_table: ConstraintsTable,
+    pin_planner: bool = False,
 ) -> str:
     """Generate XDC constraints from the signal and pin tables"""
 
@@ -57,14 +60,16 @@ def generate_xdc(
                     direction_xdc = f"set_property DIRECTION {direction} [get_ports {{{name}_p[{index}]}}]"
                     lines.append(pin_xdc)
                     lines.append(iostandard_xdc)
-                    lines.append(direction_xdc)
+                    if pin_planner:
+                        lines.append(direction_xdc)
                     # The n side
                     pin_xdc = f"set_property PACKAGE_PIN {pkg_pin_n} [get_ports {{{name}_n[{index}]}}]"
                     iostandard_xdc = f"set_property IOSTANDARD {iostandard} [get_ports {{{name}_n[{index}]}}]"
                     direction_xdc = f"set_property DIRECTION {direction} [get_ports {{{name}_n[{index}]}}]"
                     lines.append(pin_xdc)
                     lines.append(iostandard_xdc)
-                    lines.append(direction_xdc)
+                    if pin_planner:
+                        lines.append(direction_xdc)
                 else:
                     # The p side
                     pin_xdc = (
@@ -78,7 +83,8 @@ def generate_xdc(
                     )
                     lines.append(pin_xdc)
                     lines.append(iostandard_xdc)
-                    lines.append(direction_xdc)
+                    if pin_planner:
+                        lines.append(direction_xdc)
                     # The n side
                     pin_xdc = (
                         f"set_property PACKAGE_PIN {pkg_pin_n} [get_ports {name}_n]"
@@ -91,7 +97,8 @@ def generate_xdc(
                     )
                     lines.append(pin_xdc)
                     lines.append(iostandard_xdc)
-                    lines.append(direction_xdc)
+                    if pin_planner:
+                        lines.append(direction_xdc)
 
             # Single-ended here
             else:
@@ -105,7 +112,8 @@ def generate_xdc(
                     direction_xdc = f"set_property DIRECTION {direction} [get_ports {{{name}_pad[{index}]}}]"
                     lines.append(pin_xdc)
                     lines.append(iostandard_xdc)
-                    lines.append(direction_xdc)
+                    if pin_planner:
+                        lines.append(direction_xdc)
                 else:
                     pin_xdc = (
                         f"set_property PACKAGE_PIN {pkg_pin} [get_ports {name}_pad]"
@@ -118,7 +126,8 @@ def generate_xdc(
                     )
                     lines.append(pin_xdc)
                     lines.append(iostandard_xdc)
-                    lines.append(direction_xdc)
+                    if pin_planner:
+                        lines.append(direction_xdc)
 
         # This gives a block of pin constraints, with the comment at the top and no intervening
         # blank lines.

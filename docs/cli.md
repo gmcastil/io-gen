@@ -36,3 +36,11 @@ the XDC file.
 
 Generate only the XDC file (`<top>.xdc`). Skip the HDL files. `--lang`
 is not required when this flag is set.
+
+This mode is intended for use with the Vivado IO Planning project workflow,
+where constraints are loaded without RTL. In this context, port directions are
+not known from HDL, so the generated XDC includes `set_property DIRECTION`
+constraints for every port. These constraints are only valid in a
+constraint-only IO Planning project and will cause critical warnings if loaded
+into a standard RTL implementation flow. When generating constraints for RTL
+implementation, use the default full-generation mode instead.

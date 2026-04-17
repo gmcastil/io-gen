@@ -47,7 +47,8 @@ def main() -> None:
     mode.add_argument(
         "--xdc-only",
         action="store_true",
-        help="Generate the XDC file only. Skip HDL files. --lang is ignored.",
+        default=False,
+        help="Generate XDC constraints only for an IO Planning project",
     )
 
     parser.add_argument(

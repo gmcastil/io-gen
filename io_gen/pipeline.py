@@ -89,7 +89,11 @@ def run_pipeline(
 
     if not rtl_only:
         with open(output_dir / f"{top}.xdc", "w") as xdc:
-            xdc.write(generate_xdc(signal_table, pin_table, constraints_table))
+            xdc.write(
+                generate_xdc(
+                    signal_table, pin_table, constraints_table, pin_planner=xdc_only
+                )
+            )
             print(f"Info: Wrote XDC constraints to {output_dir / f'{top}.xdc'}")
 
     if not xdc_only:
