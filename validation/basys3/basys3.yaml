@@ -133,7 +133,7 @@ signals:
     pinset:
       p: [J3, L3, M2, N2]
       n: [K3, M3, M1, N1]
-    iostandard: LVCMOS33
+    iostandard: TMDS_33
     direction: in
     width: 4
     buffer: ibufds
