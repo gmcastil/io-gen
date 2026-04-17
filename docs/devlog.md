@@ -3,6 +3,11 @@
 Entries are in reverse chronological order.
 
 ---
+## 2026-04-18 - Feature complete with synth target now
+
+- Added a `synth` target to the validation flow
+- Fixed a bug in the pipeline
+- As far as I can tell, the tool is mature and has all the original features I wanted to add
 
 ## 2026-04-15 - IOBUFDS support added
 

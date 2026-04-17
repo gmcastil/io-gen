@@ -32,7 +32,7 @@ SYNTH_TCLARGS		:= $(PART) $(BOARD) $(SYNTH_DIR) $(SYNTH_REPORTS_DIR)
 SYNTH_VIVADO_ARGS	:= -mode batch -log $(SYNTH_REPORTS_DIR)/vivado.log -journal $(SYNTH_REPORTS_DIR)/vivado.jou -notrace
 STAMP_SYNTH_READY	:= $(SYNTH_DIR)/.stamp_synth_ready
 
-.PHONY: synth drc $(BOARD) clean
+.PHONY: synth drc clean
 
 synth: $(STAMP_SYNTH_READY)
 	mkdir -pv $(SYNTH_REPORTS_DIR)
