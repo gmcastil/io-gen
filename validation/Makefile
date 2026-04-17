@@ -15,56 +15,48 @@ SYNTH_REPORTS_DIR	:= $(SYNTH_DIR)/reports
 
 include $(BOARD_DIR)/board.mk
 
-
-MKDIR			:= mkdir
-RM			:= rm
-LN			:= ln
-TOUCH			:= touch
-PATCH			:= patch
 # Users may need to source the .venv/bin/activate script to make sure
 # that io-gen is in their PATH
 IOGEN			:= io-gen
 # Users probably need to source the settings64.sh script in the Vivado
 # installation directory to make sure this is in their PATH
 VIVADO			:= vivado
-# Put Vivado in batch mode and stick the journal and log in the output directory
-DRC_VIVADO_ARGS		:= -mode batch -log $(DRC_REPORTS_DIR)/vivado.log -journal $(DRC_REPORTS_DIR)/vivado.jou -notrace
-SYNTH_VIVADO_ARGS	:= -mode batch -log $(SYNTH_REPORTS_DIR)/vivado.log -journal $(SYNTH_REPORTS_DIR)/vivado.jou -notrace
 
 RUN_DRC			:= $(MAKEFILE_DIR)/run_drc.tcl
 DRC_TCLARGS		:= $(PART) $(BOARD) $(DRC_XDC) $(DRC_REPORTS_DIR)
+DRC_VIVADO_ARGS		:= -mode batch -log $(DRC_REPORTS_DIR)/vivado.log -journal $(DRC_REPORTS_DIR)/vivado.jou -notrace
+STAMP_DRC_READY		:= $(DRC_DIR)/.stamp_drc_ready
 
 RUN_SYNTH		:= $(MAKEFILE_DIR)/run_synth.tcl
 SYNTH_TCLARGS		:= $(PART) $(BOARD) $(SYNTH_DIR) $(SYNTH_REPORTS_DIR)
-
-STAMP_DRC_READY		:= $(DRC_DIR)/.stamp_drc_ready
+SYNTH_VIVADO_ARGS	:= -mode batch -log $(SYNTH_REPORTS_DIR)/vivado.log -journal $(SYNTH_REPORTS_DIR)/vivado.jou -notrace
 STAMP_SYNTH_READY	:= $(SYNTH_DIR)/.stamp_synth_ready
 
 .PHONY: synth drc $(BOARD) clean
 
 synth: $(STAMP_SYNTH_READY)
-	@$(MKDIR) -pv $(SYNTH_REPORTS_DIR)
-	@$(VIVADO) $(SYNTH_VIVADO_ARGS) -source $(RUN_SYNTH) -tclargs $(SYNTH_TCLARGS)
+	mkdir -pv $(SYNTH_REPORTS_DIR)
+	$(VIVADO) $(SYNTH_VIVADO_ARGS) -source $(RUN_SYNTH) -tclargs $(SYNTH_TCLARGS)
 
 drc: $(STAMP_DRC_READY)
-	@$(MKDIR) -pv $(DRC_REPORTS_DIR)
-	@$(VIVADO) $(DRC_VIVADO_ARGS) -source $(RUN_DRC) -tclargs $(DRC_TCLARGS)
+	mkdir -pv $(DRC_REPORTS_DIR)
+	cd $(SYNTH_DIR); $(VIVADO) $(DRC_VIVADO_ARGS) -source $(RUN_DRC) -tclargs $(DRC_TCLARGS)
 
 $(STAMP_DRC_READY):
-	@$(MKDIR) -pv $(DRC_DIR)
-	@$(IOGEN) --top $(BOARD) --xdc-only --output $(DRC_DIR) $(BOARD_YAML)
-	@$(TOUCH) $(STAMP_DRC_READY)
+	mkdir -pv $(DRC_DIR)
+	$(IOGEN) --top $(BOARD) --xdc-only --output $(DRC_DIR) $(BOARD_YAML)
+	touch $(STAMP_DRC_READY)
 
 $(STAMP_SYNTH_READY): $(SYNTH_DIR)/$(BOARD).v
-	@$(LN) -sfv $(BOARD_DIR)/$(BOARD)_user.v $(SYNTH_DIR)/$(BOARD).patch
-	@$(PATCH) $(SYNTH_DIR)/$(BOARD)_user.v < $(BOARD_DIR)/$(BOARD).patch
-	@$(TOUCH) $(STAMP_SYNTH_READY)
+	ln -sfv $(BOARD_DIR)/$(BOARD)_user.v $(SYNTH_DIR)/$(BOARD)_user.v
+	patch $(SYNTH_DIR)/$(BOARD).v < $(BOARD_DIR)/$(BOARD).patch
+	touch $(STAMP_SYNTH_READY)
 
 $(SYNTH_DIR)/$(BOARD).v:
-	@$(MKDIR) -pv $(SYNTH_DIR)
-	@$(IOGEN) --top $(BOARD) --lang verilog --output $(SYNTH_DIR) $(BOARD_YAML)
+	mkdir -pv $(SYNTH_DIR)
+	$(IOGEN) --top $(BOARD) --lang verilog --output $(SYNTH_DIR) $(BOARD_YAML)
 
 clean:
-	$(RM) -rf $(MAKEFILE_DIR)/.Xil
-	$(RM) -rf $(OUTPUT_DIR)
+	rm -rf $(MAKEFILE_DIR)/.Xil
+	rm -rf $(OUTPUT_DIR)
 

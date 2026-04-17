@@ -3,7 +3,7 @@ proc log_err { msg } {
 }
 
 proc usage { } {
-    puts "Usage: vivado -mode batch -source run_drc.tcl -tclargs <part> <xdc_file> <rpt_file>"
+    puts "Usage: vivado -mode batch -source run_drc.tcl -tclargs <part> <board_name> <xdc_file> <reports_dir>"
     return 0
 }
 
@@ -17,10 +17,10 @@ if { [llength $argv] != 4} {
 set part [lindex $argv 0]
 set board [lindex $argv 1]
 set xdc_file [lindex $argv 2]
-set output_dir [lindex $argv 3]
+set reports_dir [lindex $argv 3]
 
-set rpt_file "${output_dir}/${board}.rpt"
-set rpx_file "${output_dir}/${board}.rpx"
+set rpt_file "${reports_dir}/${board}.rpt"
+set rpx_file "${reports_dir}/${board}.rpx"
 set proj_name "drc-validation"
 
 # Create an in-memory pin planning project
