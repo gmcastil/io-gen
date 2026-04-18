@@ -89,17 +89,12 @@ def _check_unique_pins(signals: list[dict]) -> None:
     Applies to all signals, including those with generate: false.
     Raises ValidationError identifying the first duplicate pin found.
     """
-    uniq_pins = set()
-    pins = []
-    # Get all of the pins of every signal in the design
+    pins = set()
     for sig in signals:
-        pins.extend(_get_pin_names_from_signal(sig))
-    # Iterate and check for duplicates
-    for pin in pins:
-        if pin in uniq_pins:
-            raise ValidationError(f"Pin '{pin}': duplicate pins")
-        else:
-            uniq_pins.add(pin)
+        for pin in _get_pin_names_from_signal(sig):
+            if pin in pins:
+                raise ValidationError(f"Pin '{pin}': duplicate pins")
+            pins.add(pin)
 
 
 def _check_pinset_array_mismatch(sig: dict) -> None:
@@ -261,7 +256,7 @@ def _check_non_ascii(path: Path) -> None:
     Raises ValidationError identifying the location of the first non-ASCII character
     in the provided path.
     """
-    with open(path, "r") as lines:
+    with open(path, "r", encoding="utf-8") as lines:
         for index, line in enumerate(lines, 1):
             if not line.isascii():
                 raise ValidationError(f"found non-ASCII encoded string at line {index}")

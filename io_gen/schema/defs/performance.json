@@ -1,6 +1,0 @@
-{
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "defs/performance.json",
-    "type": "string",
-    "enum": [ "HP", "HR", "HD" ]
-}

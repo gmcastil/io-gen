@@ -132,7 +132,8 @@ def _generate_verilog_ioring_inst(signal_table: SignalTable, top: str) -> str:
         return ""
 
     # Note that we're adding an extra character to the name length because Verilog
-    # adds a '.' to the port name in instantiations of modules.
+    # adds a '.' to the port name in instantiations of modules, and then rounding up
+    # to the nearest 4 space boundary.
     longest_name = len(max(ioring_ports, key=len))
     name_len = (((longest_name + 1) // 4 + 1) * 4) - 1
 

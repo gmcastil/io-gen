@@ -1,16 +1,21 @@
 from pathlib import Path
 
 from io_gen.validate import validate, validate_verilog, validate_vhdl
-from io_gen.tables.signal_table import build_signal_table
-from io_gen.tables.pin_table import build_pin_table
-from io_gen.tables.meta_table import build_meta_table
-from io_gen.tables.constraints_table import build_constraints_table
 
-from io_gen.generate.xdc import generate_xdc
-from io_gen.generate.verilog_top import generate_verilog_top
-from io_gen.generate.verilog_ioring import generate_verilog_ioring
-from io_gen.generate.vhdl_top import generate_vhdl_top
-from io_gen.generate.vhdl_ioring import generate_vhdl_ioring
+from io_gen.tables import (
+    build_signal_table,
+    build_pin_table,
+    build_meta_table,
+    build_constraints_table,
+)
+
+from io_gen.generate import (
+    generate_xdc,
+    generate_verilog_top,
+    generate_verilog_ioring,
+    generate_vhdl_top,
+    generate_vhdl_ioring,
+)
 
 
 def run_pipeline(
@@ -88,7 +93,7 @@ def run_pipeline(
         return
 
     if not rtl_only:
-        with open(output_dir / f"{top}.xdc", "w") as xdc:
+        with open(output_dir / f"{top}.xdc", "w", encoding="utf-8") as xdc:
             xdc.write(
                 generate_xdc(
                     signal_table, pin_table, constraints_table, pin_planner=xdc_only
@@ -99,23 +104,21 @@ def run_pipeline(
     if not xdc_only:
         if lang == "verilog":
             # Write the top level RTL to disk
-            with open(output_dir / f"{top}.v", "w") as top_rtl:
+            with open(output_dir / f"{top}.v", "w", encoding="utf-8") as top_rtl:
                 top_rtl.write(generate_verilog_top(signal_table, top))
                 print(f"Info: Wrote top level module to {output_dir / f'{top}.v'}")
             # Write the IO ring RTL to disk
-            with open(output_dir / f"{top}_io.v", "w") as top_rtl:
+            with open(output_dir / f"{top}_io.v", "w", encoding="utf-8") as top_rtl:
                 top_rtl.write(generate_verilog_ioring(signal_table, pin_table, top))
                 print(f"Info: Wrote IO ring module to {output_dir / f'{top}_io.v'}")
         else:
             # Write the top level RTL to disk
-            with open(output_dir / f"{top}.vhd", "w") as top_rtl:
+            with open(output_dir / f"{top}.vhd", "w", encoding="utf-8") as top_rtl:
                 top_rtl.write(generate_vhdl_top(signal_table, meta_table, top))
                 print(f"Info: Wrote top level module to {output_dir / f'{top}.vhd'}")
             # Write the IO ring RTL to disk
-            with open(output_dir / f"{top}_io.vhd", "w") as top_rtl:
+            with open(output_dir / f"{top}_io.vhd", "w", encoding="utf-8") as top_rtl:
                 top_rtl.write(
                     generate_vhdl_ioring(signal_table, pin_table, meta_table, top)
                 )
                 print(f"Info: Wrote IO ring module to {output_dir / f'{top}_io.vhd'}")
-
-    return

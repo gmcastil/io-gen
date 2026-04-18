@@ -72,6 +72,6 @@ def main() -> None:
     except PermissionError as e:
         print(f"Error: {e.strerror}: {e.filename}", file=sys.stderr)
         sys.exit(1)
-    except (ValidationError, OSError, NotImplementedError, ValueError) as e:
+    except (ValidationError, OSError, ValueError) as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)

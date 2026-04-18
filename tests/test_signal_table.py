@@ -1,6 +1,7 @@
 import pytest
 
-from io_gen.tables.signal_table import SignalTable, build_signal_table
+from io_gen.exceptions import ValidationError
+from io_gen.tables.signal_table import SignalTable, build_signal_table, signal_is_scalar
 
 
 # ---------------------------------------------------------------------------
@@ -421,3 +422,15 @@ def test_build_signal_table_count_and_order() -> None:
     assert len(rows) == 2
     assert rows[0]["name"] == "sys_clk"
     assert rows[1]["name"] == "led"
+
+
+# ---------------------------------------------------------------------------
+# signal_is_scalar
+# ---------------------------------------------------------------------------
+
+
+def test_signal_is_scalar_mixed_pinset_raises() -> None:
+    """signal_is_scalar raises ValidationError when pinset p and n have different types."""
+    sig = {"pinset": {"p": "H22", "n": ["H23"]}}
+    with pytest.raises(ValidationError):
+        signal_is_scalar(sig)

@@ -25,5 +25,5 @@ def is_valid_verilog_identifier(name: str) -> bool:
 
 
 def is_valid_vhdl_identifier(name: str) -> bool:
-    """Returns True if identifier name is a valid simple identifier"""
+    """Returns True if identifier name is a valid basic identifier"""
     return bool(_VHDL_ID.match(name))

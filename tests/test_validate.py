@@ -384,6 +384,14 @@ def test_valid_integration(tmp_path: Path, yaml_text: str, expected: dict) -> No
     assert doc == expected
 
 
+def test_malformed_yaml_raises(tmp_path: Path) -> None:
+    """Syntactically malformed YAML raises ValidationError."""
+    p = tmp_path / TMP_YAML
+    p.write_text("title: Test\n  bad_indent:\npart: [unclosed", encoding="utf-8")
+    with pytest.raises(ValidationError):
+        validate(p)
+
+
 def test_non_ascii_yaml_raises(tmp_path: Path) -> None:
     """YAML containing non-ASCII characters raises ValidationError."""
     p = tmp_path / TMP_YAML

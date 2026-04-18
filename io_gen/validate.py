@@ -43,7 +43,7 @@ SCHEMA_REFS = [
 
 def _build_resource(schema_path: Path) -> Resource:
     """Create a Resource object from a resolved path to a JSON file"""
-    with open(schema_path) as f:
+    with open(schema_path, "r", encoding="utf-8") as f:
         contents = json.load(f)
     return Resource(contents=contents, specification=DRAFT202012)
 
@@ -80,7 +80,7 @@ def _validate_structural(doc: dict) -> None:
     with importlib.resources.as_file(
         importlib.resources.files("io_gen.schema") / SCHEMA_TOP
     ) as schema_path:
-        with open(schema_path) as f:
+        with open(schema_path, "r", encoding="utf-8") as f:
             schema = json.load(f)
 
     # Create a registry containing the referenced JSON files in io_gen/schema/defs
@@ -146,7 +146,7 @@ def validate(yaml_file: Path) -> dict:
 
     # Load the YAML from the provided path - this can fail and raise and
     # exception if the file is missing or the user doesn't have read permissions
-    with open(yaml_file) as f:
+    with open(yaml_file, "r", encoding="utf-8") as f:
         try:
             doc = yaml.safe_load(f)
         except yaml.YAMLError as e:

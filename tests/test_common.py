@@ -3,7 +3,7 @@ import pytest
 from io_gen.tables import SignalTable
 from io_gen.tables.signal_table import build_signal_table
 
-from io_gen.generate.common import get_signal_top_ports, get_signal_ioring_ports
+from io_gen.generate.common import get_signal_top_ports, get_signal_ioring_ports, get_signal_nets
 
 
 def _make_signal_table(signals: list) -> SignalTable:
@@ -339,6 +339,23 @@ IORING_PORT_CASES = [
         ],
     ),
     (
+        "scalar_diff_inout",
+        {
+            "name": "diff_io",
+            "pinset": {"p": "AA1", "n": "AA2"},
+            "direction": "inout",
+            "buffer": "iobufds",
+            "iostandard": "LVDS",
+        },
+        [
+            {"name": "diff_io_p", "direction": "inout", "width": 1, "is_bus": False},
+            {"name": "diff_io_n", "direction": "inout", "width": 1, "is_bus": False},
+            {"name": "diff_io_i", "direction": "out", "width": 1, "is_bus": False},
+            {"name": "diff_io_o", "direction": "in", "width": 1, "is_bus": False},
+            {"name": "diff_io_t", "direction": "in", "width": 1, "is_bus": False},
+        ],
+    ),
+    (
         "bypass_excluded",
         {
             "name": "spare",
@@ -375,3 +392,56 @@ def test_get_signal_ioring_ports(sig: dict, expected: list[dict]) -> None:
     """Each signal type produces the correct IO ring port entries."""
     row = _make_sig_row(sig)
     assert get_signal_ioring_ports(row) == expected
+
+
+# ---- get_signal_nets --------------------------------------------------------
+
+SIGNAL_NETS_CASES = [
+    (
+        "bypass_returns_empty",
+        {
+            "name": "spare",
+            "pins": "J24",
+            "direction": "out",
+            "iostandard": "LVCMOS18",
+            "bypass": True,
+        },
+        [],
+    ),
+    (
+        "non_tristate_single_net",
+        {
+            "name": "sys_clk",
+            "pins": "G22",
+            "direction": "in",
+            "buffer": "ibuf",
+            "iostandard": "LVCMOS18",
+        },
+        [{"name": "sys_clk", "width": 1, "is_bus": False}],
+    ),
+    (
+        "tristate_three_nets",
+        {
+            "name": "gpio",
+            "pins": "A22",
+            "direction": "inout",
+            "buffer": "iobuf",
+            "iostandard": "LVCMOS18",
+        },
+        [
+            {"name": "gpio_i", "width": 1, "is_bus": False},
+            {"name": "gpio_o", "width": 1, "is_bus": False},
+            {"name": "gpio_t", "width": 1, "is_bus": False},
+        ],
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "sig, expected",
+    [pytest.param(s, e, id=n) for n, s, e in SIGNAL_NETS_CASES],
+)
+def test_get_signal_nets(sig: dict, expected: list[dict]) -> None:
+    """Each signal type produces the correct fabric-side net entries."""
+    row = _make_sig_row(sig)
+    assert get_signal_nets(row) == expected

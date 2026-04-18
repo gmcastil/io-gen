@@ -5,6 +5,28 @@ from io_gen.tables import ConstraintsTable
 from .common import get_header
 
 
+def _port_ref(name: str, suffix: str, index: int, is_bus: bool) -> str:
+    """Returns the port reference - buses get curly braces, scalars don't"""
+    if is_bus:
+        return f"{{{name}_{suffix}[{index}]}}"
+    return f"{name}_{suffix}"
+
+
+def _pin_constraints(
+    pkg_pin: str, port: str, pin: dict, pin_planner: bool
+) -> list[str]:
+    """Returns the pin constraints for a port"""
+    lines = [
+        f"set_property PACKAGE_PIN {pkg_pin} [get_ports {port}]",
+        f"set_property IOSTANDARD {pin['iostandard']} [get_ports {port}]",
+    ]
+    if pin_planner:
+        lines.append(
+            f"set_property DIRECTION {pin['direction'].upper()} [get_ports {port}]"
+        )
+    return lines
+
+
 def generate_xdc(
     signal_table: SignalTable,
     pin_table: PinTable,
@@ -13,7 +35,6 @@ def generate_xdc(
 ) -> str:
     """Generate XDC constraints from the signal and pin tables"""
 
-    # Start by writing out the header
     xdc_lines = []
     header = []
     for line in get_header():
@@ -23,115 +44,36 @@ def generate_xdc(
             header.append("#")
     xdc_lines.append("\n".join(header))
 
-    # Set general configuration and bank voltage constraints
     constraints = [
         f"set_property CONFIG_VOLTAGE {constraints_table.config_voltage} [current_design]",
         f"set_property CFGBVS {constraints_table.cfgbvs} [current_design]",
     ]
     xdc_lines.append("\n".join(constraints))
 
-    # Now add the individual pin constraints
     for sig in signal_table:
         name = sig["name"]
         comment = sig["comment"].get("xdc", None)
 
         lines = []
-        # Constraints start with the XDC comment if present
         if comment:
             lines.append(f"# {comment}")
 
-        # Get the list of pins from the pin table by name
-        pins = pin_table[name]
-        assert isinstance(pins, list)
-
-        for pin in pins:
-            iostandard = pin["iostandard"]
-            direction = pin["direction"].upper()
-            # Differential pairs here
+        for pin in pin_table[name]:
+            index = pin["index"]
+            is_bus = pin["is_bus"]
             if pin_is_differential(pin):
-                pkg_pin_p = pin["pinset"]["p"]
-                pkg_pin_n = pin["pinset"]["n"]
-                index = pin["index"]
-
-                if pin["is_bus"]:
-                    # The p side
-                    pin_xdc = f"set_property PACKAGE_PIN {pkg_pin_p} [get_ports {{{name}_p[{index}]}}]"
-                    iostandard_xdc = f"set_property IOSTANDARD {iostandard} [get_ports {{{name}_p[{index}]}}]"
-                    direction_xdc = f"set_property DIRECTION {direction} [get_ports {{{name}_p[{index}]}}]"
-                    lines.append(pin_xdc)
-                    lines.append(iostandard_xdc)
-                    if pin_planner:
-                        lines.append(direction_xdc)
-                    # The n side
-                    pin_xdc = f"set_property PACKAGE_PIN {pkg_pin_n} [get_ports {{{name}_n[{index}]}}]"
-                    iostandard_xdc = f"set_property IOSTANDARD {iostandard} [get_ports {{{name}_n[{index}]}}]"
-                    direction_xdc = f"set_property DIRECTION {direction} [get_ports {{{name}_n[{index}]}}]"
-                    lines.append(pin_xdc)
-                    lines.append(iostandard_xdc)
-                    if pin_planner:
-                        lines.append(direction_xdc)
-                else:
-                    # The p side
-                    pin_xdc = (
-                        f"set_property PACKAGE_PIN {pkg_pin_p} [get_ports {name}_p]"
-                    )
-                    iostandard_xdc = (
-                        f"set_property IOSTANDARD {iostandard} [get_ports {name}_p]"
-                    )
-                    direction_xdc = (
-                        f"set_property DIRECTION {direction} [get_ports {name}_p]"
-                    )
-                    lines.append(pin_xdc)
-                    lines.append(iostandard_xdc)
-                    if pin_planner:
-                        lines.append(direction_xdc)
-                    # The n side
-                    pin_xdc = (
-                        f"set_property PACKAGE_PIN {pkg_pin_n} [get_ports {name}_n]"
-                    )
-                    iostandard_xdc = (
-                        f"set_property IOSTANDARD {iostandard} [get_ports {name}_n]"
-                    )
-                    direction_xdc = (
-                        f"set_property DIRECTION {direction} [get_ports {name}_n]"
-                    )
-                    lines.append(pin_xdc)
-                    lines.append(iostandard_xdc)
-                    if pin_planner:
-                        lines.append(direction_xdc)
-
-            # Single-ended here
+                port_ref = _port_ref(name, "p", index, is_bus)
+                lines.extend(
+                    _pin_constraints(pin["pinset"]["p"], port_ref, pin, pin_planner)
+                )
+                port_ref = _port_ref(name, "n", index, is_bus)
+                lines.extend(
+                    _pin_constraints(pin["pinset"]["n"], port_ref, pin, pin_planner)
+                )
             else:
-                pkg_pin = pin["pin"]
-                iostandard = pin["iostandard"]
-                index = pin["index"]
+                port_ref = _port_ref(name, "pad", index, is_bus)
+                lines.extend(_pin_constraints(pin["pin"], port_ref, pin, pin_planner))
 
-                if pin["is_bus"]:
-                    pin_xdc = f"set_property PACKAGE_PIN {pkg_pin} [get_ports {{{name}_pad[{index}]}}]"
-                    iostandard_xdc = f"set_property IOSTANDARD {iostandard} [get_ports {{{name}_pad[{index}]}}]"
-                    direction_xdc = f"set_property DIRECTION {direction} [get_ports {{{name}_pad[{index}]}}]"
-                    lines.append(pin_xdc)
-                    lines.append(iostandard_xdc)
-                    if pin_planner:
-                        lines.append(direction_xdc)
-                else:
-                    pin_xdc = (
-                        f"set_property PACKAGE_PIN {pkg_pin} [get_ports {name}_pad]"
-                    )
-                    iostandard_xdc = (
-                        f"set_property IOSTANDARD {iostandard} [get_ports {name}_pad]"
-                    )
-                    direction_xdc = (
-                        f"set_property DIRECTION {direction} [get_ports {name}_pad]"
-                    )
-                    lines.append(pin_xdc)
-                    lines.append(iostandard_xdc)
-                    if pin_planner:
-                        lines.append(direction_xdc)
-
-        # This gives a block of pin constraints, with the comment at the top and no intervening
-        # blank lines.
         xdc_lines.append("\n".join(lines))
 
-    # Now join them with a blank line in between each block and fnish with a newline at the end
     return "\n\n".join(xdc_lines) + "\n"

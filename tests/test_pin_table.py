@@ -214,6 +214,27 @@ def test_bypass_true_produces_instance_none() -> None:
     assert all(row["instance"] is None for row in rows)
 
 
+def test_infer_true_bus_produces_instance_none() -> None:
+    """A bus signal with infer:true has instance=None in every pin row."""
+    table = PinTable()
+    table.add(
+        {
+            "name": "led",
+            "pins": ["A22", "B22"],
+            "width": 2,
+            "direction": "out",
+            "buffer": "obuf",
+            "iostandard": "LVCMOS18",
+            "infer": True,
+            "bypass": False,
+            "comment": {},
+            "instance": "obuf_led",
+        }
+    )
+    rows = table.table["led"]
+    assert all(row["instance"] is None for row in rows)
+
+
 # ---------------------------------------------------------------------------
 # build_pin_table() - integration
 # ---------------------------------------------------------------------------

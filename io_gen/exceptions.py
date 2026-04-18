@@ -1,2 +1,2 @@
 class ValidationError(Exception):
-    pass
+    """Raised when input YAML fails structural or semantic validation."""

@@ -38,7 +38,7 @@ Where `<ext>` is `v` or `vhd` and `<lang>` is `verilog` or `vhdl`.
 
 ## XDC Constraints
 
-**Function:** `generate_xdc(signal_table, pin_table) -> str`
+**Function:** `generate_xdc(signal_table, pin_table, constraints_table, pin_planner=False) -> str`
 
 **Input:** signal table + pin table
 

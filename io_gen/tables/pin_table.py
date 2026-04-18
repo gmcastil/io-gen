@@ -66,7 +66,6 @@ def _flatten_array(sig: dict[str, Any]) -> list[dict]:
     else:
         p_pins = sig["pinset"]["p"]
         n_pins = sig["pinset"]["n"]
-        assert len(p_pins) == len(n_pins)
         items = zip(p_pins, n_pins)
 
     flat_sig = []
@@ -106,5 +105,5 @@ def build_pin_table(signal_table: SignalTable) -> PinTable:
 
 
 def pin_is_differential(pin: dict[str, Any]) -> bool:
-    """Returns true if pin is differential else False"""
+    """Returns true if pin is differential others false"""
     return "pinset" in pin

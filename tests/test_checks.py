@@ -391,6 +391,10 @@ INVALID_PINSET_ARRAY_WIDTH_MATCH = [
         "generate_false_width_mismatch",
         {"name": "reserved", "pinset": {"p": ["H22", "H24"], "n": ["H23", "H25"]}, "generate": False, "width": 3},
     ),
+    (
+        "n_side_width_wrong",
+        {"name": "lvds_data", "pinset": {"p": ["AA1"], "n": ["AA2", "AB2"]}, "width": 1},
+    ),
 ]
 
 

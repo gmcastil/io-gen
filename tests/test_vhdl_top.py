@@ -618,6 +618,22 @@ def test_ioring_inst_bypass_excluded() -> None:
     assert "spare" not in output
 
 
+def test_ioring_inst_all_bypass_returns_empty_string() -> None:
+    """When all signals are bypass:true the ioring instantiation is empty string."""
+    st = _make_signal_table(
+        [
+            {
+                "name": "spare",
+                "pins": "J24",
+                "direction": "out",
+                "iostandard": "LVCMOS18",
+                "bypass": True,
+            },
+        ]
+    )
+    assert _generate_vhdl_ioring_inst(st, "test") == ""
+
+
 def test_ioring_inst_alignment_tab_stop() -> None:
     """When the longest port name lands on a multiple of 4, gap is exactly 1 space.
 
