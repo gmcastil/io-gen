@@ -28,23 +28,13 @@ class SignalTable:
         # reassigning what came out of the YAML. Start with the common stuff
         row["name"] = sig["name"]
         if "pins" in sig:
-            if isinstance(sig["pins"], str):
-                # Here, width isn't required in the schema, so we insert it
-                row["width"] = 1
-                row["pins"] = sig["pins"]
-            else:
-                # Here, width actually is required, so we grab it directly
-                row["width"] = sig["width"]
-                # Linter can't tell that this is list[str] so we cast it (that's why have those assertions earlier)
-                row["pins"] = deepcopy(sig["pins"])
+            row["width"] = 1 if isinstance(sig["pins"], str) else sig["width"]
+            row["pins"] = (
+                sig["pins"] if isinstance(sig["pins"], str) else deepcopy(sig["pins"])
+            )
         else:
-            # Linter can't identify this either, so we cast to a dict[str, obj] before we try to get the 'p' value
-            if isinstance(sig["pinset"]["p"], str):
-                row["width"] = 1
-                row["pinset"] = deepcopy(sig["pinset"])
-            else:
-                row["width"] = sig["width"]
-                row["pinset"] = deepcopy(sig["pinset"])
+            row["width"] = 1 if isinstance(sig["pinset"]["p"], str) else sig["width"]
+            row["pinset"] = deepcopy(sig["pinset"])
 
         # These are required for everybody
         row["iostandard"] = sig["iostandard"]
@@ -79,7 +69,7 @@ def signal_is_scalar(sig: dict[str, Any]) -> bool:
 
     # Depending on when this is called, the signal might not be validated yet
     if "pinset" in sig:
-        if type(sig["pinset"]["p"]) is not type(sig["pinset"]["n"]):
+        if not isinstance(sig["pinset"]["p"], type(sig["pinset"]["n"])):
             raise ValidationError("pinset p and n must be the same type")
 
     # Are we dealing with a scalar or an array?

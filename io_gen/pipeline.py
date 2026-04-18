@@ -59,12 +59,12 @@ def run_pipeline(
     # OSError which is being caught higher up)
     if not validate_only:
         output_dir.mkdir(parents=True, exist_ok=True)
-        # Now prove that it's writable (this will raise a PermissionError if not)
         probe = output_dir / ".io_gen_probe"
-        try:
-            probe.touch()
-        finally:
-            probe.unlink(missing_ok=True)
+        # Now prove that it's writable (this will raise a PermissionError if not)
+        probe.touch()
+        # If the preceding raises an exception, then nothing will have been created
+        # probe.unlink(missing_ok=True)
+        probe.unlink()
 
     # Get the validated data from YAML
     valid_doc = validate(yaml_path)

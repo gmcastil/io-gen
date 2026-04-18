@@ -1,8 +1,10 @@
 import re
 from pathlib import Path
+from typing import Any
 
 from .exceptions import ValidationError
 
+_PIN_NAME_PATTERN = re.compile(r"^[A-Z]+[0-9]+$")
 
 # Pair supported buffers with their directions
 BUFFER_DIRECTIONS = {
@@ -49,7 +51,7 @@ def _get_pin_names_from_signal(sig: dict) -> list[str]:
     return pins
 
 
-def _check_pin_name_format(signals: list[dict]) -> None:
+def check_pin_name_format(signals: list[dict]) -> None:
     """Check that every pin name in the design contains only uppercase letters and digits.
 
     Validates all pin names across all signals, including both legs of pinset and
@@ -59,16 +61,15 @@ def _check_pin_name_format(signals: list[dict]) -> None:
 
     Raises ValidationError identifying the first malformed pin name found.
     """
-    pattern = re.compile(r"^[A-Z]+[0-9]+$")
     for sig in signals:
         name = sig["name"]
         pins = _get_pin_names_from_signal(sig)
         for pin in pins:
-            if not pattern.match(pin):
+            if not _PIN_NAME_PATTERN.match(pin):
                 raise ValidationError(f"signal '{name}' has pin '{pin}': is malformed")
 
 
-def _check_unique_signal_names(signals: list[dict]) -> None:
+def check_unique_signal_names(signals: list[dict]) -> None:
     """Check that no two signals share the same name.
 
     Raises ValidationError identifying the first duplicate name found.
@@ -82,7 +83,7 @@ def _check_unique_signal_names(signals: list[dict]) -> None:
         uniq_names.add(name)
 
 
-def _check_unique_pins(signals: list[dict]) -> None:
+def check_unique_pins(signals: list[dict]) -> None:
     """Check that no physical pin is assigned to more than one signal.
 
     Checks both pins (scalar and array) and pinset (p and n legs).
@@ -97,7 +98,7 @@ def _check_unique_pins(signals: list[dict]) -> None:
             pins.add(pin)
 
 
-def _check_pinset_array_mismatch(sig: dict) -> None:
+def check_pinset_array_mismatch(sig: dict[str, Any]) -> None:
     """Check that pinset.p and pinset.n are the same type and length.
 
     Both must be scalar strings or both must be arrays. If arrays,
@@ -112,14 +113,14 @@ def _check_pinset_array_mismatch(sig: dict) -> None:
 
         if isinstance(p_pins, str) and isinstance(n_pins, str):
             return
-        elif isinstance(p_pins, list) and isinstance(n_pins, list):
+        if isinstance(p_pins, list) and isinstance(n_pins, list):
             if len(p_pins) != len(n_pins):
                 raise ValidationError(f"signal '{name}': pinset array mismatch")
         else:
             raise ValidationError(f"signal '{name}': pinset type mismatch")
 
 
-def _check_pins_array_width_match(sig: dict) -> None:
+def check_pins_array_width_match(sig: dict[str, Any]) -> None:
     """Check that the declared width matches the length of the pins array.
 
     Only applies when pins is an array. Raises ValidationError identifying
@@ -138,7 +139,7 @@ def _check_pins_array_width_match(sig: dict) -> None:
                 raise ValidationError(f"signal '{name}': pins array width mismatch")
 
 
-def _check_pinset_array_width_match(sig: dict) -> None:
+def check_pinset_array_width_match(sig: dict[str, Any]) -> None:
     """Check that the declared width matches the length of the pinset.p array.
 
     Only applies when pinset.p is an array. Raises ValidationError identifying
@@ -162,7 +163,7 @@ def _check_pinset_array_width_match(sig: dict) -> None:
                 raise ValidationError(f"signal '{name}': pinset array width mismatch")
 
 
-def _check_buffer_direction(sig: dict) -> None:
+def check_buffer_direction(sig: dict[str, Any]) -> None:
     """Check that the buffer type is compatible with the declared direction.
 
     Required pairings: ibuf->in, obuf->out, ibufds->in, obufds->out, iobuf->inout,
@@ -182,7 +183,7 @@ def _check_buffer_direction(sig: dict) -> None:
         )
 
 
-def _check_buffer_strategy_match(sig: dict) -> None:
+def check_buffer_strategy_match(sig: dict[str, Any]) -> None:
     """Check that the buffer type is compatible with the pin assignment strategy.
 
     ibuf, obuf, and iobuf require pins. ibufds and obufds require pinset.
@@ -206,7 +207,7 @@ def _check_buffer_strategy_match(sig: dict) -> None:
         )
 
 
-def _check_buffer_infer_bypass_mismatch(sig: dict) -> None:
+def check_buffer_infer_bypass_mismatch(sig: dict[str, Any]) -> None:
     """Check that bypass: true and infer: true are not both set on the same signal.
 
     These are mutually exclusive: bypass means an external component provides
@@ -220,7 +221,7 @@ def _check_buffer_infer_bypass_mismatch(sig: dict) -> None:
         )
 
 
-def _check_buffer_inferable(sig: dict) -> None:
+def check_buffer_inferable(sig: dict[str, Any]) -> None:
     """Check that infer: true is only used with ibuf or obuf.
 
     Synthesis inference is predictable and guaranteed correct only for these
@@ -237,20 +238,17 @@ def _check_buffer_inferable(sig: dict) -> None:
         raise ValidationError(f"signal '{name}': buffer {buffer} not inferable")
 
 
-def _check_minimum_ports_generated(signals: list[dict]) -> None:
+def check_minimum_ports_generated(signals: list[dict[str, Any]]) -> None:
     """Check that at least one signal has generate: true.
 
     Raises ValidationError if all signals have generate: false, which would
     produce no usable output.
     """
-    for sig in signals:
-        status = sig.get("generate", True)
-        if status:
-            return
-    raise ValidationError("no signals with generate: true - nothing to generate")
+    if not any(sig.get("generate", True) for sig in signals):
+        raise ValidationError("no signals with generate: true - nothing to generate")
 
 
-def _check_non_ascii(path: Path) -> None:
+def check_non_ascii(path: Path) -> None:
     """Checks a file to verify there are no non-ASCII characters present
 
     Raises ValidationError identifying the location of the first non-ASCII character

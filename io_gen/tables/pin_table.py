@@ -4,7 +4,7 @@ from typing import Any
 
 class PinTable:
     def __init__(self) -> None:
-        self.table = {}
+        self.table: dict[str, list[dict[str, Any]]] = {}
 
     def add(self, sig: dict[str, Any]) -> None:
         sig_name = sig["name"]
@@ -13,14 +13,14 @@ class PinTable:
     def __len__(self) -> int:
         return len(self.table)
 
-    def __getitem__(self, sig_name: str) -> list:
+    def __getitem__(self, sig_name: str) -> list[dict[str, Any]]:
         if sig_name in self.table:
             return self.table[sig_name]
         else:
             raise KeyError(f"'{sig_name}' not found in pin table")
 
 
-def _flatten_signal(sig: dict[str, Any]) -> list[dict]:
+def _flatten_signal(sig: dict[str, Any]) -> list[dict[str, Any]]:
     """Flattens a signal table row into a list of pin or pinset rows."""
 
     # Operate on scalars and arrays (instead of pins vs pinsets)
@@ -30,7 +30,7 @@ def _flatten_signal(sig: dict[str, Any]) -> list[dict]:
         return _flatten_array(sig)
 
 
-def _flatten_scalar(sig: dict[str, Any]) -> list[dict]:
+def _flatten_scalar(sig: dict[str, Any]) -> list[dict[str, Any]]:
     """Flattens a scalar single-ended or differential signal"""
 
     row: dict[str, Any] = {}
@@ -58,7 +58,7 @@ def _flatten_scalar(sig: dict[str, Any]) -> list[dict]:
     return [row]
 
 
-def _flatten_array(sig: dict[str, Any]) -> list[dict]:
+def _flatten_array(sig: dict[str, Any]) -> list[dict[str, Any]]:
     """Flattens single-ended or differential array signal"""
 
     if "pins" in sig:

@@ -13,18 +13,18 @@ from .tables.signal_table import SignalTable
 from .exceptions import ValidationError
 from .identifiers import is_valid_verilog_identifier, is_valid_vhdl_identifier
 from .checks import (
-    _check_pin_name_format,
-    _check_unique_signal_names,
-    _check_unique_pins,
-    _check_pinset_array_mismatch,
-    _check_pins_array_width_match,
-    _check_pinset_array_width_match,
-    _check_buffer_direction,
-    _check_buffer_strategy_match,
-    _check_buffer_infer_bypass_mismatch,
-    _check_buffer_inferable,
-    _check_minimum_ports_generated,
-    _check_non_ascii,
+    check_pin_name_format,
+    check_unique_signal_names,
+    check_unique_pins,
+    check_pinset_array_mismatch,
+    check_pins_array_width_match,
+    check_pinset_array_width_match,
+    check_buffer_direction,
+    check_buffer_strategy_match,
+    check_buffer_infer_bypass_mismatch,
+    check_buffer_inferable,
+    check_minimum_ports_generated,
+    check_non_ascii,
 )
 
 # Top level JSON schema file for validating input YAML stored in schema/
@@ -122,27 +122,27 @@ def _validate_semantic(doc: dict) -> None:
     # Explicitly assuming that structural validation was successful
     signals = doc["signals"]
 
-    _check_pin_name_format(signals)
-    _check_unique_signal_names(signals)
-    _check_unique_pins(signals)
-    _check_minimum_ports_generated(signals)
+    check_pin_name_format(signals)
+    check_unique_signal_names(signals)
+    check_unique_pins(signals)
+    check_minimum_ports_generated(signals)
 
     # Now validate each signal individually
     for sig in signals:
-        _check_pinset_array_mismatch(sig)
-        _check_pins_array_width_match(sig)
-        _check_pinset_array_width_match(sig)
-        _check_buffer_direction(sig)
-        _check_buffer_strategy_match(sig)
-        _check_buffer_infer_bypass_mismatch(sig)
-        _check_buffer_inferable(sig)
+        check_pinset_array_mismatch(sig)
+        check_pins_array_width_match(sig)
+        check_pinset_array_width_match(sig)
+        check_buffer_direction(sig)
+        check_buffer_strategy_match(sig)
+        check_buffer_infer_bypass_mismatch(sig)
+        check_buffer_inferable(sig)
 
 
 def validate(yaml_file: Path) -> dict:
     """Validate a YAML file for structural and semantical accuracy"""
 
     # Before doing anything, we check the YAML for non-ascii encoded unicode
-    _check_non_ascii(yaml_file)
+    check_non_ascii(yaml_file)
 
     # Load the YAML from the provided path - this can fail and raise and
     # exception if the file is missing or the user doesn't have read permissions

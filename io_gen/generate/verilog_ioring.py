@@ -21,10 +21,10 @@ def generate_verilog_ioring(
         if line:
             rtl.append(f"// {line}")
         else:
-            rtl.append(f"//")
+            rtl.append("//")
     rtl.append(f"module {top}_io //#(")
-    rtl.append(f"//)")
-    rtl.append(f"(")
+    rtl.append("//)")
+    rtl.append("(")
     rtl.append(_generate_verilog_ioring_ports(signal_table))
     rtl.append(");")
     rtl.append("")
@@ -45,7 +45,7 @@ def _generate_verilog_ioring_ports(signal_table: SignalTable) -> str:
             if port["is_bus"]:
                 width = f"[{port['width'] - 1}:0]"
             else:
-                width = f""
+                width = ""
             dim = f"wire {width}"
             line = f"{direction:<8}{dim:<16}{port['name']}"
             ports.append(line)

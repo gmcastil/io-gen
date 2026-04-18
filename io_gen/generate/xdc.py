@@ -52,7 +52,7 @@ def generate_xdc(
 
     for sig in signal_table:
         name = sig["name"]
-        comment = sig["comment"].get("xdc", None)
+        comment = sig["comment"].get("xdc")
 
         lines = []
         if comment:
