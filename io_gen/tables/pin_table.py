@@ -25,12 +25,12 @@ def _flatten_signal(sig: dict[str, Any]) -> list[dict[str, Any]]:
 
     # Operate on scalars and arrays (instead of pins vs pinsets)
     if signal_is_scalar(sig):
-        return _flatten_scalar(sig)
+        return flatten_scalar(sig)
     else:
-        return _flatten_array(sig)
+        return flatten_array(sig)
 
 
-def _flatten_scalar(sig: dict[str, Any]) -> list[dict[str, Any]]:
+def flatten_scalar(sig: dict[str, Any]) -> list[dict[str, Any]]:
     """Flattens a scalar single-ended or differential signal"""
 
     row: dict[str, Any] = {}
@@ -58,7 +58,7 @@ def _flatten_scalar(sig: dict[str, Any]) -> list[dict[str, Any]]:
     return [row]
 
 
-def _flatten_array(sig: dict[str, Any]) -> list[dict[str, Any]]:
+def flatten_array(sig: dict[str, Any]) -> list[dict[str, Any]]:
     """Flattens single-ended or differential array signal"""
 
     if "pins" in sig:

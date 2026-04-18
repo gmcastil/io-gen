@@ -36,11 +36,11 @@ STAMP_SYNTH_READY	:= $(SYNTH_DIR)/.stamp_synth_ready
 
 synth: $(STAMP_SYNTH_READY)
 	mkdir -pv $(SYNTH_REPORTS_DIR)
-	$(VIVADO) $(SYNTH_VIVADO_ARGS) -source $(RUN_SYNTH) -tclargs $(SYNTH_TCLARGS)
+	cd $(SYNTH_DIR); $(VIVADO) $(SYNTH_VIVADO_ARGS) -source $(RUN_SYNTH) -tclargs $(SYNTH_TCLARGS)
 
 drc: $(STAMP_DRC_READY)
 	mkdir -pv $(DRC_REPORTS_DIR)
-	cd $(SYNTH_DIR); $(VIVADO) $(DRC_VIVADO_ARGS) -source $(RUN_DRC) -tclargs $(DRC_TCLARGS)
+	$(VIVADO) $(DRC_VIVADO_ARGS) -source $(RUN_DRC) -tclargs $(DRC_TCLARGS)
 
 $(STAMP_DRC_READY):
 	mkdir -pv $(DRC_DIR)
