@@ -3,6 +3,11 @@
 Entries are in reverse chronological order.
 
 ---
+## 2026-04-23 - Adding CI and status to the project
+
+- Project is static enough that I've added it to github actions
+- Passing all tests in CI on both macOS and Ubuntu
+
 ## 2026-04-18 - Feature complete with synth target now
 
 - Added a `synth` target to the validation flow
