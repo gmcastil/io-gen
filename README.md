@@ -1,5 +1,7 @@
 # IO Gen
 
+![CI](https://github.com/gmcastil/io-gen/actions/workflows/ci.yml/badge.svg)
+
 ## Overview
 
 A common task for FPGA design engineers is to define top level RTL port names,
