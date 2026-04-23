@@ -11,7 +11,7 @@ document and produces a fully resolved signal table and pin table.
 
 **Input:** the validated YAML document as a plain dict
 
-**Output:** a `SignalTable` and a `PinTable`, both fully resolved
+**Output:** a `SignalTable`, a `PinTable`, and a `ConstraintsTable`, all fully resolved
 
 **Errors:** none expected - the input is already validated. Any error
 here is a pipeline bug.
@@ -23,6 +23,7 @@ here is a pipeline bug.
 1. Build the `MetaTable` from the top-level YAML fields (see meta_table.md)
 2. Build the `SignalTable` from the signals list (see signal_table.md)
 3. Build the `PinTable` from the signal table (see pin_table.md)
+4. Build the `ConstraintsTable` from the `constraints` block (see constraints_table.md)
 
 ---
 

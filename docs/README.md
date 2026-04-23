@@ -12,9 +12,9 @@ The pipeline takes a validated YAML document through three stages in order:
 ```
 YAML file
   -> 1. Validation (structural + semantic)
-  -> 2. Table Construction (signal table + pin table + meta table)
+  -> 2. Table Construction (signal table + pin table + meta table + constraints table)
   -> 3. Generation
-        -> XDC constraints          (from pin table + signal table)
+        -> XDC constraints          (from pin table + signal table + constraints table)
         -> HDL port declarations    (from signal table)
         -> HDL signal declarations  (from signal table)
         -> IO ring                  (from pin table + signal table)
@@ -50,6 +50,7 @@ completely. No defensive checks are needed downstream.
 - [Meta Table](meta_table.md)
 - [Signal Table](signal_table.md)
 - [Pin Table](pin_table.md)
+- [Constraints Table](constraints_table.md)
 
 ---
 

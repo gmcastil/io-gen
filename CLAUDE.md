@@ -31,6 +31,18 @@ I am the architect. You are the assistant. You operate in two standing capacitie
 3. **Implementation last** - only once tests exist do we write code to make them pass
 4. **One thing at a time** - we complete one pipeline stage before moving to the next
 
+### Adding a New Buffer Type
+
+Follow this sequence exactly:
+
+1. Update `examples/example.yaml` to include a signal using the new buffer type
+2. Regenerate example outputs (`make examples`) - these become the canonical reference; agree they are correct before proceeding
+3. Update `schema.json` and `docs/schema.md` to add the new type to the enum
+4. Write tests derived from the updated example files
+5. Implement to make the failing tests pass
+
+Do not write tests or implementation before step 2 is agreed upon.
+
 ## Context Loading
 
 At the start of every session, read all files in the `docs/` folder before
@@ -71,17 +83,14 @@ chronological. Include the relevant commit hash if a commit was made.
 
 ## Current Project State
 
-This is a code generation pipeline that will:
+The pipeline is complete and all stages are implemented and tested. All six
+buffer types (ibuf, obuf, iobuf, ibufds, obufds, iobufds) are supported.
+Future work will add new buffer types or extend existing generator behavior.
 
-- Read FPGA pin constraint data from a YAML file
-- Generate XDC constraint files, VHDL or Verilog port definitions, IO ring
-  code, IO primitive instantiations, and signal declarations
-- Output goes to files in a directory specified at runtime
-
-The pipeline design is documented in `README.md` and the stage-level
-docs it references. The schema is defined in `schema/schema.json` and
-documented in `docs/schema.md`. The data structures are settled - see the
-stage docs for details.
+The pipeline design is documented in `README.md` and the stage-level docs it
+references. The schema is defined in `io_gen/schema/schema.json` and documented
+in `docs/schema.md`. The data structures are settled - see the stage docs for
+details.
 
 ## What Is In Archive
 
@@ -110,19 +119,6 @@ Do not add formatter invocation to the pipeline.
 
 ## Domain Knowledge
 
-### Known Edge Cases
-
-- TBD - to be filled in as we discover them
-
-### Deferred Buffer Types
-
-- None currently. All six buffer types (ibuf, obuf, iobuf, ibufds, obufds, iobufds)
-  are implemented and supported.
-
-### Invalid Assumptions From Previous Attempts
-
-- TBD - to be filled in as we identify them
-
 ### Design Decisions
 
 - **No bank inheritance** - there is no bank-level IOSTANDARD inheritance. Every
@@ -146,81 +142,6 @@ Do not add formatter invocation to the pipeline.
 - **Instance indexing is always `_i<N>`** - there is no special case for scalars.
   A scalar gets `_i0`. A bus gets `_i0` through `_iN`. This applies to both
   auto-generated and user-supplied instance names.
-
-## Current Focus
-
-- [x] Review and finalize the JSON schema / data model
-- [x] Define the data structures that need to be produced
-- [x] Document each pipeline stage interface
-- [x] Write tests for each interface
-- [x] Implement one stage at a time
-
-### Validation Stage Status
-
-- [x] Structural validation implemented and tested (`io_gen/validate.py`)
-- [x] Semantic validation fully implemented (`io_gen/checks.py`)
-- [x] All check functions tested in `tests/test_checks.py`)
-- [x] Structural and integration tests in `tests/test_validate.py`
-- [x] Non-ASCII check implemented (`_check_non_ascii` in `io_gen/checks.py`)
-- [x] Enriched jsonschema error messages with signal name (`io_gen/validate.py`)
-- `io_gen/exceptions.py` defines `ValidationError` in isolation (no imports)
-- `io_gen/checks.py` contains all `_check_*` functions and `_get_pin_names_from_signal` helper
-- `io_gen/validate.py` orchestrates structural and semantic validation only
-
-### Table Construction Stage Status
-
-- [x] `SignalTable` interface designed and documented (`docs/signal_table.md`)
-- [x] `io_gen/tables/` package implemented and tested
-- [x] `MetaTable` implemented and tested (`tests/test_meta_table.py`)
-- [x] `SignalTable` and `build_signal_table()` implemented and tested (`tests/test_signal_table.py`)
-- [x] `PinTable` and `build_pin_table()` implemented and tested (`tests/test_pin_table.py`, `tests/test_flatten.py`)
-
-Key design decisions:
-
-- `SignalTable` is a thin wrapper class over `list[dict]`
-- `PinTable` is a thin wrapper class over `dict[str, list[dict]]`, keyed by signal name
-- Rows are plain dicts with variable shape (three shapes - see `docs/signal_table.md`)
-- Each factory function lives in the same module as its class
-- Tables are a package: `io_gen/tables/`
-  - `io_gen/tables/signal_table.py` - `SignalTable`, `build_signal_table()`, `signal_is_scalar()`, `signal_is_differential()`
-  - `io_gen/tables/pin_table.py` - `PinTable`, `build_pin_table()`, `pin_is_differential()`
-  - `io_gen/tables/meta_table.py` - `MetaTable`, `_build_meta_table()`
-  - `io_gen/tables/__init__.py` - re-exports all classes and private helpers
-- `_signal_is_scalar(sig)` distinguishes scalar vs. bus (single pin vs. array)
-- `_signal_is_differential(sig)` distinguishes SE vs. differential pair (`pins` vs. `pinset`) - orthogonal to scalar/bus
-- `_pin_is_differential(pin)` distinguishes SE vs. differential at the pin row level (used in XDC generator)
-- `PinTable.__getitem__(name)` is the public retrieval interface for generators - use `pt[sig["name"]]`
-
-### Generation Stage Status
-
-- [x] XDC generator implemented and tested (`io_gen/generate/xdc.py`, `tests/test_xdc.py`)
-- [x] Verilog top-level generator fully implemented and tested (`io_gen/generate/verilog_top.py`, `tests/test_verilog_top.py`)
-- [x] Verilog IO ring fully implemented and tested (`io_gen/generate/verilog_ioring.py`, `tests/test_verilog_ioring.py`)
-- [x] `generate_verilog_ioring` assembler complete
-- [x] VHDL top-level generator fully implemented and tested (`io_gen/generate/vhdl_top.py`, `tests/test_vhdl_top.py`)
-- [x] VHDL IO ring fully implemented and tested (`io_gen/generate/vhdl_ioring.py`, `tests/test_vhdl_ioring.py`)
-
-Key design decisions:
-
-- Generators live in `io_gen/generate/`, split by output file and language:
-  - `xdc.py` - `generate_xdc(st, pt)`
-  - `verilog_top.py` - `generate_verilog_top(st, top)` + private helpers
-  - `verilog_ioring.py` - `generate_verilog_ioring(st, pt, top)` + private helpers
-  - `common.py` - `_get_signal_top_ports`, `_get_signal_ioring_ports`, `_get_signal_nets`, `_get_ioring_header`
-  - `formatting.py` - `_indent_join`
-  - `vhdl_top.py`, `vhdl_ioring.py` - VHDL counterparts (pending)
-- Buffer dispatch uses `_INSTANTIATE_BUFFERS` and `_INFER_BUFFERS` dicts keyed by buffer type
-- `infer: true` signals use a single `assign` statement - no pin table lookup needed
-- Generators never see `generate: false` signals - filtered at signal table construction
-
-### CLI and Pipeline Status
-
-- [x] `io_gen/cli.py` implemented with argparse - `--top`, `--lang`, `--output`, `--validate-only`, `--rtl-only`, `--xdc-only`
-- [x] `io_gen/pipeline.py` (`run_pipeline`) implemented - dir creation, identifier validation, table construction, file writing with status output
-- [x] `io_gen/identifiers.py` - `_is_valid_verilog_identifier` and `_is_valid_vhdl_identifier` both implemented
-- [x] Entry point `io-gen` registered in `pyproject.toml`
-- [x] Makefile updated to run `pip install -e .` in venv stamp target
-- [x] First successful end-to-end run against a real board YAML
 
 ## Definitions
 
