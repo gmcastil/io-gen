@@ -89,10 +89,10 @@ if it does not exist.
 
 The following three options are mutually exclusive:
 
-- `--validate-only` — parse and validate the input YAML without writing any
+- `--validate-only` - parse and validate the input YAML without writing any
   output. Exits non-zero on failure. Useful in CI.
-- `--rtl-only` — generate HDL files only. Skip the XDC file.
-- `--xdc-only` — generate the XDC file only. Skip HDL files. `--lang` is not
+- `--rtl-only` - generate HDL files only. Skip the XDC file.
+- `--xdc-only` - generate the XDC file only. Skip HDL files. `--lang` is not
   required.
 
 ### Example

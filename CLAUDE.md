@@ -36,10 +36,11 @@ I am the architect. You are the assistant. You operate in two standing capacitie
 Follow this sequence exactly:
 
 1. Update `examples/example.yaml` to include a signal using the new buffer type
-2. Regenerate example outputs (`make examples`) - these become the canonical reference; agree they are correct before proceeding
+2. Manually craft the expected example output files to reflect the new buffer type - these become the canonical reference; agree they are correct before proceeding
 3. Update `schema.json` and `docs/schema.md` to add the new type to the enum
-4. Write tests derived from the updated example files
+4. Write tests derived from the hand-crafted example output files
 5. Implement to make the failing tests pass
+6. Run `make examples` to regenerate the example outputs and confirm they match what was hand-crafted
 
 Do not write tests or implementation before step 2 is agreed upon.
 
@@ -91,10 +92,6 @@ The pipeline design is documented in `README.md` and the stage-level docs it
 references. The schema is defined in `io_gen/schema/schema.json` and documented
 in `docs/schema.md`. The data structures are settled - see the stage docs for
 details.
-
-## What Is In Archive
-
-The `archive/` folder contains previous implementation attempts and should be ignored.
 
 ## Conventions
 

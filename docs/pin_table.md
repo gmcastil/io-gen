@@ -109,7 +109,7 @@ Responsibilities:
   with `pinset["n"][i]` to produce `{"p": ..., "n": ...}` per row
 - Copies `iostandard`, `direction`, and `infer` from the signal row into every pin row unchanged
 - Sets `index` to the bus position (0-based); scalars always get 0. Array
-  order is index-preserving: `pins[0]` → `index=0`, `pins[1]` → `index=1`,
+  order is index-preserving: `pins[0]` maps to `index=0`, `pins[1]` to `index=1`,
   etc. Same applies to `pinset["p"]` and `pinset["n"]`.
 - Appends `_i<N>` to the signal table `instance` base name to produce
   the fully-resolved instance name for each row

@@ -82,7 +82,7 @@ build_signal_table(doc)
 ### `active() -> list[dict[str, Any]]`
 
 Returns a filtered list containing only signals where `bypass` is `False`.
-Use this in generators that produce IO ring output — bypass signals have no
+Use this in generators that produce IO ring output - bypass signals have no
 buffer, no instance, and no IO ring ports. Iterating the table directly
 includes bypass signals; `active()` excludes them.
 
