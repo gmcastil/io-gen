@@ -1,5 +1,4 @@
 .coverage
-coverage.xml
 .venv_installed_stamp
 .venv/
 __pycache__/

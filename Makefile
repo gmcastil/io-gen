@@ -28,7 +28,7 @@ PROJ_FILES		:= $(shell git ls-files)
 
 # Keywords to filter tests on with `-k $(TESTS)` (default is all of them)
 TESTS			?= ""
-COVERAGE_ARGS		:= --cov=$(PKG_NAME) --cov-report=term-missing --cov-report=xml
+COVERAGE_ARGS		:= --cov=$(PKG_NAME) --cov-report=term-missing
 TEST_ARGS		:= ""
 
 .PHONY: install test clean examples
