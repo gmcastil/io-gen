@@ -3,6 +3,40 @@
 Entries are in reverse chronological order.
 
 ---
+## 2026-06-30 - Fixed distribution issues found while testing pip/pipx install
+
+**Commit:** `c8047dc` - "Fixed some doc and package issues that prevented clean distribution."
+**Tag:** `v0.2.1`
+
+Triggered by trying to install `io-gen` on Debian via `pip install git+...` and
+hitting PEP 668's externally-managed-environment error.
+
+- README now documents the Debian/PEP 668 `pipx` install path, and points
+  developers at `make install` / `make test` to build and run the test suite
+  from a clone
+- Found that `pyproject.toml` had a hardcoded `version = "0.1.0"` that was
+  never bumped when `v0.2.0` was tagged - `pip`/`pipx` installs were reporting
+  the wrong version regardless of which commit was actually checked out
+- Switched to `setuptools_scm` for dynamic versioning derived from git tags
+  instead of a hand-maintained string. `dynamic = ["version"]` plus
+  `[tool.setuptools_scm]` in `pyproject.toml`; `setuptools_scm` added to
+  `[build-system] requires`
+- `ci.yml` needed `fetch-depth: 0` on the checkout step - `setuptools_scm`
+  can't resolve a version from a shallow clone with no tag history
+- Found `[tool.setuptools.packages.find]` had no `include` filter, only
+  `exclude = ["tests*"]`. With namespace-package discovery on by default,
+  this let `docs/`, `examples/`, `validation/`, and even a stale local
+  `build/` directory get swept up as bogus packages on repeated local
+  builds (visible as `build/lib/build/lib/...` nesting). Added
+  `include = ["io_gen*"]` to scope discovery to the actual package.
+  Added `build/` to `.gitignore`
+- Fixed a heading collision in README - `### Example` (single usage
+  command) renamed to a plain lead-in sentence so it no longer collides
+  with the `## Examples` section
+- Verified end to end: tagged `v0.2.1`, pushed the tag, reinstalled with
+  `pipx`, confirmed `pipx list` reports a clean `0.2.1` with no dev/dirty
+  suffix
+
 ## 2026-04-23 - Adding CI and status to the project
 
 - Project is static enough that I've added it to github actions
