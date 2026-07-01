@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=68", "setuptools_scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "io-gen"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Generate XDC constraints and HDL from a YAML pin description"
 license = { text = "MIT" }
 authors = [
@@ -22,11 +22,14 @@ io-gen = "io_gen.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
+include = ["io_gen*"]
 exclude = ["tests*"]
 
 [tool.setuptools.package-data]
 "io_gen.schema" = ["*.json"]
 "io_gen.schema.defs" = ["*.json"]
+
+[tool.setuptools_scm]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

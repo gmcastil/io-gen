@@ -48,18 +48,28 @@ existing files.
 pip install git+https://github.com/gmcastil/io-gen.git
 ```
 
-or to install from a local clone use `pip`
+On Debian, per PEP 668, the Python base environment is marked as "externally
+managed", which prevents package installation via `pip` outside virtual
+environments. The standard workaround for that is to first install `pipx`,
+check that `~/.local/bin` is in the PATH and then install `io-gen` per-user:
+
+```bash
+sudo apt install pipx
+pipx ensurepath
+pipx install git+https://github.com/gmcastil/io-gen.git
+```
+
+The same approach is recommended on macOS with `homebrew` installed.
+
+To install from a local clone instead, one can use `pip`
 
 ```
+git clone https://github.com/gmcastil/io-gen.git
+cd io-gen
 pip install .
 ```
 
-On macOS with `homebrew` installed, it's usually preferable to use `pipx` to
-install the tool locally.
-
-```
-pipx install .
-```
+On Debian or macOS, it's usually preferable to use `pipx` to install it per user.
 
 For development, an editable installation keeps the source files in place, so
 changes will take effect immediately
@@ -95,7 +105,7 @@ The following three options are mutually exclusive:
 - `--xdc-only` - generate the XDC file only. Skip HDL files. `--lang` is not
   required.
 
-### Example
+For example:
 
 ```
 io-gen --top example --lang verilog --output out/ examples/example.yaml
@@ -114,6 +124,22 @@ supported signal type, along with the expected generated output files. The
 Digilent Basys3 FPGA board and a `Makefile` which uses Vivado to run the IO
 planning default DRC on the output XDC file. See
 [examples/README.md](examples/README.md) for details.
+
+---
+
+## Running Tests
+
+From a local clone, `make install` creates a `.venv`, installs dev and runtime
+dependencies from `requirements.txt`, and performs an editable install.
+`make test` runs the test suite against that environment. See `make help` for
+other targets (coverage, example regeneration, etc.).
+
+```bash
+git clone https://github.com/gmcastil/io-gen.git
+cd io-gen
+make install
+make test
+```
 
 ---
 
